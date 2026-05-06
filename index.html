@@ -872,6 +872,54 @@
     .pin-key { min-height: 60px; font-size: 22px; font-family: 'Fredoka One', sans-serif; border-radius: var(--radius-md); border: 2px solid var(--pu); background: rgba(212,170,238,0.12); cursor: pointer; color: var(--pu3); transition: background 80ms; }
     .pin-key:active { background: var(--pu); color: #fff; }
     .pin-key.wide { grid-column: span 2; }
+
+    /* ---- Prep Games ---- */
+    .prep-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+    .prep-tile { background: rgba(255,255,255,0.96); border-radius: var(--radius-lg); padding: 18px 12px; text-align: center; border: 2px solid transparent; cursor: pointer; transition: transform 120ms, border-color 120ms; box-shadow: var(--shadow-pop); }
+    .prep-tile:active { transform: scale(0.96); }
+    .prep-tile .pt-icon { font-size: 36px; display: block; margin-bottom: 6px; }
+    .prep-tile .pt-label { font-family: 'Fredoka One', sans-serif; font-size: 15px; color: var(--pu3); display: block; }
+    .prep-tile .pt-sub { font-size: 12px; color: #888; display: block; margin-top: 2px; }
+    .prep-tile.pt-letters { border-color: #FFB3C6; }
+    .prep-tile.pt-numbers { border-color: #A8D8F0; }
+    .prep-tile.pt-spelling { border-color: #D4AAEE; }
+    .prep-tile.pt-counting { border-color: #B8E6C8; }
+    .prep-tile.pt-sounds { border-color: #FFD88A; }
+    .prep-card { background: rgba(255,255,255,0.96); border-radius: var(--radius-lg); padding: 24px 16px; box-shadow: var(--shadow-pop); text-align: center; }
+    .prep-prompt { font-family: 'Fredoka One', sans-serif; font-size: 20px; color: var(--pu3); margin-bottom: 16px; }
+    .prep-target { font-size: 64px; font-family: 'Fredoka One', sans-serif; color: var(--pu2); margin: 12px 0; line-height: 1.1; }
+    .prep-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+    .prep-btn { min-height: 80px; font-size: 36px; font-family: 'Fredoka One', sans-serif; border-radius: var(--radius-lg); border: 3px solid var(--pu); background: rgba(212,170,238,0.15); color: var(--pu3); cursor: pointer; transition: transform 100ms, background 100ms, border-color 100ms; display: flex; align-items: center; justify-content: center; }
+    .prep-btn:active { transform: scale(0.94); }
+    .prep-btn.correct { background: #C8F7C5; border-color: #4CAF50; color: #2E7D32; animation: feedPop 300ms ease-out; }
+    .prep-btn.wrong { background: #FFCDD2; border-color: #EF5350; color: #C62828; opacity: 0.6; }
+    .prep-btn.disabled { pointer-events: none; }
+    .prep-progress { display: flex; gap: 4px; justify-content: center; margin-bottom: 12px; }
+    .prep-dot { width: 20px; height: 6px; border-radius: 3px; background: #ddd; transition: background 200ms; }
+    .prep-dot.done { background: var(--ye3); }
+    .prep-dot.active { background: var(--pu2); }
+    .prep-score { font-family: 'Fredoka One', sans-serif; font-size: 14px; color: var(--pu); margin-bottom: 8px; }
+    .prep-feedback { font-size: 48px; margin: 12px 0; animation: feedPop 300ms ease-out; }
+    .prep-speaker { font-size: 36px; cursor: pointer; margin: 8px; display: inline-block; transition: transform 100ms; }
+    .prep-speaker:active { transform: scale(0.9); }
+    .spell-word-display { display: flex; justify-content: center; gap: 6px; margin: 16px 0; flex-wrap: wrap; }
+    .spell-slot { width: 44px; height: 52px; border-radius: var(--radius-md); border: 3px dashed var(--pu); background: rgba(212,170,238,0.08); display: flex; align-items: center; justify-content: center; font-size: 28px; font-family: 'Fredoka One', sans-serif; color: var(--pu3); transition: border-color 200ms, background 200ms; }
+    .spell-slot.filled { border-style: solid; background: rgba(212,170,238,0.2); }
+    .spell-slot.active { border-color: var(--ye3); background: rgba(255,215,0,0.12); }
+    .spell-slot.wrong-shake { animation: shakeSlot 400ms ease-out; border-color: #EF5350; }
+    @keyframes shakeSlot { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+    .spell-bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 16px; }
+    .spell-letter { width: 52px; height: 52px; font-size: 26px; font-family: 'Fredoka One', sans-serif; border-radius: var(--radius-md); border: 2px solid var(--pu); background: rgba(255,255,255,0.9); color: var(--pu3); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 100ms, opacity 200ms; }
+    .spell-letter:active { transform: scale(0.9); }
+    .spell-letter.used { opacity: 0.25; pointer-events: none; }
+    .spell-letter.correct-pop { background: #C8F7C5; border-color: #4CAF50; color: #2E7D32; }
+    .spell-hint { font-size: 14px; color: #888; margin-top: 4px; }
+    .count-emojis { font-size: 36px; line-height: 1.4; margin: 12px 0; letter-spacing: 4px; word-spacing: 8px; }
+    .prep-done-card { background: rgba(255,255,255,0.96); border-radius: var(--radius-lg); padding: 28px 20px; box-shadow: var(--shadow-pop); text-align: center; }
+    .prep-done-stars { font-size: 40px; margin: 12px 0; }
+    .prep-done-msg { font-family: 'Fredoka One', sans-serif; font-size: 22px; color: var(--pu3); margin: 8px 0; }
+    .prep-done-detail { font-size: 15px; color: #666; margin: 4px 0; }
+    .prep-coins-msg { font-size: 18px; font-weight: 800; color: var(--ye3); margin: 12px 0; }
   </style>
 </head>
 <body>
@@ -933,6 +981,11 @@
           <span class="icon">🪙</span>
           <span class="label">Coins</span>
           <span class="desc">Wallet & shop</span>
+        </button>
+        <button class="tile t-prep" data-go="s-prep" style="background:linear-gradient(135deg,#FFE0F0,#E0F0FF);border:2px solid #D4AAEE;">
+          <span class="icon">🧸</span>
+          <span class="label">Prep Games</span>
+          <span class="desc">Letters & numbers</span>
         </button>
       </div>
 
@@ -1030,6 +1083,8 @@
     <section class="screen" id="s-settings"></section>
     <section class="screen" id="s-avatarroom"></section>
     <section class="screen" id="s-dadwrong"></section>
+    <section class="screen" id="s-prep"></section>
+    <section class="screen" id="s-prep-game"></section>
   </div>
 
   <script>
@@ -1782,6 +1837,7 @@
       if (id === 's-settings')   renderSettingsScreen();
       if (id === 's-avatarroom') renderAvatarRoom();
       if (id === 's-dadwrong')   renderDadWrongCard();
+      if (id === 's-prep')       renderPrepHub();
       window.scrollTo(0, 0);
     }
 
@@ -4677,6 +4733,515 @@
           renderAvatarRoom();
         });
       }
+    }
+
+    // ============================================================
+    // Prep Games — letters, numbers, spelling, counting, sounds
+    // ============================================================
+
+    var PREP_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+
+    var PREP_SPELL_WORDS = [
+      { word: 'AMOS', hint: '👦 Your name!' },
+      { word: 'DAD', hint: '👨 Father' },
+      { word: 'MUM', hint: '👩 Mother' },
+      { word: 'EMELIA', hint: '👧 Sister' },
+      { word: 'JOHN', hint: '👨 Dad\'s name' },
+      { word: 'CAT', hint: '🐱' },
+      { word: 'DOG', hint: '🐶' },
+      { word: 'SUN', hint: '☀️' },
+      { word: 'HAT', hint: '🎩' },
+      { word: 'BIG', hint: 'Not small!' },
+      { word: 'RED', hint: '🔴' },
+      { word: 'BUS', hint: '🚌' },
+      { word: 'CUP', hint: '☕' },
+      { word: 'PEN', hint: '🖊️' },
+      { word: 'BED', hint: '🛏️' },
+      { word: 'FUN', hint: '🎉' },
+      { word: 'RUN', hint: '🏃' },
+      { word: 'HOP', hint: '🐰' },
+      { word: 'TOP', hint: '⬆️' },
+      { word: 'MOP', hint: '🧹' }
+    ];
+
+    var PREP_COUNT_EMOJIS = ['🍎', '⭐', '🐟', '🌸', '🐛', '🎈', '🍪', '🐸', '🚗', '🦋'];
+
+    var PREP_SOUND_WORDS = [
+      { word: 'cat', emoji: '🐱' },
+      { word: 'dog', emoji: '🐶' },
+      { word: 'sun', emoji: '☀️' },
+      { word: 'hat', emoji: '🎩' },
+      { word: 'bus', emoji: '🚌' },
+      { word: 'fish', emoji: '🐟' },
+      { word: 'bed', emoji: '🛏️' },
+      { word: 'pen', emoji: '🖊️' },
+      { word: 'cup', emoji: '☕' },
+      { word: 'run', emoji: '🏃' },
+      { word: 'map', emoji: '🗺️' },
+      { word: 'leg', emoji: '🦵' },
+      { word: 'nut', emoji: '🥜' },
+      { word: 'pig', emoji: '🐷' },
+      { word: 'egg', emoji: '🥚' },
+      { word: 'van', emoji: '🚐' },
+      { word: 'web', emoji: '🕸️' },
+      { word: 'zip', emoji: '🤐' },
+      { word: 'key', emoji: '🔑' },
+      { word: 'toy', emoji: '🧸' }
+    ];
+
+    var PREP_CHEERS = ['Well done! 🎉', 'Amazing! ⭐', 'You got it! 🌟', 'Super star! 💫', 'Great job! 🥳', 'Yes! 👏', 'Brilliant! ✨', 'Yay! 🎊'];
+
+    var prepSession = null;
+
+    // ---- Prep Hub ----
+
+    function renderPrepHub() {
+      var p = activeProfile();
+      if (!p) { showScreen('s-profiles'); return; }
+      var container = $('s-prep');
+      container.innerHTML =
+        '<button class="btn-back" data-back="s-home">← Back</button>' +
+        '<h2 style="text-align:center;color:var(--pu3);">🧸 Prep Games</h2>' +
+        '<p style="text-align:center;color:#888;font-size:14px;">Fun games to get ready for school!</p>' +
+        '<div class="prep-grid">' +
+          '<button class="prep-tile pt-letters" data-prep="letters">' +
+            '<span class="pt-icon">🔤</span>' +
+            '<span class="pt-label">Letter Match</span>' +
+            '<span class="pt-sub">Find the letter</span>' +
+          '</button>' +
+          '<button class="prep-tile pt-numbers" data-prep="numbers">' +
+            '<span class="pt-icon">🔢</span>' +
+            '<span class="pt-label">Number Match</span>' +
+            '<span class="pt-sub">Find the number</span>' +
+          '</button>' +
+          '<button class="prep-tile pt-spelling" data-prep="spelling">' +
+            '<span class="pt-icon">✏️</span>' +
+            '<span class="pt-label">Spell It</span>' +
+            '<span class="pt-sub">Spell simple words</span>' +
+          '</button>' +
+          '<button class="prep-tile pt-counting" data-prep="counting">' +
+            '<span class="pt-icon">🐛</span>' +
+            '<span class="pt-label">Counting</span>' +
+            '<span class="pt-sub">Count and choose</span>' +
+          '</button>' +
+          '<button class="prep-tile pt-sounds" data-prep="sounds">' +
+            '<span class="pt-icon">👂</span>' +
+            '<span class="pt-label">First Sound</span>' +
+            '<span class="pt-sub">What letter starts it?</span>' +
+          '</button>' +
+        '</div>';
+
+    }
+
+    // Prep hub tile clicks via global delegation
+    document.addEventListener('click', function(ev) {
+      var tile = ev.target.closest('[data-prep]');
+      if (!tile) return;
+      startPrepGame(tile.getAttribute('data-prep'));
+    });
+
+    // ---- Start a prep game session ----
+
+    function startPrepGame(mode) {
+      var p = activeProfile();
+      if (!p) return;
+      var rounds = [];
+      var totalRounds = 10;
+
+      if (mode === 'letters') {
+        var pool = shuffle(PREP_LETTERS.slice());
+        for (var i = 0; i < totalRounds; i++) {
+          var target = pool[i % pool.length];
+          var distractors = [];
+          while (distractors.length < 3) {
+            var d = pick(PREP_LETTERS);
+            if (d !== target && distractors.indexOf(d) === -1) distractors.push(d);
+          }
+          var opts = shuffle([target].concat(distractors));
+          rounds.push({ target: target, options: opts, speakText: target });
+        }
+      }
+
+      if (mode === 'numbers') {
+        var nums = [];
+        for (var n = 1; n <= 20; n++) nums.push(n);
+        var numPool = shuffle(nums);
+        for (var i = 0; i < totalRounds; i++) {
+          var target = numPool[i % numPool.length];
+          var distractors = [];
+          while (distractors.length < 3) {
+            var d = Math.floor(Math.random() * 20) + 1;
+            if (d !== target && distractors.indexOf(d) === -1) distractors.push(d);
+          }
+          var opts = shuffle([target].concat(distractors));
+          rounds.push({ target: target, options: opts, speakText: String(target) });
+        }
+      }
+
+      if (mode === 'spelling') {
+        var wordPool = shuffle(PREP_SPELL_WORDS.slice());
+        totalRounds = Math.min(6, wordPool.length);
+        for (var i = 0; i < totalRounds; i++) {
+          rounds.push({ wordObj: wordPool[i] });
+        }
+      }
+
+      if (mode === 'counting') {
+        for (var i = 0; i < totalRounds; i++) {
+          var count = Math.floor(Math.random() * 10) + 1;
+          var emoji = pick(PREP_COUNT_EMOJIS);
+          var distractors = [];
+          while (distractors.length < 3) {
+            var d = Math.floor(Math.random() * 10) + 1;
+            if (d !== count && distractors.indexOf(d) === -1) distractors.push(d);
+          }
+          var opts = shuffle([count].concat(distractors));
+          var emojiStr = '';
+          for (var j = 0; j < count; j++) emojiStr += emoji + ' ';
+          rounds.push({ target: count, options: opts, emoji: emoji, emojiStr: emojiStr.trim(), speakText: 'How many can you count?' });
+        }
+      }
+
+      if (mode === 'sounds') {
+        var soundPool = shuffle(PREP_SOUND_WORDS.slice());
+        for (var i = 0; i < totalRounds; i++) {
+          var item = soundPool[i % soundPool.length];
+          var firstLetter = item.word.charAt(0).toUpperCase();
+          var distractors = [];
+          while (distractors.length < 3) {
+            var d = pick(PREP_LETTERS);
+            if (d !== firstLetter && distractors.indexOf(d) === -1) distractors.push(d);
+          }
+          var opts = shuffle([firstLetter].concat(distractors));
+          rounds.push({ target: firstLetter, options: opts, word: item.word, emoji: item.emoji, speakText: 'What does ' + item.word + ' start with?' });
+        }
+      }
+
+      prepSession = {
+        mode: mode,
+        rounds: rounds,
+        index: 0,
+        correct: 0,
+        coins: 0,
+        totalRounds: rounds.length
+      };
+
+      renderPrepRound();
+    }
+
+    // ---- Render current prep round ----
+
+    function renderPrepRound() {
+      if (!prepSession) return;
+      if (prepSession.index >= prepSession.totalRounds) {
+        renderPrepDone();
+        return;
+      }
+
+      var mode = prepSession.mode;
+
+      if (mode === 'spelling') {
+        renderSpellingRound();
+        return;
+      }
+
+      var round = prepSession.rounds[prepSession.index];
+      var container = $('s-prep-game');
+      container.className = 'screen active';
+
+      var progressHtml = '<div class="prep-progress">';
+      for (var i = 0; i < prepSession.totalRounds; i++) {
+        var cls = 'prep-dot';
+        if (i < prepSession.index) cls += ' done';
+        if (i === prepSession.index) cls += ' active';
+        progressHtml += '<div class="' + cls + '"></div>';
+      }
+      progressHtml += '</div>';
+
+      var promptText = '';
+      var targetDisplay = '';
+
+      if (mode === 'letters') {
+        promptText = 'Find the letter';
+        targetDisplay = '<div class="prep-target">' + escapeHtml(round.target) + '</div>';
+      } else if (mode === 'numbers') {
+        promptText = 'Find the number';
+        targetDisplay = '<div class="prep-target">' + round.target + '</div>';
+      } else if (mode === 'counting') {
+        promptText = 'How many ' + round.emoji + '?';
+        targetDisplay = '<div class="count-emojis">' + round.emojiStr + '</div>';
+      } else if (mode === 'sounds') {
+        promptText = 'What does ' + round.emoji + ' ' + round.word + ' start with?';
+        targetDisplay = '<div class="prep-target">' + round.emoji + '</div>';
+      }
+
+      var buttonsHtml = '<div class="prep-btn-grid">';
+      for (var i = 0; i < round.options.length; i++) {
+        buttonsHtml += '<button class="prep-btn" data-answer="' + escapeHtml(String(round.options[i])) + '">' + escapeHtml(String(round.options[i])) + '</button>';
+      }
+      buttonsHtml += '</div>';
+
+      container.innerHTML =
+        '<button class="btn-back" data-back="s-prep">← Back</button>' +
+        '<div class="prep-card">' +
+          progressHtml +
+          '<div class="prep-score">' + prepSession.correct + ' / ' + prepSession.totalRounds + ' correct</div>' +
+          '<div class="prep-prompt">' + promptText + '</div>' +
+          '<span class="prep-speaker" id="prep-speak">🔊</span>' +
+          targetDisplay +
+          '<div id="prep-feedback"></div>' +
+          buttonsHtml +
+        '</div>';
+
+      // Show the screen
+      var screens = document.querySelectorAll('.screen');
+      for (var i = 0; i < screens.length; i++) {
+        screens[i].classList.toggle('active', screens[i].id === 's-prep-game');
+      }
+
+      // Speak
+      setTimeout(function() {
+        if (mode === 'letters') speak('Find the letter ' + round.target, 0.75);
+        else if (mode === 'numbers') speak('Find the number ' + round.speakText, 0.75);
+        else if (mode === 'counting') speak(round.speakText, 0.75);
+        else if (mode === 'sounds') speak(round.speakText, 0.75);
+      }, 400);
+
+      // Speaker button
+      $('prep-speak').addEventListener('click', function() {
+        if (mode === 'letters') speak('Find the letter ' + round.target, 0.75);
+        else if (mode === 'numbers') speak('Find the number ' + round.speakText, 0.75);
+        else if (mode === 'counting') speak(round.speakText, 0.75);
+        else if (mode === 'sounds') speak(round.speakText, 0.75);
+      });
+
+      // Answer buttons
+      var answered = false;
+      var allBtns = container.querySelectorAll('.prep-btn');
+      for (var bi = 0; bi < allBtns.length; bi++) {
+        (function(btn) {
+          btn.addEventListener('click', function() {
+            if (answered) return;
+            answered = true;
+
+            var selected = btn.getAttribute('data-answer');
+            var isCorrect = (String(selected) === String(round.target));
+
+            for (var j = 0; j < allBtns.length; j++) {
+              allBtns[j].classList.add('disabled');
+              if (String(allBtns[j].getAttribute('data-answer')) === String(round.target)) {
+                allBtns[j].classList.add('correct');
+              } else if (allBtns[j] === btn && !isCorrect) {
+                allBtns[j].classList.add('wrong');
+              }
+            }
+
+            var fb = $('prep-feedback');
+            if (isCorrect) {
+              prepSession.correct++;
+              prepSession.coins++;
+              fb.innerHTML = '<div class="prep-feedback">🎉</div>';
+              speak(pick(PREP_CHEERS).replace(/[^a-zA-Z ]/g, ''), 0.85);
+            } else {
+              fb.innerHTML = '<div class="prep-feedback">😊</div><div style="color:#888;font-size:14px;">It was ' + escapeHtml(String(round.target)) + '</div>';
+              speak('The answer is ' + round.target, 0.75);
+            }
+
+            var scoreEl = container.querySelector('.prep-score');
+            if (scoreEl) scoreEl.textContent = prepSession.correct + ' / ' + prepSession.totalRounds + ' correct';
+
+            setTimeout(function() {
+              prepSession.index++;
+              renderPrepRound();
+            }, 1600);
+          });
+        })(allBtns[bi]);
+      }
+    }
+
+    // ---- Spelling round ----
+
+    function renderSpellingRound() {
+      if (prepSession.index >= prepSession.totalRounds) {
+        renderPrepDone();
+        return;
+      }
+
+      var round = prepSession.rounds[prepSession.index];
+      var wordObj = round.wordObj;
+      var letters = wordObj.word.split('');
+      var container = $('s-prep-game');
+
+      var screens = document.querySelectorAll('.screen');
+      for (var i = 0; i < screens.length; i++) {
+        screens[i].classList.toggle('active', screens[i].id === 's-prep-game');
+      }
+
+      var progressHtml = '<div class="prep-progress">';
+      for (var i = 0; i < prepSession.totalRounds; i++) {
+        var cls = 'prep-dot';
+        if (i < prepSession.index) cls += ' done';
+        if (i === prepSession.index) cls += ' active';
+        progressHtml += '<div class="' + cls + '"></div>';
+      }
+      progressHtml += '</div>';
+
+      var slotsHtml = '<div class="spell-word-display" id="spell-slots">';
+      for (var i = 0; i < letters.length; i++) {
+        slotsHtml += '<div class="spell-slot" data-idx="' + i + '"></div>';
+      }
+      slotsHtml += '</div>';
+
+      // Build letter bank: all letters of the word + some random extras
+      var bankLetters = letters.slice();
+      var extraCount = Math.max(2, 6 - letters.length);
+      while (bankLetters.length < letters.length + extraCount) {
+        var r = pick(PREP_LETTERS);
+        if (bankLetters.indexOf(r) === -1 || Math.random() > 0.5) bankLetters.push(r);
+      }
+      bankLetters = shuffle(bankLetters);
+
+      var bankHtml = '<div class="spell-bank" id="spell-bank">';
+      for (var i = 0; i < bankLetters.length; i++) {
+        bankHtml += '<button class="spell-letter" data-letter="' + bankLetters[i] + '" data-bi="' + i + '">' + bankLetters[i] + '</button>';
+      }
+      bankHtml += '</div>';
+
+      container.innerHTML =
+        '<button class="btn-back" data-back="s-prep">← Back</button>' +
+        '<div class="prep-card">' +
+          progressHtml +
+          '<div class="prep-score">' + prepSession.correct + ' / ' + prepSession.totalRounds + ' correct</div>' +
+          '<div class="prep-prompt">Spell the word</div>' +
+          '<span class="prep-speaker" id="prep-speak">🔊</span>' +
+          '<div class="prep-target" style="font-size:40px;">' + escapeHtml(wordObj.word) + '</div>' +
+          '<div class="spell-hint">' + wordObj.hint + '</div>' +
+          slotsHtml +
+          '<div id="prep-feedback"></div>' +
+          bankHtml +
+        '</div>';
+
+      setTimeout(function() {
+        speak('Spell ' + wordObj.word, 0.7);
+      }, 400);
+
+      $('prep-speak').addEventListener('click', function() {
+        speak('Spell ' + wordObj.word, 0.7);
+      });
+
+      var currentPos = 0;
+      var mistakes = 0;
+      var slots = container.querySelectorAll('.spell-slot');
+      if (slots.length > 0) slots[0].classList.add('active');
+
+      container.addEventListener('click', function(ev) {
+        var letterBtn = ev.target.closest('.spell-letter');
+        if (!letterBtn || letterBtn.classList.contains('used')) return;
+        if (currentPos >= letters.length) return;
+
+        var tapped = letterBtn.getAttribute('data-letter');
+        var expected = letters[currentPos];
+
+        if (tapped === expected) {
+          letterBtn.classList.add('used', 'correct-pop');
+          slots[currentPos].textContent = tapped;
+          slots[currentPos].classList.add('filled');
+          slots[currentPos].classList.remove('active');
+          speak(tapped, 0.9);
+          currentPos++;
+
+          if (currentPos < letters.length) {
+            slots[currentPos].classList.add('active');
+          }
+
+          if (currentPos >= letters.length) {
+            var fb = $('prep-feedback');
+            if (mistakes === 0) {
+              prepSession.correct++;
+              prepSession.coins += 2;
+              fb.innerHTML = '<div class="prep-feedback">🎉</div>';
+              speak('You spelled ' + wordObj.word + '! ' + pick(PREP_CHEERS).replace(/[^a-zA-Z ]/g, ''), 0.8);
+            } else {
+              prepSession.coins++;
+              fb.innerHTML = '<div class="prep-feedback">👏</div>';
+              speak('You spelled ' + wordObj.word, 0.8);
+            }
+            var scoreEl = container.querySelector('.prep-score');
+            if (scoreEl) scoreEl.textContent = prepSession.correct + ' / ' + prepSession.totalRounds + ' correct';
+
+            setTimeout(function() {
+              prepSession.index++;
+              renderPrepRound();
+            }, 2000);
+          }
+        } else {
+          mistakes++;
+          slots[currentPos].classList.add('wrong-shake');
+          setTimeout(function() {
+            slots[currentPos].classList.remove('wrong-shake');
+          }, 500);
+          speak('Try again', 0.8);
+        }
+      });
+    }
+
+    // ---- Prep done screen ----
+
+    function renderPrepDone() {
+      var p = activeProfile();
+      if (!p) return;
+      var container = $('s-prep-game');
+
+      var pct = prepSession.totalRounds > 0 ? Math.round((prepSession.correct / prepSession.totalRounds) * 100) : 0;
+      var starCount = pct >= 90 ? 3 : (pct >= 60 ? 2 : 1);
+      var starsStr = '';
+      for (var i = 0; i < starCount; i++) starsStr += '⭐';
+
+      var modeNames = { letters: 'Letter Match', numbers: 'Number Match', spelling: 'Spell It', counting: 'Counting', sounds: 'First Sound' };
+      var modeName = modeNames[prepSession.mode] || 'Prep Game';
+
+      var coins = prepSession.coins;
+      var today = todayKey();
+      if (p.economy.dailyDate !== today) {
+        p.economy.dailyDate = today;
+        p.economy.dailyCoins = 0;
+      }
+      var cap = getDailyCap(p);
+      var awarded = Math.min(coins, Math.max(0, cap - (p.economy.dailyCoins || 0)));
+      p.economy.coins = (p.economy.coins || 0) + awarded;
+      p.economy.dailyCoins = (p.economy.dailyCoins || 0) + awarded;
+      p.economy.totalEarned = (p.economy.totalEarned || 0) + awarded;
+      p.economy.gems = Math.max(p.economy.gems || 0, Math.floor((p.economy.totalEarned || 0) / 40));
+      if (awarded > 0) {
+        p.coinHistory.push({ date: today, amount: awarded, source: 'prep-' + prepSession.mode });
+      }
+      updateStreak(p);
+      saveActiveProfile();
+
+      var msg = pct >= 90 ? 'Amazing work!' : (pct >= 60 ? 'Great effort!' : 'Good try!');
+
+      container.innerHTML =
+        '<div class="prep-done-card">' +
+          '<div class="prep-done-stars">' + starsStr + '</div>' +
+          '<div class="prep-done-msg">' + msg + '</div>' +
+          '<div style="font-size:15px;color:var(--pu);margin:4px 0;">' + modeName + '</div>' +
+          '<div class="prep-done-detail">' + prepSession.correct + ' out of ' + prepSession.totalRounds + ' correct</div>' +
+          (awarded > 0 ? '<div class="prep-coins-msg">🪙 +' + awarded + ' coins!</div>' : '') +
+          (awarded < coins ? '<div class="prep-done-detail" style="color:#aaa;">Daily coin cap reached</div>' : '') +
+          '<div style="margin-top:20px;display:flex;gap:10px;justify-content:center;">' +
+            '<button class="btn" id="prep-again">Play Again</button>' +
+            '<button class="btn" id="prep-back" style="background:var(--pu);">Back</button>' +
+          '</div>' +
+        '</div>';
+
+      speak(msg, 0.8);
+
+      $('prep-again').addEventListener('click', function() {
+        startPrepGame(prepSession.mode);
+      });
+      $('prep-back').addEventListener('click', function() {
+        showScreen('s-prep');
+      });
     }
 
     // -----------------------------------
