@@ -834,6 +834,16 @@
     .ar-style-btn { padding: 9px 6px; border: 2px solid var(--pu2); border-radius: var(--radius-sm); background: rgba(212,170,238,0.1); font-family: 'Fredoka One', sans-serif; font-size: 13px; color: var(--pu3); cursor: pointer; transition: background 100ms, transform 80ms; }
     .ar-style-btn.selected { background: var(--pu); border-color: var(--pu3); color: var(--wh); }
     .ar-style-btn:active { transform: scale(0.96); }
+    .ar-gem-balance { display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; gap: 8px; background: rgba(212,170,238,0.18); border-radius: var(--radius-md); padding: 10px 14px; margin-bottom: 4px; }
+    .ar-gem-count { font-family: 'Fredoka One', sans-serif; font-size: 22px; color: var(--pu3); }
+    .ar-gem-label { font-size: 13px; color: var(--mut); font-weight: 700; }
+    .ar-shop-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 8px; }
+    .ar-shop-btn { position: relative; font-size: 26px; border: 2.5px solid transparent; border-radius: var(--radius-md); padding: 8px 4px 20px; background: rgba(212,170,238,0.12); cursor: pointer; transition: transform 100ms ease; display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: center; justify-content: center; }
+    .ar-shop-btn.owned { border-color: var(--gn2); background: rgba(184,238,216,0.25); }
+    .ar-shop-btn.cant-afford { opacity: 0.45; }
+    .ar-shop-btn:active { transform: scale(1.08); }
+    .ar-shop-price { position: absolute; bottom: 3px; left: 0; right: 0; text-align: center; font-size: 10px; font-weight: 800; color: var(--pu3); line-height: 1; }
+    .ar-shop-price.owned-lbl { color: var(--gn3); }
 
     /* ---- PIN overlay ---- */
     .pin-overlay { background: rgba(255,255,255,0.97); border-radius: var(--radius-lg); padding: 28px 20px 20px; box-shadow: var(--shadow-pop); text-align: center; }
@@ -1569,7 +1579,7 @@
           lesson: 'ai sits in the middle of words. ay usually comes at the end. a_e uses a silent e at the end.'
         },
         cueLine: 'Can you hear the long A sound?',
-        sentenceStarters: ['On a rainy day I like to…', 'I made a huge…', 'We played a game of…'],
+        sentenceStarters: ['I found a snail on the train track when…', 'I made a birthday cake and…', 'We stayed to play all day because…', 'The rain made the playground…'],
         words: [
           { w: 'rain',     team: 'ai',  lv: 'core',      hint: 'It falls from the sky on a cloudy day.',           ph: 'rayn' },
           { w: 'train',    team: 'ai',  lv: 'core',      hint: 'You ride this on railway tracks.',                 ph: 'trayn' },
@@ -1602,7 +1612,7 @@
           lesson: 'ee and ea are the most common. e_e is rarer and usually appears in longer words.'
         },
         cueLine: 'Listen for the long E — like saying "eee"!',
-        sentenceStarters: ['I love to read about…', 'At the beach we…', 'The green tree had…'],
+        sentenceStarters: ['My team ran to the beach and…', 'The queen sat under the tree to read because…', 'At the beach my feet felt…', 'We screamed when we saw these…'],
         words: [
           { w: 'tree',        team: 'ee',  lv: 'core',      hint: 'A tall plant with branches and leaves.',        ph: 'trea' },
           { w: 'feet',        team: 'ee',  lv: 'core',      hint: 'You stand and walk on these.',                  ph: 'feat' },
@@ -1632,7 +1642,7 @@
           lesson: 'They all sound the same! er is most common. ir often comes before d and l. ur often comes before n.'
         },
         cueLine: 'These all make the same "er" sound — the tricky part is knowing which spelling!',
-        sentenceStarters: ['The bird flew over…', 'First she turned and then…', 'In her purple…'],
+        sentenceStarters: ['The purple bird perched in the fern and…', 'First she twirled then she turned because…', 'It was urgent — her turn came when…', 'The girl heard a bird chirp and…'],
         words: [
           { w: 'fern',    team: 'er', lv: 'core',      hint: 'A leafy green plant that grows in the bush.',        ph: 'furn' },
           { w: 'her',     team: 'er', lv: 'core',      hint: 'Belonging to a girl or woman.',                      ph: 'hur' },
@@ -1648,14 +1658,111 @@
           { w: 'reverse', team: 'er', lv: 'extension', hint: 'To go or do something backwards.',                   ph: 'ruhvers' }
         ]
       }
+      'i_e-igh-y': {
+        name: 'Long I (i_e / igh / y)', emoji: '🪁',
+        teams: ['i_e', 'igh', 'y'],
+        teamInfo: {
+          'i_e': { label: 'i_e', bg: '#D4AAEE', fg: '#7830B8', family: 'kite, time, hide, smile' },
+          'igh': { label: 'igh', bg: '#FFEC80', fg: '#806800', family: 'night, light, bright, fight' },
+          'y':   { label: 'y',   bg: '#B8EED8', fg: '#1A6840', family: 'fly, try, sky, dry' }
+        },
+        compare: {
+          title: 'Three ways to write the long I sound',
+          words: ['kite', 'night', 'fly'],
+          lesson: 'i_e uses a silent e at the end. igh uses three letters together for one sound. y makes the long I at the end of short words.'
+        },
+        cueLine: 'Can you hear the long I — like saying "eye"?',
+        sentenceStarters: ['At night the bright stars…', 'I fly my kite when the sky is…', 'It was time to smile because…', 'She tried to hide in the light because…'],
+        words: [
+          { w: 'time',     team: 'i_e', lv: 'core',      hint: 'What a clock measures.',                         ph: 'tiem' },
+          { w: 'kite',     team: 'i_e', lv: 'core',      hint: 'You fly this on a windy day.',                   ph: 'kiet' },
+          { w: 'hide',     team: 'i_e', lv: 'core',      hint: 'To stay out of sight.',                          ph: 'hied' },
+          { w: 'night',    team: 'igh', lv: 'core',      hint: 'The dark time after sunset.',                    ph: 'nite' },
+          { w: 'light',    team: 'igh', lv: 'core',      hint: 'The sun and lamps give this.',                   ph: 'lite' },
+          { w: 'bright',   team: 'igh', lv: 'core',      hint: 'Very shiny or very clever.',                     ph: 'brite' },
+          { w: 'fly',      team: 'y',   lv: 'core',      hint: 'To move through the air like a bird.',           ph: 'flie' },
+          { w: 'sky',      team: 'y',   lv: 'core',      hint: 'The blue space above the clouds.',               ph: 'skie' },
+          { w: 'smile',    team: 'i_e', lv: 'challenge', hint: 'A happy look on your face.',                     ph: 'smiel' },
+          { w: 'fright',   team: 'igh', lv: 'challenge', hint: 'A sudden scary feeling.',                        ph: 'frite' },
+          { w: 'supply',   team: 'y',   lv: 'challenge', hint: 'A stock of things you have ready.',              ph: 'suplie' },
+          { w: 'twilight', team: 'igh', lv: 'extension', hint: 'The soft glow of light just after sunset.',      ph: 'twilite' },
+          { w: 'identify', team: 'y',   lv: 'extension', hint: 'To name or recognise something correctly.',      ph: 'identifie' }
+        ]
+      },
+      'oa-ow-o_e': {
+        name: 'Long O (oa / ow / o_e)', emoji: '🚣',
+        teams: ['oa', 'ow', 'o_e'],
+        teamInfo: {
+          'oa':  { label: 'oa',  bg: '#A8D8F0', fg: '#2878B8', family: 'boat, road, toad, coat' },
+          'ow':  { label: 'ow',  bg: '#B8EED8', fg: '#1A6840', family: 'grow, show, blow, know' },
+          'o_e': { label: 'o_e', bg: '#FFB3C6', fg: '#CC3060', family: 'home, stone, hope, bone' }
+        },
+        compare: {
+          title: 'Three ways to write the long O sound',
+          words: ['boat', 'grow', 'home'],
+          lesson: 'oa usually sits in the middle of words. ow comes at the end. o_e uses a silent e at the end.'
+        },
+        cueLine: 'Listen for the long O — like saying "oh"!',
+        sentenceStarters: ['The boat floated past the…', 'I hope the flowers grow…', 'On the road home I saw…', 'The stone was so big that…'],
+        words: [
+          { w: 'boat',     team: 'oa',  lv: 'core',      hint: 'You sail on water in this.',                     ph: 'bote' },
+          { w: 'road',     team: 'oa',  lv: 'core',      hint: 'Cars and buses travel on this.',                  ph: 'rode' },
+          { w: 'toad',     team: 'oa',  lv: 'core',      hint: 'A bumpy amphibian related to a frog.',            ph: 'tode' },
+          { w: 'grow',     team: 'ow',  lv: 'core',      hint: 'To get bigger over time.',                        ph: 'groe' },
+          { w: 'show',     team: 'ow',  lv: 'core',      hint: 'To let someone see, or a performance.',           ph: 'shoe' },
+          { w: 'blow',     team: 'ow',  lv: 'core',      hint: 'What the wind does.',                             ph: 'bloe' },
+          { w: 'home',     team: 'o_e', lv: 'core',      hint: 'The place where you live.',                       ph: 'hoam' },
+          { w: 'hope',     team: 'o_e', lv: 'core',      hint: 'To wish for something good.',                     ph: 'hoap' },
+          { w: 'stone',    team: 'o_e', lv: 'core',      hint: 'A small hard rock.',                              ph: 'stoan' },
+          { w: 'groan',    team: 'oa',  lv: 'challenge', hint: 'A low sound when you are tired or sore.',         ph: 'grone' },
+          { w: 'below',    team: 'ow',  lv: 'challenge', hint: 'Under or lower than something else.',             ph: 'beloe' },
+          { w: 'explore',  team: 'o_e', lv: 'challenge', hint: 'To travel and discover new places.',              ph: 'explor' },
+          { w: 'approach', team: 'oa',  lv: 'extension', hint: 'To move closer to something.',                    ph: 'aproach' },
+          { w: 'remote',   team: 'o_e', lv: 'extension', hint: 'Far away, or the device to change the TV.',       ph: 'reemote' }
+        ]
+      },
+      'oo-ew-ue': {
+        name: 'Oo sound (oo / ew / ue)', emoji: '🌙',
+        teams: ['oo', 'ew', 'ue'],
+        teamInfo: {
+          'oo': { label: 'oo', bg: '#D4AAEE', fg: '#7830B8', family: 'moon, spoon, food, pool' },
+          'ew': { label: 'ew', bg: '#A8D8F0', fg: '#2878B8', family: 'drew, flew, grew, new' },
+          'ue': { label: 'ue', bg: '#B8EED8', fg: '#1A6840', family: 'blue, true, clue, glue' }
+        },
+        compare: {
+          title: 'Three ways to write the "oo" sound',
+          words: ['moon', 'flew', 'blue'],
+          lesson: 'oo usually sits in the middle. ew is often at the end after a consonant. ue comes at the end — and gives you a clue!'
+        },
+        cueLine: 'Listen for the long "oo" sound — like "ooo" in moon!',
+        sentenceStarters: ['Under the blue moon I…', 'She drew a picture of the food and…', 'The bird flew past and dropped a clue…', 'The true story about the pool was…'],
+        words: [
+          { w: 'moon',    team: 'oo', lv: 'core',      hint: 'It lights up the sky at night.',                  ph: 'mewn' },
+          { w: 'spoon',   team: 'oo', lv: 'core',      hint: 'You use this to eat soup or cereal.',             ph: 'spewn' },
+          { w: 'food',    team: 'oo', lv: 'core',      hint: 'What we eat to stay healthy and grow.',           ph: 'fewd' },
+          { w: 'drew',    team: 'ew', lv: 'core',      hint: 'Past tense of draw.',                             ph: 'droo' },
+          { w: 'flew',    team: 'ew', lv: 'core',      hint: 'Past tense of fly.',                              ph: 'floo' },
+          { w: 'new',     team: 'ew', lv: 'core',      hint: 'Something that just arrived or was just made.',   ph: 'noo' },
+          { w: 'blue',    team: 'ue', lv: 'core',      hint: 'The colour of the sky on a clear day.',           ph: 'bloo' },
+          { w: 'true',    team: 'ue', lv: 'core',      hint: 'Correct — the opposite of false.',                ph: 'troo' },
+          { w: 'clue',    team: 'ue', lv: 'core',      hint: 'A hint that helps you solve a mystery.',          ph: 'kloo' },
+          { w: 'drool',   team: 'oo', lv: 'challenge', hint: 'What happens when food looks too delicious.',     ph: 'drewl' },
+          { w: 'threw',   team: 'ew', lv: 'challenge', hint: 'Past tense of throw.',                            ph: 'throo' },
+          { w: 'rescue',  team: 'ue', lv: 'challenge', hint: 'To save someone from danger.',                    ph: 'reskew' },
+          { w: 'balloon', team: 'oo', lv: 'extension', hint: 'You fill this with air and it floats up.',        ph: 'baloon' },
+          { w: 'pursue',  team: 'ue', lv: 'extension', hint: 'To follow or chase after something.',             ph: 'persu' }
+        ]
+      }
     };
 
     var WEEKS = [
       { weekKey: '2025-W01', label: 'Week 1', title: 'Long A sounds', soundId: 'ai-ay-a_e', emoji: '🐌', comingSoon: false },
       { weekKey: '2025-W02', label: 'Week 2', title: 'Long E sounds', soundId: 'ee-ea-e_e', emoji: '🌿', comingSoon: false },
       { weekKey: '2025-W03', label: 'Week 3', title: 'Er sound',      soundId: 'er-ir-ur',  emoji: '🐦', comingSoon: false },
-      { weekKey: '2025-W04', label: 'Week 4', title: 'More sounds',   soundId: null,         emoji: '🔒', comingSoon: true  },
-      { weekKey: '2025-W05', label: 'Week 5', title: 'Coming soon',   soundId: null,         emoji: '🔒', comingSoon: true  }
+      { weekKey: '2025-W04', label: 'Week 4', title: 'Long I sounds', soundId: 'i_e-igh-y', emoji: '🪁', comingSoon: false },
+      { weekKey: '2025-W05', label: 'Week 5', title: 'Long O sounds', soundId: 'oa-ow-o_e', emoji: '🚣', comingSoon: false },
+      { weekKey: '2025-W06', label: 'Week 6', title: 'Oo sound',      soundId: 'oo-ew-ue',  emoji: '🌙', comingSoon: false },
+      { weekKey: '2025-W07', label: 'Week 7', title: 'Coming soon',   soundId: null,         emoji: '🔒', comingSoon: true  }
     ];
 
     // ============================================================
@@ -1799,6 +1906,7 @@
         grid.appendChild(card);
       });
       picker.classList.remove('hidden');
+      picker.scrollIntoView(true);
     }
 
     function hideSoundPicker() {
@@ -2190,6 +2298,7 @@
       p.economy.coins      = (p.economy.coins      || 0) + awarded;
       p.economy.dailyCoins = (p.economy.dailyCoins || 0) + awarded;
       p.economy.totalEarned = (p.economy.totalEarned || 0) + awarded;
+      p.economy.gems = Math.max(p.economy.gems || 0, Math.floor((p.economy.totalEarned || 0) / 50));
       if (awarded > 0) {
         p.coinHistory.push({ date: today, amount: awarded, soundId: gameSession.soundId });
       }
@@ -2688,6 +2797,7 @@
         p.economy.coins       = (p.economy.coins       || 0) + awarded;
         p.economy.dailyCoins  = (p.economy.dailyCoins  || 0) + awarded;
         p.economy.totalEarned = (p.economy.totalEarned || 0) + awarded;
+        p.economy.gems = Math.max(p.economy.gems || 0, Math.floor((p.economy.totalEarned || 0) / 50));
         if (awarded > 0) {
           p.coinHistory.push({ date: today, amount: awarded, soundId: sentenceSession.soundId, source: 'sentences' });
         }
@@ -2810,6 +2920,7 @@
           p.economy.coins       = (p.economy.coins       || 0) + awarded;
           p.economy.dailyCoins  = (p.economy.dailyCoins  || 0) + awarded;
           p.economy.totalEarned = (p.economy.totalEarned || 0) + awarded;
+          p.economy.gems = Math.max(p.economy.gems || 0, Math.floor((p.economy.totalEarned || 0) / 50));
           if (awarded > 0) {
             p.coinHistory.push({ date: today, amount: awarded, source: 'reading', title: title });
           }
@@ -3628,6 +3739,7 @@
         p.economy.coins       = (p.economy.coins       || 0) + awarded;
         p.economy.dailyCoins  = (p.economy.dailyCoins  || 0) + awarded;
         p.economy.totalEarned = (p.economy.totalEarned || 0) + awarded;
+        p.economy.gems = Math.max(p.economy.gems || 0, Math.floor((p.economy.totalEarned || 0) / 50));
         if (awarded > 0) {
           p.coinHistory.push({ date: today, amount: awarded, soundId: dadWrongSession.soundId, source: 'dadwrong' });
         }
@@ -3687,8 +3799,8 @@
       if (!p) { showScreen('s-profiles'); return; }
       migrateAvatar(p);
 
-      var tabs = ['look', 'clothes', 'accessory', 'pet'];
-      var tabLabels = { look: '🎨 Look', clothes: '👗 Clothes', accessory: '👑 Earned', pet: '🐶 Pets' };
+      var tabs = ['look', 'clothes', 'accessory', 'pet', 'shop'];
+      var tabLabels = { look: '🎨 Look', clothes: '👗 Clothes', accessory: '👑 Earned', pet: '🐶 Pets', shop: '💎 Shop' };
 
       var tabHtml = tabs.map(function(t) {
         return '<button class="ar-tab' + (avatarRoomTab === t ? ' active' : '') +
@@ -3743,6 +3855,37 @@
               '" style="background:' + c.hex + ';" aria-label="' + c.label + '"></button>';
           }).join('') + '</div>';
 
+      } else if (avatarRoomTab === 'shop') {
+        var gems = (p.economy && p.economy.gems) || 0;
+        var GEM_PRICE = 5;
+        panelHtml = '<div class="ar-gem-balance"><span style="font-size:22px;">💎</span>' +
+          '<div><div class="ar-gem-count">' + gems + ' gems</div>' +
+          '<div class="ar-gem-label">Earn 1 gem every 50 coins · items cost ' + GEM_PRICE + ' gems</div></div></div>' +
+          '<div class="ar-section-title">Accessories</div>' +
+          '<div class="ar-shop-grid">' +
+          AVATAR_ACCESSORIES.map(function(item) {
+            var owned = p.avatar.unlocked.indexOf(item) !== -1;
+            var canBuy = !owned && gems >= GEM_PRICE;
+            var cls = 'ar-shop-btn' + (owned ? ' owned' : (canBuy ? '' : ' cant-afford'));
+            var priceLabel = owned ? '<span class="ar-shop-price owned-lbl">✓ owned</span>'
+              : '<span class="ar-shop-price">💎' + GEM_PRICE + '</span>';
+            return '<button class="' + cls + '" data-shop-item="' + item + '" data-owned="' + (owned ? '1' : '0') + '">' +
+              item + priceLabel + '</button>';
+          }).join('') +
+          '</div>' +
+          '<div class="ar-section-title">Pets</div>' +
+          '<div class="ar-shop-grid">' +
+          AVATAR_PETS.map(function(item) {
+            var owned = p.avatar.unlocked.indexOf(item) !== -1;
+            var canBuy = !owned && gems >= GEM_PRICE;
+            var cls = 'ar-shop-btn' + (owned ? ' owned' : (canBuy ? '' : ' cant-afford'));
+            var priceLabel = owned ? '<span class="ar-shop-price owned-lbl">✓ owned</span>'
+              : '<span class="ar-shop-price">💎' + GEM_PRICE + '</span>';
+            return '<button class="' + cls + '" data-shop-item="' + item + '" data-owned="' + (owned ? '1' : '0') + '">' +
+              item + priceLabel + '</button>';
+          }).join('') +
+          '</div>';
+
       } else {
         var pool = avatarRoomTab === 'accessory' ? AVATAR_ACCESSORIES : AVATAR_PETS;
         var currentSlot = avatarRoomTab === 'accessory' ? p.avatar.accessory : p.avatar.pet;
@@ -3785,6 +3928,27 @@
       container.querySelectorAll('[data-field]').forEach(function(btn) {
         btn.addEventListener('click', function() {
           p.avatar[btn.getAttribute('data-field')] = btn.getAttribute('data-val');
+          saveActiveProfile();
+          renderAvatarRoom();
+        });
+      });
+
+      container.querySelectorAll('[data-shop-item]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          if (btn.getAttribute('data-owned') === '1') return;
+          var item = btn.getAttribute('data-shop-item');
+          var gems = (p.economy && p.economy.gems) || 0;
+          var GEM_PRICE = 5;
+          if (gems < GEM_PRICE) {
+            alert('You need ' + GEM_PRICE + ' 💎 gems to buy this! Keep playing to earn more coins → gems.');
+            return;
+          }
+          if (!window.confirm('Buy ' + item + ' for ' + GEM_PRICE + ' gems?')) return;
+          if (!p.economy) p.economy = {};
+          p.economy.gems = (p.economy.gems || 0) - GEM_PRICE;
+          if (p.avatar.unlocked.indexOf(item) === -1) p.avatar.unlocked.push(item);
+          if (AVATAR_ACCESSORIES.indexOf(item) !== -1) p.avatar.accessory = item;
+          else if (AVATAR_PETS.indexOf(item) !== -1) p.avatar.pet = item;
           saveActiveProfile();
           renderAvatarRoom();
         });
