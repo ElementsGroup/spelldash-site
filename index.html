@@ -2596,7 +2596,7 @@
       p.economy.coins      = (p.economy.coins      || 0) + awarded;
       p.economy.dailyCoins = (p.economy.dailyCoins || 0) + awarded;
       p.economy.totalEarned = (p.economy.totalEarned || 0) + awarded;
-      p.economy.gems = Math.max(p.economy.gems || 0, Math.floor((p.economy.totalEarned || 0) / 50));
+      p.economy.gems = Math.max(p.economy.gems || 0, Math.floor((p.economy.totalEarned || 0) / 40));
       if (awarded > 0) {
         p.coinHistory.push({ date: today, amount: awarded, soundId: gameSession.soundId });
       }
@@ -3018,13 +3018,20 @@
       pendingSoundId = null;
 
       var sound = soundId ? SOUNDS[soundId] : null;
-      var starters = sound && sound.sentenceStarters && sound.sentenceStarters.length
-        ? sound.sentenceStarters.slice()
-        : ['Tell me about your day…', 'My favourite thing is…', 'I wish I could…'];
+      var wordPool = sound ? shuffle(sound.words.map(function(w) { return w.w; })) : [];
+      var count = Math.min(4, wordPool.length);
+      var starters = [];
+      for (var i = 0; i < count; i++) {
+        starters.push('Write a sentence including the word ' + wordPool[i]);
+      }
+      if (!starters.length) {
+        starters = ['Write a sentence about your day', 'Write a sentence about your favourite thing', 'Write a sentence about something fun'];
+      }
 
       sentenceSession = {
         starters: starters, index: 0, sentences: [], coins: 0,
-        targetBonusUsed: false, soundId: soundId
+        targetBonusUsed: false, soundId: soundId,
+        targetWord: wordPool.length ? wordPool : []
       };
       renderSentenceCard();
     }
@@ -3140,7 +3147,7 @@
         p.economy.coins       = (p.economy.coins       || 0) + awarded;
         p.economy.dailyCoins  = (p.economy.dailyCoins  || 0) + awarded;
         p.economy.totalEarned = (p.economy.totalEarned || 0) + awarded;
-        p.economy.gems = Math.max(p.economy.gems || 0, Math.floor((p.economy.totalEarned || 0) / 50));
+        p.economy.gems = Math.max(p.economy.gems || 0, Math.floor((p.economy.totalEarned || 0) / 40));
         if (awarded > 0) {
           p.coinHistory.push({ date: today, amount: awarded, soundId: sentenceSession.soundId, source: 'sentences' });
         }
@@ -3263,7 +3270,7 @@
           p.economy.coins       = (p.economy.coins       || 0) + awarded;
           p.economy.dailyCoins  = (p.economy.dailyCoins  || 0) + awarded;
           p.economy.totalEarned = (p.economy.totalEarned || 0) + awarded;
-          p.economy.gems = Math.max(p.economy.gems || 0, Math.floor((p.economy.totalEarned || 0) / 50));
+          p.economy.gems = Math.max(p.economy.gems || 0, Math.floor((p.economy.totalEarned || 0) / 40));
           if (awarded > 0) {
             p.coinHistory.push({ date: today, amount: awarded, source: 'reading', title: title });
           }
@@ -3308,7 +3315,7 @@
       var totalEarned = econ.totalEarned || 0;
       var today = todayKey();
       var dailyCoins  = econ.dailyDate === today ? (econ.dailyCoins || 0) : 0;
-      var gemProgress = totalEarned % 50;
+      var gemProgress = totalEarned % 40;
 
       var history = (p.coinHistory || []).slice(-10).reverse();
       var histHtml = history.length
@@ -3335,10 +3342,10 @@
         '<div class="coin-section">' +
         '<div class="gems-display">' +
         '<div class="gems-big">💎 ' + gems + '</div>' +
-        '<div class="gems-sub">' + gemProgress + ' / 50 coins to next gem<br>' +
+        '<div class="gems-sub">' + gemProgress + ' / 40 coins to next gem<br>' +
         '<span style="font-size:12px;">' + totalEarned + ' total earned</span></div></div>' +
         '<div class="progress-track" style="margin-top:10px;">' +
-        '<div class="progress-fill" style="width:' + Math.min(100, (gemProgress / 50) * 100) + '%;' +
+        '<div class="progress-fill" style="width:' + Math.min(100, (gemProgress / 40) * 100) + '%;' +
         'background:linear-gradient(90deg,var(--pu2),var(--pu3));"></div></div>' +
         '</div>' +
         '<div class="coin-section"><h3>Recent earnings</h3>' + histHtml + '</div>' +
@@ -4082,7 +4089,7 @@
         p.economy.coins       = (p.economy.coins       || 0) + awarded;
         p.economy.dailyCoins  = (p.economy.dailyCoins  || 0) + awarded;
         p.economy.totalEarned = (p.economy.totalEarned || 0) + awarded;
-        p.economy.gems = Math.max(p.economy.gems || 0, Math.floor((p.economy.totalEarned || 0) / 50));
+        p.economy.gems = Math.max(p.economy.gems || 0, Math.floor((p.economy.totalEarned || 0) / 40));
         if (awarded > 0) {
           p.coinHistory.push({ date: today, amount: awarded, soundId: dadWrongSession.soundId, source: 'dadwrong' });
         }
@@ -4203,7 +4210,7 @@
         var GEM_PRICE = 1;
         panelHtml = '<div class="ar-gem-balance"><span style="font-size:22px;">💎</span>' +
           '<div><div class="ar-gem-count">' + gems + ' gems</div>' +
-          '<div class="ar-gem-label">Earn 1 gem every 50 coins · items cost ' + GEM_PRICE + ' gems</div></div></div>';
+          '<div class="ar-gem-label">Earn 1 gem every 40 coins · items cost ' + GEM_PRICE + ' gems</div></div></div>';
         var shopCats = [
           { title: 'Hats', items: wearablesByCat('hat') },
           { title: 'Hair Accessories', items: wearablesByCat('hairAcc') },
