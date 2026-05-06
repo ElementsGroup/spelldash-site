@@ -2345,7 +2345,7 @@
         return;
       }
       var entry = gameSession.words[gameSession.index];
-      var sound = gameSession.sound;
+      var sound = (entry._sid && SOUNDS[entry._sid]) ? SOUNDS[entry._sid] : gameSession.sound;
       gameSession.wrongThisWord = false;
       startCoinTimer();
 
@@ -2618,7 +2618,7 @@
       var p = activeProfile();
       if (!p) return;
       if (!p.wall) p.wall = {};
-      var sid = gameSession.soundId;
+      var sid = entry._sid || gameSession.soundId;
       if (!p.wall[sid]) p.wall[sid] = {};
       if (!p.wall[sid][entry.team]) p.wall[sid][entry.team] = [];
       if (p.wall[sid][entry.team].indexOf(entry.w) === -1) {
@@ -2631,7 +2631,7 @@
       if (!p) return;
       if (!p.mistakes) p.mistakes = [];
       if (!p.mistakes.find(function(m) { return m.w === entry.w; })) {
-        p.mistakes.push({ w: entry.w, team: entry.team, soundId: gameSession.soundId, date: todayKey() });
+        p.mistakes.push({ w: entry.w, team: entry.team, soundId: entry._sid || gameSession.soundId, date: todayKey() });
       }
     }
 
@@ -2766,7 +2766,7 @@
         s.words.forEach(function(w) {
           if (levelForGame === 'core' && w.lv !== 'core') return;
           if (levelForGame === 'challenge' && w.lv === 'extension') return;
-          allWords.push(w);
+          allWords.push({ w: w.w, team: w.team, hint: w.hint, lv: w.lv, _sid: id });
         });
       });
       if (!allWords.length) { alert('No words available yet!'); return; }
@@ -4200,7 +4200,7 @@
 
       } else if (avatarRoomTab === 'shop') {
         var gems = (p.economy && p.economy.gems) || 0;
-        var GEM_PRICE = 5;
+        var GEM_PRICE = 1;
         panelHtml = '<div class="ar-gem-balance"><span style="font-size:22px;">💎</span>' +
           '<div><div class="ar-gem-count">' + gems + ' gems</div>' +
           '<div class="ar-gem-label">Earn 1 gem every 50 coins · items cost ' + GEM_PRICE + ' gems</div></div></div>';
@@ -4307,7 +4307,7 @@
           if (btn.getAttribute('data-owned') === '1') return;
           var item = btn.getAttribute('data-shop-item');
           var gems = (p.economy && p.economy.gems) || 0;
-          var GEM_PRICE = 5;
+          var GEM_PRICE = 1;
           if (gems < GEM_PRICE) {
             alert('You need ' + GEM_PRICE + ' 💎 gems to buy this! Keep playing to earn more coins → gems.');
             return;
