@@ -813,11 +813,11 @@
     .ar-tab.active { background: var(--pu); border-color: var(--pu3); color: var(--wh); }
     .ar-tab:active { transform: scale(0.97); }
     .ar-panel { background: rgba(255,255,255,0.92); border-radius: var(--radius-lg); padding: 16px; margin-top: 10px; box-shadow: var(--shadow-soft); }
-    .ar-item-hint { font-size: 12px; color: var(--mut); text-align: center; margin-bottom: 4px; }
+    .ar-item-hint { font-size: 13px; font-weight: 700; color: var(--pu3); text-align: center; background: rgba(176,125,224,0.12); border-radius: var(--radius-md); padding: 8px 12px; margin-bottom: 4px; }
     .ar-item-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
     .ar-item-btn { position: relative; font-size: 28px; border: 3px solid transparent; border-radius: var(--radius-md); padding: 6px 4px; min-height: 52px; background: rgba(212,170,238,0.12); cursor: pointer; transition: transform 100ms ease; display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: center; justify-content: center; }
     .ar-item-btn.selected { border-color: var(--pu3); background: var(--pu); }
-    .ar-item-btn.locked { opacity: 0.38; }
+    .ar-item-btn.locked { opacity: 0.32; -webkit-filter: grayscale(1); filter: grayscale(1); }
     .ar-item-btn:active { transform: scale(1.1); }
     .ar-lock { position: absolute; bottom: 1px; right: 2px; font-size: 10px; line-height: 1; }
 
