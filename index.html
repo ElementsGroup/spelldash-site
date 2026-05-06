@@ -775,6 +775,15 @@
     /* ---- Sentence star display (improved) ---- */
     .star-big { font-size: 44px; text-align: center; letter-spacing: 3px; min-height: 52px; display: block; transition: transform 180ms ease; }
     .star-big.pulse { animation: starPulse 300ms ease-out; }
+    .sc-guide { display: flex; flex-direction: column; gap: 6px; margin: 2px 0 4px; }
+    .sc-row { display: -webkit-flex; display: flex; -webkit-align-items: flex-start; align-items: flex-start; gap: 8px; padding: 7px 10px; border-radius: var(--radius-md); background: rgba(176,125,224,0.07); border: 1.5px solid transparent; transition: background 180ms, border-color 180ms; }
+    .sc-row.sc-met { background: rgba(80,200,100,0.12); border-color: rgba(80,200,100,0.4); }
+    .sc-row.sc-dim { opacity: 0.5; }
+    .sc-tick { font-size: 16px; flex-shrink: 0; line-height: 1.4; }
+    .sc-stars { font-size: 11px; flex-shrink: 0; letter-spacing: 1px; margin-top: 2px; min-width: 52px; }
+    .sc-text { font-size: 13px; color: var(--txt); line-height: 1.4; }
+    .sc-text strong { color: var(--pu3); }
+    .sc-eg { color: var(--mut); font-size: 12px; }
     @keyframes starPulse { 0% { transform: scale(1); } 50% { transform: scale(1.18); } 100% { transform: scale(1); } }
     .star-tip { font-size: 14px; color: var(--pu3); font-weight: 700; text-align: center; min-height: 20px; margin-top: 4px; }
 
@@ -2395,21 +2404,29 @@
     }
 
     // ---- assessSentence -----------------------------------------
-    // Returns star count 1–5 based on sequential quality gates.
+    // Each criterion unlocks the next — sequential quality gates.
+
+    var ADJ_RE  = /\b(big|small|tiny|huge|beautiful|wonderful|amazing|colourful|bright|dark|soft|loud|funny|silly|happy|sad|scary|enormous|fantastic|strange|lovely|fluffy|shiny|spiky|bumpy|cold|hot|sweet|sour|round|flat|tall|short|fast|slow|old|new|fresh|wet|dry|cute|angry|brave|gentle|kind|wild|calm|noisy|quiet|busy|lazy|golden|silver|purple|orange|striped|spotted|curly|bumpy|crunchy|bouncy|sticky|sparkly)\b/i;
+    var ADV_RE  = /\b\w+ly\b/i;
+    var TIME_RE = /\b(when|while|after|before|because|where|until|although|however|suddenly|yesterday|tomorrow|always|sometimes|finally|eventually|at|in|on|near|under|over|beside|behind|between|outside|inside|during|through|across|around|below|above)\b/i;
+
+    function assessSentenceCriteria(text, targetWords) {
+      var t = (text || '').trim();
+      if (!t) return { stars: 0, met: [] };
+      var words = t.split(/\s+/).filter(function(w) { return w.length > 0; });
+      var met = [];
+      if (words.length < 3) return { stars: 1, met: ['basic'] };
+      met.push('basic');
+      var stars = 1;
+      if (ADJ_RE.test(t)) { met.push('adj'); stars = 2; }
+      if (stars >= 2 && ADV_RE.test(t)) { met.push('adv'); stars = 3; }
+      if (stars >= 3 && TIME_RE.test(t)) { met.push('time'); stars = 4; }
+      if (stars >= 4 && hasTargetWord(t, targetWords)) { met.push('target'); stars = 5; }
+      return { stars: stars, met: met };
+    }
 
     function assessSentence(text, targetWords) {
-      var t = (text || '').trim();
-      if (!t) return 0;
-      var words = t.split(/\s+/).filter(function(w) { return w.length > 0; });
-      if (words.length < 3) return 1;
-      var stars = 1;
-      if (words.length >= 6 || /\b(big|small|tiny|huge|beautiful|wonderful|amazing|colourful|bright|dark|soft|loud|funny|silly|happy|sad|scary|dangerous|enormous|fantastic|strange|weird|lovely)\b/i.test(t)) {
-        stars = 2;
-      }
-      if (stars >= 2 && /\b\w+ly\b/i.test(t)) stars = 3;
-      if (stars >= 3 && /\b(when|while|after|before|because|where|until|although|however|suddenly|yesterday|tomorrow|always|sometimes|finally|eventually)\b/i.test(t)) stars = 4;
-      if (stars >= 4 && hasTargetWord(t, targetWords)) stars = 5;
-      return stars;
+      return assessSentenceCriteria(text, targetWords).stars;
     }
 
     function hasTargetWord(text, wordList) {
@@ -2454,6 +2471,24 @@
         ? SOUNDS[sentenceSession.soundId].words.map(function(w) { return w.w; })
         : [];
 
+      var hasTarget = targetWords.length > 0;
+      var criteriaRows = [
+        { id: 'basic',  label: 'A sentence',          eg: '3 or more words' },
+        { id: 'adj',    label: 'A describing word',   eg: 'e.g. <em>fluffy, huge, bright</em>' },
+        { id: 'adv',    label: 'A doing word + -ly',  eg: 'e.g. <em>ran quickly, flew softly</em>' },
+        { id: 'time',   label: 'Where or when',       eg: 'e.g. <em>at the park, after lunch</em>' },
+        { id: 'target', label: 'A spelling word',     eg: 'use one from this week' }
+      ];
+      var criteriaHtml = criteriaRows.map(function(c, i) {
+        var stars = repeatStr('⭐', i + 1);
+        var dimTarget = c.id === 'target' && !hasTarget ? ' sc-dim' : '';
+        return '<div class="sc-row' + dimTarget + '" id="sc-' + c.id + '">' +
+          '<span class="sc-tick" id="sct-' + c.id + '">⬜</span>' +
+          '<span class="sc-stars">' + stars + '</span>' +
+          '<span class="sc-text"><strong>' + c.label + '</strong> <span class="sc-eg">' + c.eg + '</span></span>' +
+          '</div>';
+      }).join('');
+
       container.innerHTML =
         '<button class="btn-back" data-back="s-home">← Back</button>' +
         '<div class="sentences-screen">' +
@@ -2462,7 +2497,7 @@
         '<p class="starter-text">' + escapeHtml(starter) + '</p>' +
         '<textarea class="sentence-input" id="sentence-input" placeholder="Type your sentence here…" rows="3"></textarea>' +
         '<span class="star-big" id="star-big">⬜⬜⬜⬜⬜</span>' +
-        '<div class="star-tip" id="star-tip">Start typing your sentence!</div>' +
+        '<div class="sc-guide">' + criteriaHtml + '</div>' +
         '<div class="star-ladder">' +
         '<div class="sl-step" id="sl-0"></div>' +
         '<div class="sl-step" id="sl-1"></div>' +
@@ -2476,28 +2511,30 @@
 
       var input = $('sentence-input');
       var starBig = $('star-big');
-      var starTip = $('star-tip');
+      var IDS = ['basic', 'adj', 'adv', 'time', 'target'];
 
-      var STAR_TIPS = [
-        'Start typing your sentence!',
-        'Good start — try adding more detail.',
-        'Nice! Add a describing word (adjective) for another star.',
-        'Great! Try adding a -ly word (like "quickly") for even more.',
-        'Amazing! Use one of this week\'s spelling words to go all the way!',
-        '🌟 Perfect sentence! All 5 stars!'
-      ];
+      function updateCriteria(met) {
+        IDS.forEach(function(id) {
+          var tick = $('sct-' + id);
+          var row  = $('sc-' + id);
+          if (!tick || !row) return;
+          var isMet = met.indexOf(id) !== -1;
+          tick.textContent = isMet ? '✅' : '⬜';
+          row.classList.toggle('sc-met', isMet);
+        });
+      }
 
       input.addEventListener('input', function() {
-        var stars = assessSentence(input.value, targetWords);
-        updateStarLadder(stars);
-        var filled = repeatStr('⭐', stars) + repeatStr('⬜', 5 - stars);
+        var result = assessSentenceCriteria(input.value, targetWords);
+        updateStarLadder(result.stars);
+        updateCriteria(result.met);
+        var filled = repeatStr('⭐', result.stars) + repeatStr('⬜', 5 - result.stars);
         if (starBig.textContent !== filled) {
           starBig.textContent = filled;
           starBig.classList.remove('pulse');
           void starBig.offsetWidth;
           starBig.classList.add('pulse');
         }
-        starTip.textContent = STAR_TIPS[stars] || STAR_TIPS[0];
       });
 
       $('sentence-submit').addEventListener('click', function() {
