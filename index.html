@@ -480,6 +480,15 @@
     .pt-surp   { background: linear-gradient(150deg, #fff 50%, var(--pu)  140%); }
     .pt-prob   { background: linear-gradient(150deg, #fff 50%, var(--ye)  140%); }
     .pt-choose { background: linear-gradient(150deg, #fff 50%, var(--bl)  140%); }
+    .pt-sent   { background: linear-gradient(150deg, #fff 50%, var(--gn)  140%); }
+    .pt-dad    { background: linear-gradient(150deg, #fff 50%, #FFD6A5    140%); }
+
+    /* ---- Daddy Got It Wrong game ---- */
+    .dad-bubble { background: #FFF3CD; border: 2px solid #F0BA00; border-radius: var(--radius-lg); border-bottom-left-radius: 4px; padding: 18px 20px; margin: 4px 0 18px; position: relative; }
+    .dad-bubble::before { content: '👨'; font-size: 28px; position: absolute; left: -14px; bottom: -14px; }
+    .dad-wrong-word { font-family: 'Fredoka One', sans-serif; font-size: 38px; color: var(--pk3); letter-spacing: 1px; }
+    .dad-feedback { text-align: center; font-size: 26px; min-height: 36px; font-weight: 800; }
+    .dad-progress { font-size: 13px; color: var(--mut); text-align: center; margin-bottom: 6px; }
 
     /* ---- Sound picker ---- */
     .sound-picker { margin-top: 18px; background: rgba(255,255,255,0.96); border-radius: var(--radius-lg); padding: 18px; box-shadow: var(--shadow-pop); }
@@ -839,11 +848,6 @@
           <span class="label">Play</span>
           <span class="desc">Spelling round</span>
         </button>
-        <button class="tile t-sent"  data-go="s-sentences">
-          <span class="icon">✍️</span>
-          <span class="label">Sentences</span>
-          <span class="desc">Use your words</span>
-        </button>
         <button class="tile t-read"  data-go="s-reading">
           <span class="icon">📖</span>
           <span class="label">Reading</span>
@@ -914,6 +918,18 @@
           <span class="pt-sub">All sound sets</span>
           <span class="pt-coins">🪙 Earn up to 10 coins</span>
         </button>
+        <button class="play-tile pt-sent" data-mode="sentences">
+          <span class="pt-icon">✍️</span>
+          <span class="pt-label">Sentences</span>
+          <span class="pt-sub">Use this week's words</span>
+          <span class="pt-coins">🪙 Earn coins per star</span>
+        </button>
+        <button class="play-tile pt-dad" data-mode="dadwrong">
+          <span class="pt-icon">👨</span>
+          <span class="pt-label">Daddy Got It Wrong</span>
+          <span class="pt-sub" id="pt-dad-sub">Fix Dad's spelling mistakes</span>
+          <span class="pt-coins">🪙 Earn up to 8 coins</span>
+        </button>
       </div>
       <div id="sound-picker" class="sound-picker hidden"></div>
     </section>
@@ -931,6 +947,7 @@
     <section class="screen" id="s-wall"></section>
     <section class="screen" id="s-settings"></section>
     <section class="screen" id="s-avatarroom"></section>
+    <section class="screen" id="s-dadwrong"></section>
   </div>
 
   <script>
@@ -1119,6 +1136,7 @@
       if (id === 's-wall')       renderWallScreen();
       if (id === 's-settings')   renderSettingsScreen();
       if (id === 's-avatarroom') renderAvatarRoom();
+      if (id === 's-dadwrong')   renderDadWrongCard();
       window.scrollTo(0, 0);
     }
 
@@ -1565,6 +1583,12 @@
           : 'No problem words yet — keep playing!';
       }
       if (probBtn) probBtn.disabled = probCount === 0;
+
+      var dadSub = $('pt-dad-sub');
+      if (dadSub) {
+        if (we && !we.comingSoon) dadSub.textContent = 'Fix Dad\'s ' + we.emoji + ' ' + we.title + ' mistakes';
+        else dadSub.textContent = 'Fix Dad\'s spelling mistakes';
+      }
     }
 
     // ---- Sound picker -------------------------------------------
@@ -2157,6 +2181,19 @@
 
       } else if (mode === 'choose') {
         renderSoundPicker();
+
+      } else if (mode === 'sentences') {
+        pendingSoundId = null;
+        var weS = currentWeekEntry();
+        if (weS && weS.soundId) pendingSoundId = weS.soundId;
+        showScreen('s-sentences');
+
+      } else if (mode === 'dadwrong') {
+        var weD = currentWeekEntry();
+        var dadSoundId = (weD && weD.soundId && !weD.comingSoon)
+          ? weD.soundId
+          : (function() { var ids = Object.keys(SOUNDS); return ids[Math.floor(Math.random() * ids.length)]; })();
+        startDadWrongGame(dadSoundId);
       }
     });
 
@@ -2608,6 +2645,7 @@
         ? history.map(function(h) {
             var label = h.source === 'sentences' ? '✍️ Sentences'
                       : h.source === 'reading'   ? '📖 Reading'
+                      : h.source === 'dadwrong'  ? '👨 Daddy Got It Wrong'
                       : '🎮 Spelling';
             return '<div class="coin-row"><span>' + label + ' · ' + escapeHtml(h.date) + '</span>' +
                    '<span class="coin-row-val">+' + h.amount + '</span></div>';
@@ -3222,6 +3260,176 @@
         state.activeIndex = null;
         showScreen('s-profiles');
       });
+    }
+
+    // -----------------------------------
+    // Daddy Got It Wrong game
+    // -----------------------------------
+
+    var dadWrongSession = {
+      soundId: null, words: [], index: 0,
+      score: 0, coins: 0, attempts: 0
+    };
+
+    var DAD_RULES = [
+      [/igh/g, 'i'],   [/ai/g, 'ae'],  [/ay/g, 'ai'],  [/ea/g, 'ie'],
+      [/ee/g, 'ie'],   [/oa/g, 'oe'],  [/oi/g, 'oy'],  [/oo/g, 'u'],
+      [/ou/g, 'ow'],   [/er/g, 'ur'],  [/ir/g, 'er'],  [/ur/g, 'ir'],
+      [/aw/g, 'or'],   [/ck/g, 'k'],   [/ph/g, 'f'],   [/tch/g, 'ch'],
+      [/tion/g, 'shun'], [/wh/g, 'w'], [/or(?=[^e])/g, 'aw']
+    ];
+
+    function makeDadMistake(word) {
+      var w = word.toLowerCase();
+      var rules = shuffle(DAD_RULES.slice());
+      for (var i = 0; i < rules.length; i++) {
+        var result = w.replace(rules[i][0], rules[i][1]);
+        if (result !== w) return result;
+      }
+      // Fallback: duplicate a consonant in the middle
+      var m = w.match(/^(.+?)([bcdfghjklmnpqrstvwxyz])(.+)$/i);
+      if (m) return m[1] + m[2] + m[2] + m[3];
+      return w + 'z';
+    }
+
+    function startDadWrongGame(soundId) {
+      var p = activeProfile();
+      if (!p) return;
+      var sound = SOUNDS[soundId];
+      if (!sound) return;
+      var pool = selectWords(soundId, p.level || 'core', 8);
+      if (!pool.length) { alert('No words for this sound set yet!'); return; }
+      dadWrongSession = {
+        soundId: soundId,
+        words: pool.map(function(w) {
+          return { correct: w.w, wrong: makeDadMistake(w.w), firstTry: false };
+        }),
+        index: 0, score: 0, coins: 0, attempts: 0
+      };
+      showScreen('s-dadwrong');
+    }
+
+    function renderDadWrongCard() {
+      var container = $('s-dadwrong');
+      if (!dadWrongSession.words.length) {
+        container.innerHTML = '<button class="btn-back" data-back="s-play">← Back</button>' +
+          '<p>No game loaded. Go back and pick a game!</p>';
+        return;
+      }
+      if (dadWrongSession.index >= dadWrongSession.words.length) {
+        showDadWrongDone();
+        return;
+      }
+      var current = dadWrongSession.words[dadWrongSession.index];
+      var total = dadWrongSession.words.length;
+      var progress = dadWrongSession.index + 1;
+
+      container.innerHTML =
+        '<button class="btn-back" data-back="s-play">← Back</button>' +
+        '<div style="padding-bottom:24px;">' +
+        '<div class="dad-progress">Word ' + progress + ' of ' + total + '</div>' +
+        '<div class="progress-track"><div class="progress-fill" id="dw-progress" style="width:' +
+          Math.round(((progress - 1) / total) * 100) + '%;"></div></div>' +
+        '<div style="margin-top:20px;font-size:15px;font-weight:700;color:var(--pu3);">Dad typed…</div>' +
+        '<div class="dad-bubble">' +
+        '<div class="dad-wrong-word" id="dw-wrong">' + escapeHtml(current.wrong) + '</div>' +
+        '</div>' +
+        '<div style="font-size:15px;font-weight:700;color:var(--txt);margin-bottom:10px;">What should it be? ✏️</div>' +
+        '<input class="input" id="dw-input" type="text" autocomplete="off" autocorrect="off" ' +
+          'autocapitalize="none" spellcheck="false" placeholder="Type the correct spelling…" />' +
+        '<div class="dad-feedback" id="dw-feedback"></div>' +
+        '<button class="btn" id="dw-check" style="width:100%;margin-top:14px;">Check ✓</button>' +
+        '</div>';
+
+      var input = $('dw-input');
+      var feedback = $('dw-feedback');
+      var checkBtn = $('dw-check');
+      var attempts = 0;
+
+      function check() {
+        var val = (input.value || '').trim().toLowerCase();
+        if (!val) { input.focus(); return; }
+        dadWrongSession.attempts++;
+        if (val === current.correct.toLowerCase()) {
+          var firstTry = attempts === 0;
+          current.firstTry = firstTry;
+          if (firstTry) { dadWrongSession.score++; dadWrongSession.coins++; }
+          feedback.style.color = 'var(--gn3)';
+          feedback.textContent = firstTry ? '✅ You fixed it!' : '✅ Correct!';
+          checkBtn.textContent = 'Next word →';
+          checkBtn.removeEventListener('click', check);
+          checkBtn.addEventListener('click', function next() {
+            checkBtn.removeEventListener('click', next);
+            dadWrongSession.index++;
+            renderDadWrongCard();
+          });
+          input.disabled = true;
+        } else {
+          attempts++;
+          feedback.style.color = 'var(--pk3)';
+          feedback.textContent = attempts === 1 ? '❌ Not quite — try again!' : '❌ Hmm… think about the sound!';
+          input.value = '';
+          input.focus();
+        }
+      }
+
+      checkBtn.addEventListener('click', check);
+      input.addEventListener('keydown', function(e) {
+        if (e.keyCode === 13) check();
+      });
+      input.focus();
+    }
+
+    function showDadWrongDone() {
+      var p = activeProfile();
+      var total = dadWrongSession.words.length;
+      var score = dadWrongSession.score;
+      var coinsEarned = dadWrongSession.coins;
+
+      if (p && coinsEarned > 0) {
+        var today = todayKey();
+        if (p.economy.dailyDate !== today) { p.economy.dailyDate = today; p.economy.dailyCoins = 0; }
+        var cap = getDailyCap(p);
+        var awarded = Math.min(coinsEarned, Math.max(0, cap - (p.economy.dailyCoins || 0)));
+        p.economy.coins       = (p.economy.coins       || 0) + awarded;
+        p.economy.dailyCoins  = (p.economy.dailyCoins  || 0) + awarded;
+        p.economy.totalEarned = (p.economy.totalEarned || 0) + awarded;
+        if (awarded > 0) {
+          p.coinHistory.push({ date: today, amount: awarded, soundId: dadWrongSession.soundId, source: 'dadwrong' });
+        }
+        updateStreak(p);
+        saveActiveProfile();
+        coinsEarned = awarded;
+      }
+
+      var emoji = score === total ? '🏆' : score >= total * 0.7 ? '🎉' : '💪';
+      var msg   = score === total ? 'Perfect! Dad needs lessons from you!' :
+                  score >= total * 0.7 ? 'Great work! You\'re a better speller than Dad!' :
+                  'Good effort! Keep correcting Dad!';
+
+      var container = $('s-dadwrong');
+      container.innerHTML =
+        '<button class="btn-back" data-back="s-play">← Back</button>' +
+        '<div style="text-align:center;padding:20px 0;">' +
+        '<div style="font-size:64px;">' + emoji + '</div>' +
+        '<h2 style="color:var(--pu3);">Dad corrected!</h2>' +
+        '<p style="font-size:18px;font-weight:700;">' + score + ' of ' + total + ' fixed on first try</p>' +
+        '<p style="color:var(--mut);">' + msg + '</p>' +
+        (coinsEarned > 0 ? '<p style="color:var(--ye3);font-weight:800;font-size:18px;">🪙 +' + coinsEarned + ' coins!</p>' : '') +
+        '<div style="margin-top:16px;background:rgba(255,255,255,0.9);border-radius:var(--radius-lg);padding:14px;">' +
+        dadWrongSession.words.map(function(w) {
+          return '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(0,0,0,0.06);">' +
+            '<span style="font-size:13px;color:var(--mut);">Dad wrote: <em>' + escapeHtml(w.wrong) + '</em></span>' +
+            '<span style="font-weight:800;color:' + (w.firstTry ? 'var(--gn3)' : 'var(--pk3)') + ';">' +
+            escapeHtml(w.correct) + ' ' + (w.firstTry ? '✅' : '📝') + '</span></div>';
+        }).join('') +
+        '</div>' +
+        '<button class="btn" id="dw-again" style="width:100%;margin-top:16px;">Play again 🎲</button>' +
+        '<button class="btn btn-secondary" id="dw-home" style="width:100%;margin-top:10px;">Back to home</button>' +
+        '</div>';
+
+      $('dw-again').addEventListener('click', function() { startDadWrongGame(dadWrongSession.soundId); });
+      $('dw-home').addEventListener('click', function() { showScreen('s-home'); });
     }
 
     // -----------------------------------
