@@ -3244,7 +3244,7 @@
     // ---- assessSentence -----------------------------------------
     // Each criterion unlocks the next — sequential quality gates.
 
-    var ADJ_RE  = /\b(big|small|tiny|huge|beautiful|wonderful|amazing|colourful|bright|dark|soft|loud|funny|silly|happy|sad|scary|enormous|fantastic|strange|lovely|fluffy|shiny|spiky|bumpy|cold|hot|sweet|sour|round|flat|tall|short|fast|slow|old|new|fresh|wet|dry|cute|angry|brave|gentle|kind|wild|calm|noisy|quiet|busy|lazy|golden|silver|purple|orange|striped|spotted|curly|bumpy|crunchy|bouncy|sticky|sparkly)\b/i;
+    var ADJ_RE  = /\b(big|small|tiny|huge|beautiful|wonderful|amazing|colourful|bright|dark|soft|loud|funny|silly|happy|sad|scary|enormous|fantastic|strange|lovely|fluffy|shiny|spiky|bumpy|cold|hot|sweet|sour|round|flat|tall|short|fast|slow|old|new|fresh|wet|dry|cute|angry|brave|gentle|kind|wild|calm|noisy|quiet|busy|lazy|golden|silver|purple|orange|striped|spotted|curly|crunchy|bouncy|sticky|sparkly|red|blue|green|yellow|pink|white|black|brown|grey|gray|long|wide|thin|thick|deep|heavy|light|strong|weak|clean|dirty|pretty|ugly|nice|mean|young|little|great|good|bad|cool|warm|scary|weird|magic|magical|special|awesome|brilliant|clever|smart|careful|dangerous|electric|exciting|famous|fierce|friendly|giant|grumpy|invisible|mighty|mysterious|playful|powerful|secret|super|terrible|tricky|wicked|wooden|metal|plastic|stone|glass|smooth|rough|sharp|dull|hard|open|shut|empty|full|rich|poor|plain|fancy|broken|bent|crooked|straight|narrow|loose|tight|deep|shallow)\b/i;
     var ADV_RE  = /\b\w+ly\b/i;
     var TIME_RE = /\b(when|while|after|before|because|where|until|although|however|suddenly|yesterday|tomorrow|always|sometimes|finally|eventually|at|in|on|near|under|over|beside|behind|between|outside|inside|during|through|across|around|below|above)\b/i;
 
@@ -3253,13 +3253,13 @@
       if (!t) return { stars: 0, met: [] };
       var words = t.split(/\s+/).filter(function(w) { return w.length > 0; });
       var met = [];
-      if (words.length < 3) return { stars: 1, met: ['basic'] };
+      if (words.length < 3) return { stars: 0, met: [] };
       met.push('basic');
       var stars = 1;
-      if (ADJ_RE.test(t)) { met.push('adj'); stars = 2; }
-      if (stars >= 2 && ADV_RE.test(t)) { met.push('adv'); stars = 3; }
-      if (stars >= 3 && TIME_RE.test(t)) { met.push('time'); stars = 4; }
-      if (stars >= 4 && hasTargetWord(t, targetWords)) { met.push('target'); stars = 5; }
+      if (ADJ_RE.test(t)) { met.push('adj'); stars++; }
+      if (ADV_RE.test(t)) { met.push('adv'); stars++; }
+      if (TIME_RE.test(t)) { met.push('time'); stars++; }
+      if (hasTargetWord(t, targetWords)) { met.push('target'); stars++; }
       return { stars: stars, met: met };
     }
 
