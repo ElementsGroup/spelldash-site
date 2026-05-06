@@ -193,17 +193,24 @@
     .profile-card:active { transform: scale(0.98); }
 
     .avatar-circle {
+      position: relative;
       width: 110px;
       height: 110px;
       border-radius: 50%;
+      display: -webkit-flex;
       display: flex;
+      -webkit-align-items: center;
       align-items: center;
+      -webkit-justify-content: center;
       justify-content: center;
       font-family: 'Fredoka One', sans-serif;
       font-size: 42px;
       color: var(--wh);
       box-shadow: var(--shadow-pop);
     }
+    .av-badge { position: absolute; width: 30%; height: 30%; border-radius: 50%; background: #fff; display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: center; justify-content: center; font-size: 52%; box-shadow: 0 2px 5px rgba(0,0,0,0.2); line-height: 1; }
+    .av-acc { top: -5%; right: -5%; }
+    .av-pet { bottom: -5%; right: -5%; }
     .avatar-pink   { background: linear-gradient(135deg, var(--pk2), var(--pk3)); }
     .avatar-blue   { background: linear-gradient(135deg, var(--bl2), var(--bl3)); }
     .avatar-purple { background: linear-gradient(135deg, var(--pu2), var(--pu3)); }
@@ -790,6 +797,20 @@
     .emoji-btn:active { transform: scale(1.1); }
     .emoji-locked { opacity: 0.3; cursor: default; filter: grayscale(1); }
 
+    /* ---- Avatar Room tabs ---- */
+    .ar-tabs { display: -webkit-flex; display: flex; gap: 6px; margin: 14px 0 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .ar-tab { -webkit-flex: 1; flex: 1; min-width: 72px; padding: 8px 4px; border: 2px solid var(--pu2); border-radius: var(--radius-md); background: rgba(255,255,255,0.7); font-family: 'Fredoka One', sans-serif; font-size: 13px; color: var(--pu3); cursor: pointer; white-space: nowrap; transition: background 120ms, transform 80ms; }
+    .ar-tab.active { background: var(--pu); border-color: var(--pu3); color: var(--wh); }
+    .ar-tab:active { transform: scale(0.97); }
+    .ar-panel { background: rgba(255,255,255,0.92); border-radius: var(--radius-lg); padding: 16px; margin-top: 10px; box-shadow: var(--shadow-soft); }
+    .ar-item-hint { font-size: 12px; color: var(--mut); text-align: center; margin-bottom: 4px; }
+    .ar-item-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+    .ar-item-btn { position: relative; font-size: 28px; border: 3px solid transparent; border-radius: var(--radius-md); padding: 6px 4px; min-height: 52px; background: rgba(212,170,238,0.12); cursor: pointer; transition: transform 100ms ease; display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: center; justify-content: center; }
+    .ar-item-btn.selected { border-color: var(--pu3); background: var(--pu); }
+    .ar-item-btn.locked { opacity: 0.38; }
+    .ar-item-btn:active { transform: scale(1.1); }
+    .ar-lock { position: absolute; bottom: 1px; right: 2px; font-size: 10px; line-height: 1; }
+
     /* ---- PIN overlay ---- */
     .pin-overlay { background: rgba(255,255,255,0.97); border-radius: var(--radius-lg); padding: 28px 20px 20px; box-shadow: var(--shadow-pop); text-align: center; }
     .pin-dots { display: flex; justify-content: center; gap: 14px; margin: 16px 0; }
@@ -970,7 +991,7 @@
     function freshProfile(name) {
       return {
         name: name || '',
-        avatar: { colour: 'pink', emoji: null, unlockedEmojis: [] },
+        avatar: { colour: 'pink', character: null, accessory: null, pet: null, unlocked: [] },
         weekKey: '',
         level: 'core',
         minsPerPage: 1,
@@ -1113,19 +1134,57 @@
 
     var AVATAR_PALETTE = ['avatar-pink', 'avatar-blue', 'avatar-purple', 'avatar-green'];
 
-    var AVATAR_EMOJI_CATEGORIES = [
-      { label: '🐾 Animals', emojis: ['🦄','🐉','🦋','🐬','🦊','🐼','🐸','🦁','🐨','🦔','🐯','🐺','🦅','🦜','🐙','🦈','🐢','🐘','🦒','🦓'] },
-      { label: '🌟 Space & Nature', emojis: ['🌈','⭐','🌙','☀️','🌺','🌸','🍀','🔥','💫','🌊','🌻','🌴','🍄','❄️','🌋','🌍','🌅','🌠','🪐','🌪️'] },
-      { label: '🍕 Food & Fun', emojis: ['🍕','🍰','🍦','🍩','🌮','🍔','🍣','🍓','🍉','🎂','🧁','🍭','🍿','🥑','🧇','🍋','🍇','🍡','🥕','🍒'] },
-      { label: '🎮 Activities', emojis: ['🚀','🎸','🏆','💎','🎯','🪄','🎭','🎨','🎬','🎡','🎮','🎵','🎺','🏄','🎃','⚽','🏀','🎾','🛹','🎠'] }
-    ];
-    var AVATAR_EMOJIS = (function() {
-      var all = [];
-      AVATAR_EMOJI_CATEGORIES.forEach(function(cat) { all = all.concat(cat.emojis); });
-      return all;
-    })();
+    // Avatar item pools — all start locked, earned via drops
+    var AVATAR_CHARACTERS  = ['🦊','🐼','🦁','🐸','🐨','🐯','🦋','🐬','🦄','🐉','🦅','🦔','🐙','🦈','🐺','🦒','🦓','🦜','🐘','🐢'];
+    var AVATAR_ACCESSORIES = ['👑','🎩','🎓','🌸','🎀','⭐','🌈','💎','🏆','🎯','🪄','🔮','🌙','🔥','🌺'];
+    var AVATAR_PETS        = ['🐶','🐱','🐰','🐹','🐻','🦎','🐠','🦕','🐣','🦋','🐝','🐢','🐌','🐾','🐲'];
+    var ALL_AVATAR_ITEMS   = AVATAR_CHARACTERS.concat(AVATAR_ACCESSORIES).concat(AVATAR_PETS);
+
+    var avatarRoomTab = 'colour';
+
     function avatarClassFor(index) {
       return AVATAR_PALETTE[index % AVATAR_PALETTE.length];
+    }
+
+    function migrateAvatar(p) {
+      if (!p.avatar) {
+        p.avatar = { colour: 'pink', character: null, accessory: null, pet: null, unlocked: [] };
+        return;
+      }
+      // migrate old shape that used emoji/unlockedEmojis
+      if (p.avatar.unlocked === undefined) {
+        p.avatar.unlocked = p.avatar.unlockedEmojis || [];
+        delete p.avatar.unlockedEmojis;
+      }
+      if (p.avatar.character === undefined) {
+        p.avatar.character = p.avatar.emoji || null;
+        delete p.avatar.emoji;
+      }
+      if (p.avatar.accessory === undefined) p.avatar.accessory = null;
+      if (p.avatar.pet       === undefined) p.avatar.pet       = null;
+    }
+
+    function avatarCircleHtml(p, index, sizeStyle) {
+      migrateAvatar(p);
+      var colour  = p.avatar.colour || 'pink';
+      var cls     = 'avatar-circle avatar-' + colour;
+      var content = p.avatar.character || initialsOf(p.name);
+      var accBadge = p.avatar.accessory
+        ? '<span class="av-badge av-acc">' + p.avatar.accessory + '</span>' : '';
+      var petBadge = p.avatar.pet
+        ? '<span class="av-badge av-pet">' + p.avatar.pet + '</span>' : '';
+      var extra = sizeStyle ? ' style="' + sizeStyle + '"' : '';
+      return '<div class="' + cls + '"' + extra + '>' +
+        content + accBadge + petBadge + '</div>';
+    }
+
+    function fillAvatarCircle(el, p) {
+      migrateAvatar(p);
+      var colour = p.avatar.colour || 'pink';
+      el.className = 'avatar-circle avatar-' + colour;
+      el.innerHTML = (p.avatar.character || initialsOf(p.name)) +
+        (p.avatar.accessory ? '<span class="av-badge av-acc">' + p.avatar.accessory + '</span>' : '') +
+        (p.avatar.pet       ? '<span class="av-badge av-pet">' + p.avatar.pet       + '</span>' : '');
     }
 
     // -----------------------------------
@@ -1189,15 +1248,6 @@
       }
     }
 
-    function getAvatarContent(profile) {
-      return (profile && profile.avatar && profile.avatar.emoji) || initialsOf(profile ? profile.name : '');
-    }
-
-    function getAvatarClass(profile, index) {
-      if (profile && profile.avatar && profile.avatar.colour) return 'avatar-' + profile.avatar.colour;
-      return avatarClassFor(index);
-    }
-
     function buildProfileCard(index) {
       var profile = state.profiles[index];
       var card = document.createElement('div');
@@ -1207,18 +1257,16 @@
 
       if (profile) {
         card.innerHTML =
-          '<div class="avatar-circle ' + getAvatarClass(profile, index) + '">' + getAvatarContent(profile) + '</div>' +
+          avatarCircleHtml(profile, index) +
           '<div class="profile-name">' + escapeHtml(profile.name) + '</div>' +
           '<div class="profile-sub">🎮 ' + (profile.totalSessions || 0) + ' sessions</div>';
       } else {
-        // Empty slot — let the user create a profile here.
         card.innerHTML =
           '<div class="avatar-circle ' + avatarClassFor(index) + '">+</div>' +
           '<div class="profile-name">Add player</div>' +
           '<div class="profile-sub">Tap to set up</div>';
       }
 
-      // Tap = select / create. Long press = rename (only on populated slots).
       attachProfileGestures(card, index);
       return card;
     }
@@ -1322,9 +1370,7 @@
       if (!p) { showScreen('s-profiles'); return; }
 
       $('home-name').textContent = p.name;
-      var av = $('home-avatar');
-      av.className = 'avatar-circle ' + getAvatarClass(p, state.activeIndex);
-      av.textContent = getAvatarContent(p);
+      fillAvatarCircle($('home-avatar'), p);
 
       var econ = p.economy || {};
       $('home-coins').textContent = econ.coins || 0;
@@ -1351,9 +1397,10 @@
         dropsArea.appendChild(badge);
       }
 
-      var unlockCount = (p.avatar && p.avatar.unlockedEmojis) ? p.avatar.unlockedEmojis.length : 0;
+      migrateAvatar(p);
+      var unlockCount = p.avatar.unlocked.length;
       $('avatar-room-msg').textContent = unlockCount > 0
-        ? unlockCount + ' emoji' + (unlockCount !== 1 ? 's' : '') + ' unlocked!'
+        ? unlockCount + ' item' + (unlockCount !== 1 ? 's' : '') + ' unlocked!'
         : 'Customise your look';
     }
 
@@ -2060,9 +2107,14 @@
       var isPerfect = gameSession.wrongCount === 0;
       var chance = dropsToday === 0 ? 1 : (isPerfect ? 0.5 : 0.33);
       if (Math.random() >= chance) return null;
+      migrateAvatar(p);
+      var locked = ALL_AVATAR_ITEMS.filter(function(item) {
+        return p.avatar.unlocked.indexOf(item) === -1;
+      });
+      if (locked.length === 0) return null;
       if (!p.drops) p.drops = [];
       p.drops.push({ date: today, seen: false });
-      return shuffle(AVATAR_EMOJIS.slice()).slice(0, 3);
+      return shuffle(locked.slice()).slice(0, 3);
     }
 
     // ---- Done screen --------------------------------------------
@@ -2133,12 +2185,17 @@
             var chosen = btn.getAttribute('data-emoji');
             var pp = activeProfile();
             if (pp) {
-              if (!pp.avatar) pp.avatar = { colour: 'pink', emoji: null, unlockedEmojis: [] };
-              pp.avatar.emoji = chosen;
+              migrateAvatar(pp);
+              if (pp.avatar.unlocked.indexOf(chosen) === -1) {
+                pp.avatar.unlocked.push(chosen);
+              }
+              if (AVATAR_CHARACTERS.indexOf(chosen) !== -1) pp.avatar.character = chosen;
+              else if (AVATAR_ACCESSORIES.indexOf(chosen) !== -1) pp.avatar.accessory = chosen;
+              else if (AVATAR_PETS.indexOf(chosen) !== -1) pp.avatar.pet = chosen;
               saveActiveProfile();
             }
             $('drop-modal').innerHTML = '<span style="font-size:46px;">' + chosen + '</span>' +
-              '<p style="margin:6px 0 0;font-weight:800;">Looking good! 🎉</p>';
+              '<p style="margin:6px 0 0;font-weight:800;">Unlocked and equipped! 🎉</p>';
           });
         });
       }
@@ -2906,8 +2963,7 @@
     }
 
     function settingsProfileHtml(p) {
-      var colour = (p.avatar && p.avatar.colour) || 'pink';
-      var emoji  = (p.avatar && p.avatar.emoji)  || initialsOf(p.name);
+      migrateAvatar(p);
       return '<div class="settings-section">' +
         '<h3>Profile</h3>' +
         '<div class="settings-row"><span class="settings-label">Name</span>' +
@@ -2915,7 +2971,7 @@
         '<button class="btn btn-secondary" id="sett-save-name" style="width:100%;margin-top:12px;">Save name</button>' +
         '<div class="settings-row" style="margin-top:14px;">' +
         '<span class="settings-label">Avatar</span>' +
-        '<div class="avatar-circle avatar-' + colour + '" style="width:44px;height:44px;font-size:20px;">' + emoji + '</div>' +
+        avatarCircleHtml(p, 0, 'width:44px;height:44px;font-size:20px;') +
         '</div>' +
         '<button class="btn btn-secondary" id="sett-go-avatar" style="width:100%;margin-top:10px;">✏️ Customise avatar</button>' +
         '<button class="btn btn-secondary" id="sett-reset-profile" style="width:100%;margin-top:10px;border-color:var(--pk2);color:var(--pk3);">Reset this profile</button>' +
@@ -3460,50 +3516,65 @@
     function renderAvatarRoom() {
       var p = activeProfile();
       if (!p) { showScreen('s-profiles'); return; }
-      if (!p.avatar) p.avatar = { colour: 'pink', emoji: null, unlockedEmojis: [] };
+      migrateAvatar(p);
 
-      var current = p.avatar.emoji;
-      var colour  = p.avatar.colour || 'pink';
+      var colour = p.avatar.colour || 'pink';
+      var tabs = ['colour', 'character', 'accessory', 'pet'];
+      var tabLabels = { colour: '🎨 Colour', character: '🐾 Character', accessory: '👑 Accessory', pet: '🐶 Pet' };
 
-      var colourSwatches = COLOUR_OPTIONS.map(function(c) {
-        return '<button class="colour-swatch' + (colour === c.key ? ' selected' : '') +
-          '" data-colour="' + c.key + '" style="background:' + c.bg + ';" aria-label="' + c.label + '"></button>';
+      var tabHtml = tabs.map(function(t) {
+        return '<button class="ar-tab' + (avatarRoomTab === t ? ' active' : '') +
+          '" data-tab="' + t + '">' + tabLabels[t] + '</button>';
       }).join('');
 
-      var categoryHtml = AVATAR_EMOJI_CATEGORIES.map(function(cat) {
-        var buttons = cat.emojis.map(function(e) {
-          var isSelected = current === e;
-          return '<button class="emoji-btn' + (isSelected ? ' selected' : '') +
-            '" data-emoji="' + e + '">' + e + '</button>';
+      var panelHtml = '';
+      if (avatarRoomTab === 'colour') {
+        var swatches = COLOUR_OPTIONS.map(function(c) {
+          return '<button class="colour-swatch' + (colour === c.key ? ' selected' : '') +
+            '" data-colour="' + c.key + '" style="background:' + c.bg + ';" aria-label="' + c.label + '"></button>';
         }).join('');
-        return '<div style="margin-bottom:14px;">' +
-          '<div style="font-size:13px;font-weight:700;color:var(--pu3);margin-bottom:8px;">' + cat.label + '</div>' +
-          '<div class="emoji-grid">' + buttons + '</div>' +
-          '</div>';
-      }).join('');
+        panelHtml = '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px;">' +
+          swatches + '</div>';
 
-      var avatarClass = 'avatar-preview-big avatar-' + colour;
-      var avatarContent = current || initialsOf(p.name);
+      } else {
+        var pool, currentSlot;
+        if (avatarRoomTab === 'character') { pool = AVATAR_CHARACTERS; currentSlot = p.avatar.character; }
+        else if (avatarRoomTab === 'accessory') { pool = AVATAR_ACCESSORIES; currentSlot = p.avatar.accessory; }
+        else { pool = AVATAR_PETS; currentSlot = p.avatar.pet; }
+
+        var itemBtns = pool.map(function(item) {
+          var isUnlocked = p.avatar.unlocked.indexOf(item) !== -1;
+          var isSelected = currentSlot === item;
+          var btnCls = 'ar-item-btn' + (isSelected ? ' selected' : '') + (isUnlocked ? '' : ' locked');
+          return '<button class="' + btnCls + '" data-item="' + item + '" data-unlocked="' + (isUnlocked ? '1' : '0') + '">' +
+            item + (isUnlocked ? '' : '<span class="ar-lock">🔒</span>') +
+            '</button>';
+        }).join('');
+
+        var clearBtn = currentSlot
+          ? '<button class="btn btn-ghost" id="ar-clear-slot" style="width:100%;margin-top:12px;">Remove ' + tabLabels[avatarRoomTab].split(' ')[1] + '</button>'
+          : '';
+        panelHtml = '<div class="ar-item-hint">Earn locked items from drops after games! 🎁</div>' +
+          '<div class="ar-item-grid" style="margin-top:10px;">' + itemBtns + '</div>' + clearBtn;
+      }
 
       var container = $('s-avatarroom');
       container.innerHTML =
         '<button class="btn-back" data-back="s-home">← Back</button>' +
-        '<h2 style="margin-bottom:16px;">Avatar Room 🎨</h2>' +
+        '<h2 style="margin-bottom:12px;">Avatar Room 🎨</h2>' +
         '<div class="avatar-preview-wrap">' +
-        '<div class="' + avatarClass + '" id="ar-preview">' + avatarContent + '</div>' +
-        '<div style="font-size:17px;font-weight:800;color:var(--pu3);">' + escapeHtml(p.name) + '</div>' +
-        '<div style="font-size:13px;color:var(--mut);">' +
-          (current ? 'Tap your emoji again to use initials' : 'Pick an emoji below!') +
+        avatarCircleHtml(p, 0, 'width:100px;height:100px;font-size:38px;') +
+        '<div style="font-size:17px;font-weight:800;color:var(--pu3);margin-top:8px;">' + escapeHtml(p.name) + '</div>' +
         '</div>' +
-        '</div>' +
-        '<div class="emoji-section" style="margin-top:18px;">' +
-        '<h3>Background colour</h3>' +
-        '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">' + colourSwatches + '</div>' +
-        '</div>' +
-        '<div class="emoji-section" style="margin-top:14px;">' +
-        '<h3>Choose your emoji</h3>' +
-        categoryHtml +
-        '</div>';
+        '<div class="ar-tabs">' + tabHtml + '</div>' +
+        '<div class="ar-panel">' + panelHtml + '</div>';
+
+      container.querySelectorAll('.ar-tab').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          avatarRoomTab = btn.getAttribute('data-tab');
+          renderAvatarRoom();
+        });
+      });
 
       container.querySelectorAll('.colour-swatch').forEach(function(btn) {
         btn.addEventListener('click', function() {
@@ -3513,14 +3584,35 @@
         });
       });
 
-      container.querySelectorAll('.emoji-btn').forEach(function(btn) {
+      container.querySelectorAll('.ar-item-btn').forEach(function(btn) {
         btn.addEventListener('click', function() {
-          var chosen = btn.getAttribute('data-emoji');
-          p.avatar.emoji = (p.avatar.emoji === chosen) ? null : chosen;
+          if (btn.getAttribute('data-unlocked') === '0') {
+            alert('Play games to earn drops and unlock this item! 🎁');
+            return;
+          }
+          var item = btn.getAttribute('data-item');
+          if (avatarRoomTab === 'character') {
+            p.avatar.character = (p.avatar.character === item) ? null : item;
+          } else if (avatarRoomTab === 'accessory') {
+            p.avatar.accessory = (p.avatar.accessory === item) ? null : item;
+          } else {
+            p.avatar.pet = (p.avatar.pet === item) ? null : item;
+          }
           saveActiveProfile();
           renderAvatarRoom();
         });
       });
+
+      var clearBtn = $('ar-clear-slot');
+      if (clearBtn) {
+        clearBtn.addEventListener('click', function() {
+          if (avatarRoomTab === 'character') p.avatar.character = null;
+          else if (avatarRoomTab === 'accessory') p.avatar.accessory = null;
+          else p.avatar.pet = null;
+          saveActiveProfile();
+          renderAvatarRoom();
+        });
+      }
     }
 
     // -----------------------------------
