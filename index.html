@@ -820,6 +820,20 @@
     .ar-item-btn.locked { opacity: 0.32; -webkit-filter: grayscale(1); filter: grayscale(1); }
     .ar-item-btn:active { transform: scale(1.1); }
     .ar-lock { position: absolute; bottom: 1px; right: 2px; font-size: 10px; line-height: 1; }
+    .avatar-circle svg { display: block; width: 100%; height: 100%; }
+    .ar-section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--pu3); margin: 14px 0 7px; }
+    .ar-choice-row { display: -webkit-flex; display: flex; gap: 10px; margin-bottom: 4px; }
+    .ar-choice-btn { -webkit-flex: 1; flex: 1; padding: 11px 8px; border: 2.5px solid var(--pu2); border-radius: var(--radius-md); background: rgba(212,170,238,0.1); font-family: 'Fredoka One', sans-serif; font-size: 15px; color: var(--pu3); cursor: pointer; transition: background 120ms, transform 80ms; }
+    .ar-choice-btn.selected { background: var(--pu); border-color: var(--pu3); color: var(--wh); }
+    .ar-choice-btn:active { transform: scale(0.97); }
+    .ar-swatch-row { display: -webkit-flex; display: flex; -webkit-flex-wrap: wrap; flex-wrap: wrap; gap: 10px; margin-bottom: 4px; }
+    .ar-swatch { width: 38px; height: 38px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; transition: transform 100ms, border-color 100ms; outline: none; box-shadow: 0 2px 6px rgba(0,0,0,0.18); }
+    .ar-swatch.selected { border-color: var(--txt); transform: scale(1.18); box-shadow: 0 3px 10px rgba(0,0,0,0.28); }
+    .ar-swatch:active { transform: scale(1.1); }
+    .ar-style-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 4px; }
+    .ar-style-btn { padding: 9px 6px; border: 2px solid var(--pu2); border-radius: var(--radius-sm); background: rgba(212,170,238,0.1); font-family: 'Fredoka One', sans-serif; font-size: 13px; color: var(--pu3); cursor: pointer; transition: background 100ms, transform 80ms; }
+    .ar-style-btn.selected { background: var(--pu); border-color: var(--pu3); color: var(--wh); }
+    .ar-style-btn:active { transform: scale(0.96); }
 
     /* ---- PIN overlay ---- */
     .pin-overlay { background: rgba(255,255,255,0.97); border-radius: var(--radius-lg); padding: 28px 20px 20px; box-shadow: var(--shadow-pop); text-align: center; }
@@ -1001,7 +1015,7 @@
     function freshProfile(name) {
       return {
         name: name || '',
-        avatar: { colour: 'pink', character: null, accessory: null, pet: null, unlocked: [] },
+        avatar: { gender: 'girl', skinKey: 'light', hairStyle: 'long', hairColour: 'brown', eyeColour: 'blue', shirtColour: 'pink', unlocked: [], accessory: null, pet: null },
         weekKey: '',
         level: 'core',
         minsPerPage: 1,
@@ -1142,57 +1156,163 @@
       return (first + second).toUpperCase();
     }
 
-    var AVATAR_PALETTE = ['avatar-pink', 'avatar-blue', 'avatar-purple', 'avatar-green'];
-
-    // Avatar item pools — all start locked, earned via drops
-    var AVATAR_CHARACTERS  = ['🦊','🐼','🦁','🐸','🐨','🐯','🦋','🐬','🦄','🐉','🦅','🦔','🐙','🦈','🐺','🦒','🦓','🦜','🐘','🐢'];
+    // ---- Avatar character customisation constants ----
+    var SKIN_TONES = [
+      { key: 'light',  hex: '#FDDBB4', label: 'Light' },
+      { key: 'warm',   hex: '#F1C27D', label: 'Warm' },
+      { key: 'medium', hex: '#D4956A', label: 'Medium' },
+      { key: 'dark',   hex: '#8D5524', label: 'Dark' }
+    ];
+    var HAIR_COLOURS = [
+      { key: 'brown',  hex: '#6B3A2A', label: 'Brown' },
+      { key: 'blonde', hex: '#D4A017', label: 'Blonde' },
+      { key: 'red',    hex: '#B83820', label: 'Red' },
+      { key: 'black',  hex: '#1C1C1C', label: 'Black' },
+      { key: 'pink',   hex: '#E0609A', label: 'Pink' },
+      { key: 'blue',   hex: '#2060B0', label: 'Blue' },
+      { key: 'purple', hex: '#7030A0', label: 'Purple' },
+      { key: 'orange', hex: '#D06010', label: 'Orange' }
+    ];
+    var EYE_COLOURS = [
+      { key: 'blue',   hex: '#2878B8', label: 'Blue' },
+      { key: 'green',  hex: '#2E8B4A', label: 'Green' },
+      { key: 'brown',  hex: '#7D4E19', label: 'Brown' },
+      { key: 'hazel',  hex: '#A07040', label: 'Hazel' },
+      { key: 'grey',   hex: '#6A7878', label: 'Grey' }
+    ];
+    var SHIRT_COLOURS = [
+      { key: 'pink',   hex: '#FF85A1', label: 'Pink',   cls: 'avatar-pink' },
+      { key: 'purple', hex: '#B07DE0', label: 'Purple', cls: 'avatar-purple' },
+      { key: 'blue',   hex: '#5CB8E8', label: 'Blue',   cls: 'avatar-blue' },
+      { key: 'green',  hex: '#5CB87A', label: 'Green',  cls: 'avatar-green' },
+      { key: 'yellow', hex: '#FFD740', label: 'Yellow', cls: 'avatar-yellow' },
+      { key: 'orange', hex: '#FFB347', label: 'Orange', cls: 'avatar-orange' },
+      { key: 'red',    hex: '#FF7070', label: 'Red',    cls: 'avatar-red' },
+      { key: 'teal',   hex: '#40D8C8', label: 'Teal',   cls: 'avatar-teal' }
+    ];
+    var HAIR_STYLES = [
+      { key: 'long',     label: 'Long' },
+      { key: 'short',    label: 'Short Bob' },
+      { key: 'curly',    label: 'Curly' },
+      { key: 'bun',      label: 'Bun' },
+      { key: 'ponytail', label: 'Ponytail' },
+      { key: 'spiky',    label: 'Spiky' }
+    ];
+    // Earned via drops only
     var AVATAR_ACCESSORIES = ['👑','🎩','🎓','🌸','🎀','⭐','🌈','💎','🏆','🎯','🪄','🔮','🌙','🔥','🌺'];
     var AVATAR_PETS        = ['🐶','🐱','🐰','🐹','🐻','🦎','🐠','🦕','🐣','🦋','🐝','🐢','🐌','🐾','🐲'];
-    var ALL_AVATAR_ITEMS   = AVATAR_CHARACTERS.concat(AVATAR_ACCESSORIES).concat(AVATAR_PETS);
+    var ALL_AVATAR_ITEMS   = AVATAR_ACCESSORIES.concat(AVATAR_PETS);
 
-    var avatarRoomTab = 'colour';
+    var avatarRoomTab = 'look';
+    var _avId = 0;
 
     function avatarClassFor(index) {
-      return AVATAR_PALETTE[index % AVATAR_PALETTE.length];
+      var fb = ['avatar-pink','avatar-blue','avatar-purple','avatar-green'];
+      return fb[index % fb.length];
+    }
+
+    function lookupHex(arr, key, fallback) {
+      for (var i = 0; i < arr.length; i++) { if (arr[i].key === key) return arr[i].hex; }
+      return fallback;
+    }
+    function lookupCls(arr, key, fallback) {
+      for (var i = 0; i < arr.length; i++) { if (arr[i].key === key) return arr[i].cls || fallback; }
+      return fallback;
     }
 
     function migrateAvatar(p) {
-      if (!p.avatar) {
-        p.avatar = { colour: 'pink', character: null, accessory: null, pet: null, unlocked: [] };
-        return;
+      if (!p.avatar) { p.avatar = { gender:'girl', skinKey:'light', hairStyle:'long', hairColour:'brown', eyeColour:'blue', shirtColour:'pink', unlocked:[], accessory:null, pet:null }; return; }
+      var a = p.avatar;
+      if (a.unlocked    === undefined) { a.unlocked = a.unlockedEmojis || []; delete a.unlockedEmojis; }
+      if (a.gender      === undefined) a.gender      = 'girl';
+      if (a.skinKey     === undefined) a.skinKey     = 'light';
+      if (a.hairStyle   === undefined) a.hairStyle   = 'long';
+      if (a.hairColour  === undefined) a.hairColour  = 'brown';
+      if (a.eyeColour   === undefined) a.eyeColour   = 'blue';
+      if (a.shirtColour === undefined) a.shirtColour = 'pink';
+      if (a.accessory   === undefined) a.accessory   = null;
+      if (a.pet         === undefined) a.pet         = null;
+      delete a.colour; delete a.character; delete a.emoji;
+    }
+
+    function buildAvatarSVG(av) {
+      var uid   = 'av' + (++_avId);
+      var skin  = lookupHex(SKIN_TONES,    av.skinKey     || 'light',  '#FDDBB4');
+      var hair  = lookupHex(HAIR_COLOURS,  av.hairColour  || 'brown',  '#6B3A2A');
+      var eye   = lookupHex(EYE_COLOURS,   av.eyeColour   || 'blue',   '#2878B8');
+      var shirt = lookupHex(SHIRT_COLOURS, av.shirtColour || 'pink',   '#FF85A1');
+      var sty   = av.hairStyle || 'long';
+      var cx = 50, cy = 56, r = 32;
+      var ey = cy - 4, ex = 11, bw = ey - 9;
+      var bt = av.gender === 'boy' ? '2.5' : '1.8';
+      var hb = '', hf = '';
+      if (sty === 'long') {
+        hb = '<path d="M 16 44 Q 4 62 6 98 L 18 98 Q 20 62 18 44 Z" fill="' + hair + '"/>' +
+             '<path d="M 84 44 Q 96 62 94 98 L 82 98 Q 80 62 82 44 Z" fill="' + hair + '"/>';
+        hf = '<path d="M 18 56 C 18 10 82 10 82 56 L 80 40 C 80 28 20 28 20 40 Z" fill="' + hair + '"/>';
+      } else if (sty === 'short') {
+        hb = '<path d="M 8 56 C 8 8 92 8 92 56 L 92 72 C 92 90 72 98 50 98 C 28 98 8 90 8 72 Z" fill="' + hair + '"/>';
+        hf = '<path d="M 18 56 C 18 14 82 14 82 56 L 80 44 C 80 28 20 28 20 44 Z" fill="' + hair + '"/>';
+      } else if (sty === 'curly') {
+        hb = '<circle cx="12" cy="50" r="13" fill="' + hair + '"/><circle cx="88" cy="50" r="13" fill="' + hair + '"/>';
+        hf = '<circle cx="24" cy="28" r="13" fill="' + hair + '"/><circle cx="50" cy="18" r="14" fill="' + hair + '"/>' +
+             '<circle cx="76" cy="28" r="13" fill="' + hair + '"/><circle cx="14" cy="44" r="11" fill="' + hair + '"/>' +
+             '<circle cx="86" cy="44" r="11" fill="' + hair + '"/>';
+      } else if (sty === 'bun') {
+        hf = '<path d="M 18 56 C 18 14 82 14 82 56 L 80 42 C 80 26 20 26 20 42 Z" fill="' + hair + '"/>' +
+             '<circle cx="50" cy="10" r="14" fill="' + hair + '"/>' +
+             '<rect x="44" y="20" width="12" height="7" rx="3" fill="' + hair + '"/>';
+      } else if (sty === 'ponytail') {
+        hb = '<path d="M 74 38 Q 100 58 90 92" stroke="' + hair + '" stroke-width="12" fill="none" stroke-linecap="round"/>';
+        hf = '<path d="M 18 56 C 18 14 82 14 82 56 L 80 42 C 80 26 20 26 20 42 Z" fill="' + hair + '"/>' +
+             '<circle cx="76" cy="38" r="5" fill="white" stroke="' + hair + '" stroke-width="2"/>';
+      } else {
+        hf = '<path d="M 18 56 C 18 30 82 30 82 56 L 80 44 C 80 32 20 32 20 44 Z" fill="' + hair + '"/>' +
+             '<polygon points="50,0 41,28 59,28" fill="' + hair + '"/>' +
+             '<polygon points="30,6 22,30 40,30" fill="' + hair + '"/>' +
+             '<polygon points="70,6 60,30 78,30" fill="' + hair + '"/>' +
+             '<polygon points="14,18 8,38 26,36" fill="' + hair + '"/>' +
+             '<polygon points="86,18 74,36 92,38" fill="' + hair + '"/>';
       }
-      // migrate old shape that used emoji/unlockedEmojis
-      if (p.avatar.unlocked === undefined) {
-        p.avatar.unlocked = p.avatar.unlockedEmojis || [];
-        delete p.avatar.unlockedEmojis;
-      }
-      if (p.avatar.character === undefined) {
-        p.avatar.character = p.avatar.emoji || null;
-        delete p.avatar.emoji;
-      }
-      if (p.avatar.accessory === undefined) p.avatar.accessory = null;
-      if (p.avatar.pet       === undefined) p.avatar.pet       = null;
+      var sp  = '<path d="M 16 100 Q 28 82 38 82 Q 44 90 50 88 Q 56 90 62 82 Q 72 82 84 100 Z" fill="' + shirt + '"/>';
+      var nk  = '<rect x="44" y="' + (cy+r-4) + '" width="12" height="11" fill="' + skin + '"/>';
+      var fc  = '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + skin + '"/>';
+      var ck  = '<ellipse cx="' + (cx-18) + '" cy="' + (cy+8) + '" rx="7" ry="5" fill="#FF9898" opacity="0.3"/>' +
+                '<ellipse cx="' + (cx+18) + '" cy="' + (cy+8) + '" rx="7" ry="5" fill="#FF9898" opacity="0.3"/>';
+      var ew  = '<ellipse cx="' + (cx-ex) + '" cy="' + ey + '" rx="6" ry="5.5" fill="white"/>' +
+                '<ellipse cx="' + (cx+ex) + '" cy="' + ey + '" rx="6" ry="5.5" fill="white"/>' +
+                '<circle cx="' + (cx-ex) + '" cy="' + ey + '" r="3.8" fill="' + eye + '"/>' +
+                '<circle cx="' + (cx+ex) + '" cy="' + ey + '" r="3.8" fill="' + eye + '"/>' +
+                '<circle cx="' + (cx-ex+0.5) + '" cy="' + (ey-0.5) + '" r="2.2" fill="#111"/>' +
+                '<circle cx="' + (cx+ex-0.5) + '" cy="' + (ey-0.5) + '" r="2.2" fill="#111"/>' +
+                '<circle cx="' + (cx-ex+2) + '" cy="' + (ey-2.5) + '" r="1" fill="white"/>' +
+                '<circle cx="' + (cx+ex+0.5) + '" cy="' + (ey-2.5) + '" r="1" fill="white"/>';
+      var br  = '<path d="M '+(cx-ex-5)+' '+bw+' Q '+(cx-ex)+' '+(bw-4)+' '+(cx-ex+5)+' '+bw+'" stroke="'+hair+'" stroke-width="'+bt+'" fill="none" stroke-linecap="round"/>' +
+                '<path d="M '+(cx+ex-5)+' '+bw+' Q '+(cx+ex)+' '+(bw-4)+' '+(cx+ex+5)+' '+bw+'" stroke="'+hair+'" stroke-width="'+bt+'" fill="none" stroke-linecap="round"/>';
+      var ns  = '<path d="M '+(cx-3)+' '+(cy+7)+' Q '+cx+' '+(cy+11)+' '+(cx+3)+' '+(cy+7)+'" stroke="rgba(0,0,0,0.18)" stroke-width="1.5" fill="none" stroke-linecap="round"/>';
+      var mt  = '<path d="M '+(cx-9)+' '+(cy+14)+' Q '+cx+' '+(cy+21)+' '+(cx+9)+' '+(cy+14)+'" stroke="#CC4466" stroke-width="2.5" fill="none" stroke-linecap="round"/>';
+      return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">' +
+        '<defs><clipPath id="'+uid+'"><circle cx="50" cy="50" r="50"/></clipPath></defs>' +
+        '<g clip-path="url(#'+uid+')">' + hb + sp + nk + fc + ck + ew + br + ns + mt + hf + '</g></svg>';
+    }
+
+    function avatarBgClass(p) {
+      return lookupCls(SHIRT_COLOURS, (p.avatar && p.avatar.shirtColour) || 'pink', 'avatar-pink');
     }
 
     function avatarCircleHtml(p, index, sizeStyle) {
       migrateAvatar(p);
-      var colour  = p.avatar.colour || 'pink';
-      var cls     = 'avatar-circle avatar-' + colour;
-      var content = p.avatar.character || initialsOf(p.name);
-      var accBadge = p.avatar.accessory
-        ? '<span class="av-badge av-acc">' + p.avatar.accessory + '</span>' : '';
-      var petBadge = p.avatar.pet
-        ? '<span class="av-badge av-pet">' + p.avatar.pet + '</span>' : '';
+      var cls  = 'avatar-circle ' + avatarBgClass(p);
+      var acc  = p.avatar.accessory ? '<span class="av-badge av-acc">' + p.avatar.accessory + '</span>' : '';
+      var pet  = p.avatar.pet       ? '<span class="av-badge av-pet">' + p.avatar.pet       + '</span>' : '';
       var extra = sizeStyle ? ' style="' + sizeStyle + '"' : '';
-      return '<div class="' + cls + '"' + extra + '>' +
-        content + accBadge + petBadge + '</div>';
+      return '<div class="' + cls + '"' + extra + '>' + buildAvatarSVG(p.avatar) + acc + pet + '</div>';
     }
 
     function fillAvatarCircle(el, p) {
       migrateAvatar(p);
-      var colour = p.avatar.colour || 'pink';
-      el.className = 'avatar-circle avatar-' + colour;
-      el.innerHTML = (p.avatar.character || initialsOf(p.name)) +
+      el.className = 'avatar-circle ' + avatarBgClass(p);
+      el.innerHTML = buildAvatarSVG(p.avatar) +
         (p.avatar.accessory ? '<span class="av-badge av-acc">' + p.avatar.accessory + '</span>' : '') +
         (p.avatar.pet       ? '<span class="av-badge av-pet">' + p.avatar.pet       + '</span>' : '');
     }
@@ -2199,8 +2319,7 @@
               if (pp.avatar.unlocked.indexOf(chosen) === -1) {
                 pp.avatar.unlocked.push(chosen);
               }
-              if (AVATAR_CHARACTERS.indexOf(chosen) !== -1) pp.avatar.character = chosen;
-              else if (AVATAR_ACCESSORIES.indexOf(chosen) !== -1) pp.avatar.accessory = chosen;
+              if (AVATAR_ACCESSORIES.indexOf(chosen) !== -1) pp.avatar.accessory = chosen;
               else if (AVATAR_PETS.indexOf(chosen) !== -1) pp.avatar.pet = chosen;
               saveActiveProfile();
             }
@@ -3568,9 +3687,8 @@
       if (!p) { showScreen('s-profiles'); return; }
       migrateAvatar(p);
 
-      var colour = p.avatar.colour || 'pink';
-      var tabs = ['colour', 'character', 'accessory', 'pet'];
-      var tabLabels = { colour: '🎨 Colour', character: '🐾 Character', accessory: '👑 Accessory', pet: '🐶 Pet' };
+      var tabs = ['look', 'clothes', 'accessory', 'pet'];
+      var tabLabels = { look: '🎨 Look', clothes: '👗 Clothes', accessory: '👑 Earned', pet: '🐶 Pets' };
 
       var tabHtml = tabs.map(function(t) {
         return '<button class="ar-tab' + (avatarRoomTab === t ? ' active' : '') +
@@ -3578,34 +3696,72 @@
       }).join('');
 
       var panelHtml = '';
-      if (avatarRoomTab === 'colour') {
-        var swatches = COLOUR_OPTIONS.map(function(c) {
-          return '<button class="colour-swatch' + (colour === c.key ? ' selected' : '') +
-            '" data-colour="' + c.key + '" style="background:' + c.bg + ';" aria-label="' + c.label + '"></button>';
-        }).join('');
-        panelHtml = '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px;">' +
-          swatches + '</div>';
+
+      if (avatarRoomTab === 'look') {
+        var genderHtml = '<div class="ar-section-title">Gender</div>' +
+          '<div class="ar-choice-row">' +
+          '<button class="ar-choice-btn' + (p.avatar.gender === 'girl' ? ' selected' : '') +
+            '" data-field="gender" data-val="girl">👧 Girl</button>' +
+          '<button class="ar-choice-btn' + (p.avatar.gender === 'boy' ? ' selected' : '') +
+            '" data-field="gender" data-val="boy">👦 Boy</button>' +
+          '</div>';
+
+        var skinHtml = '<div class="ar-section-title">Skin Tone</div><div class="ar-swatch-row">' +
+          SKIN_TONES.map(function(s) {
+            return '<button class="ar-swatch' + (p.avatar.skinKey === s.key ? ' selected' : '') +
+              '" data-field="skinKey" data-val="' + s.key +
+              '" style="background:' + s.hex + ';" aria-label="' + s.label + '"></button>';
+          }).join('') + '</div>';
+
+        var hairStyleHtml = '<div class="ar-section-title">Hair Style</div><div class="ar-style-grid">' +
+          HAIR_STYLES.map(function(hs) {
+            return '<button class="ar-style-btn' + (p.avatar.hairStyle === hs.key ? ' selected' : '') +
+              '" data-field="hairStyle" data-val="' + hs.key + '">' + hs.label + '</button>';
+          }).join('') + '</div>';
+
+        var hairColHtml = '<div class="ar-section-title">Hair Colour</div><div class="ar-swatch-row">' +
+          HAIR_COLOURS.map(function(c) {
+            return '<button class="ar-swatch' + (p.avatar.hairColour === c.key ? ' selected' : '') +
+              '" data-field="hairColour" data-val="' + c.key +
+              '" style="background:' + c.hex + ';" aria-label="' + c.label + '"></button>';
+          }).join('') + '</div>';
+
+        var eyeColHtml = '<div class="ar-section-title">Eye Colour</div><div class="ar-swatch-row">' +
+          EYE_COLOURS.map(function(c) {
+            return '<button class="ar-swatch' + (p.avatar.eyeColour === c.key ? ' selected' : '') +
+              '" data-field="eyeColour" data-val="' + c.key +
+              '" style="background:' + c.hex + ';" aria-label="' + c.label + '"></button>';
+          }).join('') + '</div>';
+
+        panelHtml = genderHtml + skinHtml + hairStyleHtml + hairColHtml + eyeColHtml;
+
+      } else if (avatarRoomTab === 'clothes') {
+        panelHtml = '<div class="ar-section-title">Shirt Colour</div><div class="ar-swatch-row">' +
+          SHIRT_COLOURS.map(function(c) {
+            return '<button class="ar-swatch' + (p.avatar.shirtColour === c.key ? ' selected' : '') +
+              '" data-field="shirtColour" data-val="' + c.key +
+              '" style="background:' + c.hex + ';" aria-label="' + c.label + '"></button>';
+          }).join('') + '</div>';
 
       } else {
-        var pool, currentSlot;
-        if (avatarRoomTab === 'character') { pool = AVATAR_CHARACTERS; currentSlot = p.avatar.character; }
-        else if (avatarRoomTab === 'accessory') { pool = AVATAR_ACCESSORIES; currentSlot = p.avatar.accessory; }
-        else { pool = AVATAR_PETS; currentSlot = p.avatar.pet; }
+        var pool = avatarRoomTab === 'accessory' ? AVATAR_ACCESSORIES : AVATAR_PETS;
+        var currentSlot = avatarRoomTab === 'accessory' ? p.avatar.accessory : p.avatar.pet;
+        var slotLabel   = avatarRoomTab === 'accessory' ? 'Accessory' : 'Pet';
 
         var itemBtns = pool.map(function(item) {
           var isUnlocked = p.avatar.unlocked.indexOf(item) !== -1;
           var isSelected = currentSlot === item;
           var btnCls = 'ar-item-btn' + (isSelected ? ' selected' : '') + (isUnlocked ? '' : ' locked');
-          return '<button class="' + btnCls + '" data-item="' + item + '" data-unlocked="' + (isUnlocked ? '1' : '0') + '">' +
-            item + (isUnlocked ? '' : '<span class="ar-lock">🔒</span>') +
-            '</button>';
+          return '<button class="' + btnCls + '" data-item="' + item +
+            '" data-unlocked="' + (isUnlocked ? '1' : '0') + '">' +
+            item + (isUnlocked ? '' : '<span class="ar-lock">🔒</span>') + '</button>';
         }).join('');
 
-        var clearBtn = currentSlot
-          ? '<button class="btn btn-ghost" id="ar-clear-slot" style="width:100%;margin-top:12px;">Remove ' + tabLabels[avatarRoomTab].split(' ')[1] + '</button>'
+        var clearHtml = currentSlot
+          ? '<button class="btn btn-ghost" id="ar-clear-slot" style="width:100%;margin-top:12px;">Remove ' + slotLabel + '</button>'
           : '';
-        panelHtml = '<div class="ar-item-hint">Earn locked items from drops after games! 🎁</div>' +
-          '<div class="ar-item-grid" style="margin-top:10px;">' + itemBtns + '</div>' + clearBtn;
+        panelHtml = '<div class="ar-item-hint">🎁 Play games to earn drops and unlock!</div>' +
+          '<div class="ar-item-grid" style="margin-top:10px;">' + itemBtns + '</div>' + clearHtml;
       }
 
       var container = $('s-avatarroom');
@@ -3626,9 +3782,9 @@
         });
       });
 
-      container.querySelectorAll('.colour-swatch').forEach(function(btn) {
+      container.querySelectorAll('[data-field]').forEach(function(btn) {
         btn.addEventListener('click', function() {
-          p.avatar.colour = btn.getAttribute('data-colour');
+          p.avatar[btn.getAttribute('data-field')] = btn.getAttribute('data-val');
           saveActiveProfile();
           renderAvatarRoom();
         });
@@ -3641,9 +3797,7 @@
             return;
           }
           var item = btn.getAttribute('data-item');
-          if (avatarRoomTab === 'character') {
-            p.avatar.character = (p.avatar.character === item) ? null : item;
-          } else if (avatarRoomTab === 'accessory') {
+          if (avatarRoomTab === 'accessory') {
             p.avatar.accessory = (p.avatar.accessory === item) ? null : item;
           } else {
             p.avatar.pet = (p.avatar.pet === item) ? null : item;
@@ -3653,11 +3807,10 @@
         });
       });
 
-      var clearBtn = $('ar-clear-slot');
-      if (clearBtn) {
-        clearBtn.addEventListener('click', function() {
-          if (avatarRoomTab === 'character') p.avatar.character = null;
-          else if (avatarRoomTab === 'accessory') p.avatar.accessory = null;
+      var clearSlotBtn = $('ar-clear-slot');
+      if (clearSlotBtn) {
+        clearSlotBtn.addEventListener('click', function() {
+          if (avatarRoomTab === 'accessory') p.avatar.accessory = null;
           else p.avatar.pet = null;
           saveActiveProfile();
           renderAvatarRoom();
