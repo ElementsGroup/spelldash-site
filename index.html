@@ -208,6 +208,10 @@
     .avatar-blue   { background: linear-gradient(135deg, var(--bl2), var(--bl3)); }
     .avatar-purple { background: linear-gradient(135deg, var(--pu2), var(--pu3)); }
     .avatar-green  { background: linear-gradient(135deg, var(--gn2), var(--gn3)); }
+    .avatar-yellow { background: linear-gradient(135deg, #FFD740, #E07A00); }
+    .avatar-orange { background: linear-gradient(135deg, #FFB347, #D44000); }
+    .avatar-red    { background: linear-gradient(135deg, #FF7070, #B81818); }
+    .avatar-teal   { background: linear-gradient(135deg, #40D8C8, #0A8070); }
 
     .profile-name {
       font-family: 'Fredoka One', sans-serif;
@@ -1109,11 +1113,17 @@
 
     var AVATAR_PALETTE = ['avatar-pink', 'avatar-blue', 'avatar-purple', 'avatar-green'];
 
-    var AVATAR_EMOJIS = [
-      '🦄','🐉','🦋','🐬','🦊','🐼','🐸','🦁','🐨','🦔',
-      '🌈','⭐','🌙','☀️','🌺','🌸','🍀','🍉','🍕','🎸',
-      '🚀','🎠','🏆','💎','🎯','🪄','🎭','🎪','🎨','🎬'
+    var AVATAR_EMOJI_CATEGORIES = [
+      { label: '🐾 Animals', emojis: ['🦄','🐉','🦋','🐬','🦊','🐼','🐸','🦁','🐨','🦔','🐯','🐺','🦅','🦜','🐙','🦈','🐢','🐘','🦒','🦓'] },
+      { label: '🌟 Space & Nature', emojis: ['🌈','⭐','🌙','☀️','🌺','🌸','🍀','🔥','💫','🌊','🌻','🌴','🍄','❄️','🌋','🌍','🌅','🌠','🪐','🌪️'] },
+      { label: '🍕 Food & Fun', emojis: ['🍕','🍰','🍦','🍩','🌮','🍔','🍣','🍓','🍉','🎂','🧁','🍭','🍿','🥑','🧇','🍋','🍇','🍡','🥕','🍒'] },
+      { label: '🎮 Activities', emojis: ['🚀','🎸','🏆','💎','🎯','🪄','🎭','🎨','🎬','🎡','🎮','🎵','🎺','🏄','🎃','⚽','🏀','🎾','🛹','🎠'] }
     ];
+    var AVATAR_EMOJIS = (function() {
+      var all = [];
+      AVATAR_EMOJI_CATEGORIES.forEach(function(cat) { all = all.concat(cat.emojis); });
+      return all;
+    })();
     function avatarClassFor(index) {
       return AVATAR_PALETTE[index % AVATAR_PALETTE.length];
     }
@@ -2050,16 +2060,9 @@
       var isPerfect = gameSession.wrongCount === 0;
       var chance = dropsToday === 0 ? 1 : (isPerfect ? 0.5 : 0.33);
       if (Math.random() >= chance) return null;
-      if (!p.avatar) p.avatar = { colour: 'pink', emoji: null, unlockedEmojis: [] };
-      if (!p.avatar.unlockedEmojis) p.avatar.unlockedEmojis = [];
-      var pool = AVATAR_EMOJIS.filter(function(e) {
-        return p.avatar.unlockedEmojis.indexOf(e) === -1;
-      });
-      if (!pool.length) return null;
-      var choices = shuffle(pool).slice(0, 3);
       if (!p.drops) p.drops = [];
       p.drops.push({ date: today, seen: false });
-      return choices;
+      return shuffle(AVATAR_EMOJIS.slice()).slice(0, 3);
     }
 
     // ---- Done screen --------------------------------------------
@@ -2088,7 +2091,7 @@
 
       var dropHtml = dropChoices
         ? '<div class="drop-modal" id="drop-modal"><span class="drop-box">🎁</span>' +
-          '<p>Surprise! Pick a new avatar emoji:</p>' +
+          '<p style="font-weight:700;margin:4px 0;">Try one of these on your avatar!</p>' +
           '<div class="drop-emoji-row">' +
           dropChoices.map(function(e) {
             return '<button class="drop-emoji-btn" data-emoji="' + e + '">' + e + '</button>';
@@ -2131,12 +2134,11 @@
             var pp = activeProfile();
             if (pp) {
               if (!pp.avatar) pp.avatar = { colour: 'pink', emoji: null, unlockedEmojis: [] };
-              if (!pp.avatar.unlockedEmojis) pp.avatar.unlockedEmojis = [];
-              if (pp.avatar.unlockedEmojis.indexOf(chosen) === -1) pp.avatar.unlockedEmojis.push(chosen);
+              pp.avatar.emoji = chosen;
               saveActiveProfile();
             }
             $('drop-modal').innerHTML = '<span style="font-size:46px;">' + chosen + '</span>' +
-              '<p style="margin:6px 0 0;font-weight:800;">Added to your avatar room! 🎉</p>';
+              '<p style="margin:6px 0 0;font-weight:800;">Looking good! 🎉</p>';
           });
         });
       }
@@ -2904,13 +2906,18 @@
     }
 
     function settingsProfileHtml(p) {
+      var colour = (p.avatar && p.avatar.colour) || 'pink';
+      var emoji  = (p.avatar && p.avatar.emoji)  || initialsOf(p.name);
       return '<div class="settings-section">' +
         '<h3>Profile</h3>' +
         '<div class="settings-row"><span class="settings-label">Name</span>' +
         '<input class="input" id="sett-name" value="' + escapeHtml(p.name) + '" maxlength="20" style="width:180px;" /></div>' +
-        '<div class="settings-row"><span class="settings-label">Avatar</span>' +
-        '<span class="settings-sub">Full avatar coming in next update ✨</span></div>' +
         '<button class="btn btn-secondary" id="sett-save-name" style="width:100%;margin-top:12px;">Save name</button>' +
+        '<div class="settings-row" style="margin-top:14px;">' +
+        '<span class="settings-label">Avatar</span>' +
+        '<div class="avatar-circle avatar-' + colour + '" style="width:44px;height:44px;font-size:20px;">' + emoji + '</div>' +
+        '</div>' +
+        '<button class="btn btn-secondary" id="sett-go-avatar" style="width:100%;margin-top:10px;">✏️ Customise avatar</button>' +
         '<button class="btn btn-secondary" id="sett-reset-profile" style="width:100%;margin-top:10px;border-color:var(--pk2);color:var(--pk3);">Reset this profile</button>' +
         '</div>';
     }
@@ -3056,6 +3063,10 @@
         saveActiveProfile();
         alert('Name saved!');
       });
+
+      // Go to avatar room
+      var goAvatar = $('sett-go-avatar');
+      if (goAvatar) goAvatar.addEventListener('click', function() { showScreen('s-avatarroom'); });
 
       // Reset profile
       var resetProf = $('sett-reset-profile');
@@ -3437,9 +3448,13 @@
     // -----------------------------------
     var COLOUR_OPTIONS = [
       { key: 'pink',   label: 'Pink',   bg: 'linear-gradient(135deg,#FF85A1,#CC3060)' },
-      { key: 'blue',   label: 'Blue',   bg: 'linear-gradient(135deg,#5CB8E8,#2878B8)' },
       { key: 'purple', label: 'Purple', bg: 'linear-gradient(135deg,#B07DE0,#7830B8)' },
-      { key: 'green',  label: 'Green',  bg: 'linear-gradient(135deg,#3CB87A,#1A6840)' }
+      { key: 'blue',   label: 'Blue',   bg: 'linear-gradient(135deg,#5CB8E8,#2878B8)' },
+      { key: 'teal',   label: 'Teal',   bg: 'linear-gradient(135deg,#40D8C8,#0A8070)' },
+      { key: 'green',  label: 'Green',  bg: 'linear-gradient(135deg,#3CB87A,#1A6840)' },
+      { key: 'yellow', label: 'Yellow', bg: 'linear-gradient(135deg,#FFD740,#E07A00)' },
+      { key: 'orange', label: 'Orange', bg: 'linear-gradient(135deg,#FFB347,#D44000)' },
+      { key: 'red',    label: 'Red',    bg: 'linear-gradient(135deg,#FF7070,#B81818)' }
     ];
 
     function renderAvatarRoom() {
@@ -3447,21 +3462,24 @@
       if (!p) { showScreen('s-profiles'); return; }
       if (!p.avatar) p.avatar = { colour: 'pink', emoji: null, unlockedEmojis: [] };
 
-      var unlocked = p.avatar.unlockedEmojis || [];
-      var current  = p.avatar.emoji;
-      var colour   = p.avatar.colour || 'pink';
+      var current = p.avatar.emoji;
+      var colour  = p.avatar.colour || 'pink';
 
       var colourSwatches = COLOUR_OPTIONS.map(function(c) {
         return '<button class="colour-swatch' + (colour === c.key ? ' selected' : '') +
           '" data-colour="' + c.key + '" style="background:' + c.bg + ';" aria-label="' + c.label + '"></button>';
       }).join('');
 
-      var emojiButtons = AVATAR_EMOJIS.map(function(e) {
-        var isUnlocked = unlocked.indexOf(e) !== -1;
-        var isSelected = current === e;
-        var cls = 'emoji-btn' + (isSelected ? ' selected' : '') + (isUnlocked ? '' : ' emoji-locked');
-        return '<button class="' + cls + '" data-emoji="' + e + '"' +
-          (isUnlocked ? '' : ' disabled title="Earn this in a surprise drop!"') + '>' + e + '</button>';
+      var categoryHtml = AVATAR_EMOJI_CATEGORIES.map(function(cat) {
+        var buttons = cat.emojis.map(function(e) {
+          var isSelected = current === e;
+          return '<button class="emoji-btn' + (isSelected ? ' selected' : '') +
+            '" data-emoji="' + e + '">' + e + '</button>';
+        }).join('');
+        return '<div style="margin-bottom:14px;">' +
+          '<div style="font-size:13px;font-weight:700;color:var(--pu3);margin-bottom:8px;">' + cat.label + '</div>' +
+          '<div class="emoji-grid">' + buttons + '</div>' +
+          '</div>';
       }).join('');
 
       var avatarClass = 'avatar-preview-big avatar-' + colour;
@@ -3470,21 +3488,21 @@
       var container = $('s-avatarroom');
       container.innerHTML =
         '<button class="btn-back" data-back="s-home">← Back</button>' +
-        '<h2 style="margin-bottom:16px;">Avatar Room</h2>' +
+        '<h2 style="margin-bottom:16px;">Avatar Room 🎨</h2>' +
         '<div class="avatar-preview-wrap">' +
         '<div class="' + avatarClass + '" id="ar-preview">' + avatarContent + '</div>' +
-        '<div style="font-size:15px;font-weight:700;color:var(--pu3);">' + escapeHtml(p.name) + '</div>' +
-        '<div style="font-size:13px;color:var(--mut);">' + unlocked.length + ' emoji' + (unlocked.length !== 1 ? 's' : '') + ' unlocked</div>' +
+        '<div style="font-size:17px;font-weight:800;color:var(--pu3);">' + escapeHtml(p.name) + '</div>' +
+        '<div style="font-size:13px;color:var(--mut);">' +
+          (current ? 'Tap your emoji again to use initials' : 'Pick an emoji below!') +
+        '</div>' +
         '</div>' +
         '<div class="emoji-section" style="margin-top:18px;">' +
         '<h3>Background colour</h3>' +
-        '<div class="colour-row">' + colourSwatches + '</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">' + colourSwatches + '</div>' +
         '</div>' +
         '<div class="emoji-section" style="margin-top:14px;">' +
-        '<h3>Your emoji</h3>' +
-        '<p style="font-size:13px;color:var(--mut);margin:0 0 10px;">Earn more in surprise drops after games!</p>' +
-        '<div class="emoji-grid">' + emojiButtons + '</div>' +
-        (current ? '<button class="btn btn-ghost" id="ar-remove-emoji" style="margin-top:14px;width:100%;">Use initials instead</button>' : '') +
+        '<h3>Choose your emoji</h3>' +
+        categoryHtml +
         '</div>';
 
       container.querySelectorAll('.colour-swatch').forEach(function(btn) {
@@ -3495,7 +3513,7 @@
         });
       });
 
-      container.querySelectorAll('.emoji-btn:not(.emoji-locked)').forEach(function(btn) {
+      container.querySelectorAll('.emoji-btn').forEach(function(btn) {
         btn.addEventListener('click', function() {
           var chosen = btn.getAttribute('data-emoji');
           p.avatar.emoji = (p.avatar.emoji === chosen) ? null : chosen;
@@ -3503,15 +3521,6 @@
           renderAvatarRoom();
         });
       });
-
-      var removeBtn = $('ar-remove-emoji');
-      if (removeBtn) {
-        removeBtn.addEventListener('click', function() {
-          p.avatar.emoji = null;
-          saveActiveProfile();
-          renderAvatarRoom();
-        });
-      }
     }
 
     // -----------------------------------
