@@ -1,0 +1,2931 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>Spell Dash</title>
+
+  <!-- Google Fonts: Fredoka One for headings, Nunito for body/UI -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================================
+       Design tokens — pastel palette, three steps per family.
+       ============================================================ */
+    :root {
+      --pk:  #FFB3C6;  --pk2: #FF85A1;  --pk3: #CC3060;
+      --pu:  #D4AAEE;  --pu2: #B07DE0;  --pu3: #7830B8;
+      --bl:  #A8D8F0;  --bl2: #5CB8E8;  --bl3: #2878B8;
+      --ye:  #FFEC80;  --ye2: #F0BA00;  --ye3: #806800;
+      --gn:  #B8EED8;  --gn2: #3CB87A;  --gn3: #1A6840;
+
+      --bg:  #FDF0F6;
+      --txt: #381540;
+      --mut: #9070A0;
+      --wh:  #FFFFFF;
+
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 10px;
+
+      --shadow-soft: 0 6px 18px rgba(120, 48, 184, 0.12);
+      --shadow-pop:  0 10px 28px rgba(204, 48, 96, 0.18);
+
+      --tap-min: 54px;
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+      color: var(--txt);
+      background: var(--bg);
+      overscroll-behavior: none;
+    }
+
+    /* Pastel radial gradient — pink top-left, blue bottom-right, purple centre. */
+    body {
+      background:
+        radial-gradient(circle at 12% 8%,  var(--pk)  0%, transparent 45%),
+        radial-gradient(circle at 88% 92%, var(--bl)  0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, var(--pu)  0%, transparent 55%),
+        var(--bg);
+      min-height: 100vh;
+    }
+
+    /* App shell — iPad-first, capped width, centred. */
+    .app {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 20px 18px 40px;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* ============================================================
+       Typography helpers
+       ============================================================ */
+    h1, h2, h3 {
+      font-family: 'Fredoka One', 'Nunito', sans-serif;
+      font-weight: 400;
+      letter-spacing: 0.2px;
+      margin: 0 0 12px;
+      color: var(--pu3);
+    }
+    h1 { font-size: 34px; }
+    h2 { font-size: 24px; }
+    h3 { font-size: 18px; color: var(--txt); }
+
+    p { line-height: 1.45; }
+
+    .muted { color: var(--mut); }
+    .center { text-align: center; }
+
+    /* ============================================================
+       Buttons & inputs — large, touch-friendly.
+       ============================================================ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: var(--tap-min);
+      padding: 0 22px;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: var(--shadow-soft);
+      transition: transform 80ms ease, box-shadow 120ms ease;
+      color: var(--wh);
+      background: linear-gradient(180deg, var(--pk2), var(--pk3));
+    }
+    .btn:active { transform: translateY(1px) scale(0.99); box-shadow: var(--shadow-pop); }
+
+    .btn-secondary {
+      background: var(--wh);
+      color: var(--pu3);
+      border: 2px solid var(--pu);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--pu3);
+      box-shadow: none;
+      font-weight: 700;
+    }
+
+    .btn-back {
+      min-height: 44px;
+      padding: 0 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.85);
+      color: var(--pu3);
+      font-weight: 800;
+      box-shadow: var(--shadow-soft);
+      border: none;
+      font-size: 16px;
+      margin-bottom: 16px;
+      cursor: pointer;
+    }
+
+    .input {
+      width: 100%;
+      min-height: var(--tap-min);
+      padding: 0 16px;
+      border-radius: var(--radius-md);
+      border: 2px solid var(--pu);
+      background: var(--wh);
+      font-family: 'Nunito', sans-serif;
+      font-size: 18px;
+      color: var(--txt);
+      outline: none;
+    }
+    .input:focus { border-color: var(--pu2); box-shadow: 0 0 0 4px rgba(176,125,224,0.18); }
+
+    /* ============================================================
+       Screen container — only the active screen is shown.
+       ============================================================ */
+    .screen { display: none; animation: fadeIn 220ms ease-out; }
+    .screen.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============================================================
+       Screen 1 — Profile select
+       ============================================================ */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 28px;
+    }
+
+    .profile-card {
+      background: rgba(255,255,255,0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: var(--radius-lg);
+      padding: 22px 14px 18px;
+      text-align: center;
+      box-shadow: var(--shadow-soft);
+      cursor: pointer;
+      user-select: none;
+      transition: transform 120ms ease;
+      min-height: 220px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .profile-card:active { transform: scale(0.98); }
+
+    .avatar-circle {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Fredoka One', sans-serif;
+      font-size: 42px;
+      color: var(--wh);
+      box-shadow: var(--shadow-pop);
+    }
+    .avatar-pink   { background: linear-gradient(135deg, var(--pk2), var(--pk3)); }
+    .avatar-blue   { background: linear-gradient(135deg, var(--bl2), var(--bl3)); }
+    .avatar-purple { background: linear-gradient(135deg, var(--pu2), var(--pu3)); }
+    .avatar-green  { background: linear-gradient(135deg, var(--gn2), var(--gn3)); }
+
+    .profile-name {
+      font-family: 'Fredoka One', sans-serif;
+      font-size: 22px;
+      color: var(--pu3);
+    }
+    .profile-sub { font-size: 13px; color: var(--mut); }
+
+    .name-entry {
+      background: rgba(255,255,255,0.9);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      margin-top: 18px;
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .tagline {
+      text-align: center;
+      color: var(--pu3);
+      font-weight: 700;
+      margin: 4px 0 18px;
+    }
+
+    /* ============================================================
+       Screen 2 — Home
+       ============================================================ */
+    .home-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(255,255,255,0.75);
+      border-radius: var(--radius-lg);
+      padding: 14px 16px;
+      box-shadow: var(--shadow-soft);
+      margin-bottom: 16px;
+    }
+    .home-header .avatar-circle { width: 64px; height: 64px; font-size: 26px; }
+    .home-header .who { display: flex; flex-direction: column; }
+    .home-header .who .profile-name { font-size: 20px; }
+    .home-header .who .profile-sub { font-size: 12px; }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .coin-card,
+    .gem-card {
+      background: rgba(255,255,255,0.85);
+      border-radius: var(--radius-lg);
+      padding: 14px 16px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .coin-amount {
+      font-family: 'Fredoka One', sans-serif;
+      font-size: 32px;
+      color: var(--ye3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .progress-track {
+      height: 10px;
+      background: rgba(120,48,184,0.12);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--ye2), var(--pk2));
+      width: 0%;
+      transition: width 300ms ease;
+    }
+    .progress-label {
+      font-size: 12px;
+      color: var(--mut);
+      margin-top: 6px;
+    }
+
+    .gem-card { display: flex; flex-direction: column; gap: 8px; }
+    .gem-amount {
+      font-family: 'Fredoka One', sans-serif;
+      font-size: 24px;
+      color: var(--pu3);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .streak {
+      font-weight: 800;
+      color: var(--pk3);
+      display: flex; align-items: center; gap: 6px;
+      font-size: 16px;
+    }
+
+    .tile-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .tile {
+      background: rgba(255,255,255,0.9);
+      border: none;
+      border-radius: var(--radius-lg);
+      padding: 18px 14px;
+      min-height: 110px;
+      box-shadow: var(--shadow-soft);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      text-align: left;
+      transition: transform 120ms ease;
+      font-family: 'Nunito', sans-serif;
+    }
+    .tile:active { transform: scale(0.98); }
+    .tile .icon { font-size: 36px; }
+    .tile .label {
+      font-family: 'Fredoka One', sans-serif;
+      font-size: 20px;
+      color: var(--pu3);
+    }
+    .tile .desc { font-size: 13px; color: var(--mut); }
+
+    .tile.t-play     { background: linear-gradient(160deg, #FFFFFF 60%, var(--pk)); }
+    .tile.t-sent     { background: linear-gradient(160deg, #FFFFFF 60%, var(--bl)); }
+    .tile.t-read     { background: linear-gradient(160deg, #FFFFFF 60%, var(--gn)); }
+    .tile.t-coins    { background: linear-gradient(160deg, #FFFFFF 60%, var(--ye)); }
+
+    .avatar-room {
+      margin-top: 12px;
+      background: rgba(255,255,255,0.85);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .avatar-room .icon { font-size: 30px; }
+    .avatar-room .label {
+      font-family: 'Fredoka One', sans-serif;
+      font-size: 18px;
+      color: var(--pu3);
+    }
+    .avatar-room .desc { font-size: 13px; color: var(--mut); }
+
+    .week-track {
+      margin-top: 16px;
+      background: rgba(255,255,255,0.7);
+      border-radius: var(--radius-lg);
+      padding: 14px;
+      box-shadow: var(--shadow-soft);
+    }
+    .week-track h3 { margin-bottom: 8px; }
+    .dot-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 6px 2px 4px;
+      scrollbar-width: none;
+    }
+    .dot-row::-webkit-scrollbar { display: none; }
+    .week-dot {
+      flex: 0 0 auto;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(176,125,224,0.25);
+      border: 2px solid rgba(176,125,224,0.4);
+    }
+    .week-dot.done   { background: var(--gn2); border-color: var(--gn3); }
+    .week-dot.active { background: var(--pk2); border-color: var(--pk3); transform: scale(1.15); }
+
+    .drops-area {
+      margin-top: 12px;
+      min-height: 6px;
+    }
+    .drop-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--ye);
+      color: var(--ye3);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 13px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    /* ============================================================
+       Stub placeholder card for not-yet-built screens.
+       ============================================================ */
+    .stub {
+      background: rgba(255,255,255,0.85);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      box-shadow: var(--shadow-soft);
+      text-align: center;
+    }
+    .stub h2 { color: var(--pu3); }
+    .stub p  { color: var(--mut); }
+
+    /* ============================================================
+       Stage 2/3 — Week badge, play hub, game screen.
+       ============================================================ */
+
+    /* Coming-soon week dot — dashed outline. */
+    .week-dot.coming-soon {
+      background: transparent;
+      border: 2px dashed rgba(176,125,224,0.45);
+    }
+
+    /* Week badge below the dot track on Home. */
+    .week-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(212,170,238,0.25));
+      border-radius: var(--radius-lg);
+      padding: 14px 16px;
+      margin-top: 12px;
+      box-shadow: var(--shadow-soft);
+      border: 2px solid rgba(176,125,224,0.2);
+    }
+    .wb-emoji { font-size: 30px; flex: 0 0 auto; }
+    .wb-text  { display: flex; flex-direction: column; gap: 2px; }
+    .wb-text strong { font-family: 'Fredoka One', sans-serif; font-size: 16px; color: var(--pu3); }
+    .wb-text span   { font-size: 13px; color: var(--mut); }
+
+    /* ---- Play hub ---- */
+    .play-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .play-tile {
+      background: rgba(255,255,255,0.92);
+      border: none;
+      border-radius: var(--radius-lg);
+      padding: 20px 16px;
+      min-height: 150px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      text-align: left;
+      box-shadow: var(--shadow-soft);
+      transition: transform 120ms ease;
+      font-family: 'Nunito', sans-serif;
+    }
+    .play-tile:active   { transform: scale(0.97); }
+    .play-tile:disabled { opacity: 0.5; cursor: default; }
+    .pt-icon  { font-size: 34px; }
+    .pt-label { font-family: 'Fredoka One', sans-serif; font-size: 18px; color: var(--pu3); }
+    .pt-sub   { font-size: 13px; color: var(--mut); line-height: 1.3; }
+    .pt-coins { font-size: 12px; color: var(--ye3); font-weight: 800; margin-top: auto; padding-top: 6px; }
+    .pt-week   { background: linear-gradient(150deg, #fff 50%, var(--pk)  140%); }
+    .pt-surp   { background: linear-gradient(150deg, #fff 50%, var(--pu)  140%); }
+    .pt-prob   { background: linear-gradient(150deg, #fff 50%, var(--ye)  140%); }
+    .pt-choose { background: linear-gradient(150deg, #fff 50%, var(--bl)  140%); }
+
+    /* ---- Sound picker ---- */
+    .sound-picker { margin-top: 18px; background: rgba(255,255,255,0.96); border-radius: var(--radius-lg); padding: 18px; box-shadow: var(--shadow-pop); }
+    .sound-picker h3 { margin-bottom: 12px; }
+    .sound-picker.hidden { display: none; }
+    .picker-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .picker-card {
+      border: none;
+      background: rgba(212,170,238,0.15);
+      border-radius: var(--radius-md);
+      padding: 14px 12px;
+      min-height: 80px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      box-shadow: var(--shadow-soft);
+      transition: transform 100ms ease;
+      font-family: 'Nunito', sans-serif;
+    }
+    .picker-card:active { transform: scale(0.97); background: var(--pu); color: #fff; }
+    .pc-icon { font-size: 24px; }
+    .pc-name { font-size: 14px; font-weight: 700; color: var(--pu3); line-height: 1.25; }
+
+    /* ---- Game screen ---- */
+    #s-game { padding-bottom: 60px; }
+
+    .phase-dots { display: flex; justify-content: center; gap: 8px; margin-bottom: 16px; }
+    .phase-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: rgba(176,125,224,0.2);
+      border: 2px solid rgba(176,125,224,0.35);
+      transition: all 200ms ease;
+    }
+    .phase-dot.pd-active { background: var(--pu2); border-color: var(--pu3); transform: scale(1.35); }
+    .phase-dot.pd-done   { background: var(--gn2); border-color: var(--gn3); }
+
+    .game-content { display: flex; flex-direction: column; gap: 12px; }
+
+    .game-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255,255,255,0.82);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      box-shadow: var(--shadow-soft);
+    }
+    .gh-sound { font-family: 'Fredoka One', sans-serif; font-size: 17px; color: var(--pu3); }
+    .gh-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+    .gh-stars { font-size: 20px; letter-spacing: 1px; }
+    .coin-timer { font-size: 12px; font-weight: 700; color: var(--ye3); background: var(--ye); padding: 3px 9px; border-radius: 999px; }
+    .score-badge { text-align: center; font-size: 13px; color: var(--mut); font-weight: 700; }
+
+    /* ---- Comparison panel ---- */
+    .compare-panel { background: rgba(255,255,255,0.96); border-radius: var(--radius-lg); padding: 20px 18px; box-shadow: var(--shadow-soft); display: flex; flex-direction: column; gap: 12px; }
+    .compare-cue   { font-size: 15px; color: var(--mut); font-style: italic; margin: 0; }
+    .compare-title { font-family: 'Fredoka One', sans-serif; font-size: 20px; color: var(--pu3); }
+    .compare-teams { display: flex; gap: 8px; flex-wrap: wrap; }
+    .compare-team  { flex: 1 1 80px; border-radius: var(--radius-sm); padding: 10px; display: flex; flex-direction: column; gap: 2px; font-size: 13px; }
+    .compare-team strong { font-size: 18px; font-family: 'Fredoka One', sans-serif; }
+    .compare-words { display: flex; gap: 8px; flex-wrap: wrap; }
+    .compare-word  { border: none; background: rgba(176,125,224,0.12); border-radius: var(--radius-sm); padding: 8px 14px; min-height: 44px; font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 16px; color: var(--pu3); cursor: pointer; }
+    .compare-word:active { background: var(--pu2); color: #fff; }
+    .compare-lesson { font-size: 14px; color: var(--txt); background: var(--ye); border-radius: var(--radius-sm); padding: 10px 12px; margin: 0; }
+    #compare-go { width: 100%; }
+
+    /* ---- Game card (shared by choose + fix rounds) ---- */
+    .game-card {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      padding: 22px 18px 18px;
+      box-shadow: var(--shadow-pop);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .word-display {
+      font-family: 'Fredoka One', sans-serif;
+      font-size: 46px;
+      color: var(--pu3);
+      text-align: center;
+      letter-spacing: 2px;
+      line-height: 1.1;
+    }
+    .word-display .gap { color: var(--pk3); font-style: italic; }
+    .speaker-btn { border: none; background: linear-gradient(135deg, var(--bl), var(--bl2)); border-radius: 50%; width: 56px; height: 56px; font-size: 26px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-soft); flex-shrink: 0; }
+    .speaker-btn:active { transform: scale(0.92); }
+    .word-hint { font-size: 15px; color: var(--mut); font-style: italic; text-align: center; margin: 0; }
+
+    /* Team answer buttons */
+    .team-grid-row { display: flex; gap: 10px; width: 100%; flex-wrap: wrap; }
+    .team-grid-2x2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+    .team-btn {
+      border: none;
+      border-radius: var(--radius-md);
+      min-height: var(--tap-min);
+      padding: 10px 14px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      box-shadow: var(--shadow-soft);
+      transition: transform 100ms ease;
+      font-family: 'Nunito', sans-serif;
+      flex: 1 1 0;
+    }
+    .team-btn:active   { transform: scale(0.96); }
+    .team-btn:disabled { opacity: 0.45; }
+    .team-btn strong   { font-family: 'Fredoka One', sans-serif; font-size: 22px; display: block; }
+    .team-btn small    { font-size: 11px; line-height: 1.3; }
+
+    /* Fix Dad mode */
+    .fix-label    { font-size: 12px; font-weight: 800; color: var(--mut); text-transform: uppercase; letter-spacing: 1px; }
+    .fix-misspell { font-family: 'Fredoka One', sans-serif; font-size: 38px; color: var(--pk3); text-decoration: line-through; text-decoration-color: var(--pk2); text-align: center; }
+    .fix-grid     { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+    .fix-opt      { border: 2px solid rgba(176,125,224,0.3); background: rgba(255,255,255,0.95); border-radius: var(--radius-md); min-height: var(--tap-min); padding: 8px 12px; cursor: pointer; font-family: 'Fredoka One', sans-serif; font-size: 20px; color: var(--pu3); display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-soft); transition: transform 100ms ease; }
+    .fix-opt:active   { transform: scale(0.97); background: var(--pu); color: #fff; border-color: var(--pu3); }
+    .fix-opt:disabled { opacity: 0.45; }
+
+    /* Feedback bubble */
+    .feedback-bubble { border-radius: var(--radius-md); padding: 12px 16px; font-weight: 700; font-size: 15px; text-align: center; animation: feedPop 180ms ease-out; }
+    .feedback-correct { background: var(--gn); color: var(--gn3); border: 2px solid var(--gn2); }
+    .feedback-wrong   { background: var(--pk); color: var(--pk3); border: 2px solid var(--pk2); }
+    @keyframes feedPop { from { transform: scale(0.88); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    /* Say Why */
+    .say-why-card { background: rgba(255,255,255,0.96); border-radius: var(--radius-lg); padding: 16px; box-shadow: var(--shadow-soft); animation: fadeIn 200ms ease-out; }
+    .say-why-q    { font-size: 15px; color: var(--txt); margin: 0 0 10px; text-align: center; }
+    .say-why-opts { display: flex; flex-direction: column; gap: 8px; }
+    .say-why-btn  { border: 2px solid var(--pu); background: rgba(212,170,238,0.1); border-radius: var(--radius-md); min-height: var(--tap-min); padding: 0 14px; cursor: pointer; font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 15px; color: var(--pu3); text-align: left; transition: background 100ms; }
+    .say-why-btn:active { background: var(--pu2); color: #fff; border-color: var(--pu3); }
+
+    /* Done screen */
+    .done-screen { background: rgba(255,255,255,0.96); border-radius: var(--radius-lg); padding: 28px 20px; box-shadow: var(--shadow-pop); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+    .done-stars  { font-size: 40px; letter-spacing: 4px; }
+    .done-msg    { font-size: 26px; color: var(--pu3); margin: 0; }
+    .done-score  { font-size: 16px; color: var(--mut); margin: 0; }
+    .done-coins  { font-size: 16px; color: var(--ye3); margin: 0; font-weight: 700; }
+    .cap-msg     { font-size: 14px; color: var(--pk3); font-style: italic; margin: 0; }
+    #done-home, #done-again { width: 100%; }
+
+    /* Surprise drop */
+    .drop-modal { background: linear-gradient(135deg, var(--pu), var(--pk)); border-radius: var(--radius-lg); padding: 18px; color: #fff; width: 100%; text-align: center; }
+    .drop-modal p { margin: 0; font-weight: 700; font-size: 15px; }
+    .drop-modal small { font-weight: 400; opacity: 0.88; }
+    .drop-box { font-size: 46px; animation: dropBounce 600ms ease infinite alternate; display: block; }
+    @keyframes dropBounce { from { transform: translateY(0); } to { transform: translateY(-8px); } }
+
+    /* ============================================================
+       Stage 4 — Sentences, Reading, Coins, Ask Dad
+       ============================================================ */
+
+    /* ---- Sentences ---- */
+    .sentences-screen { display: flex; flex-direction: column; gap: 14px; }
+    .starter-card { background: rgba(255,255,255,0.96); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-pop); display: flex; flex-direction: column; gap: 10px; }
+    .starter-label { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--mut); }
+    .starter-text { font-family: 'Fredoka One', sans-serif; font-size: 22px; color: var(--pu3); margin: 0; }
+    .sentence-input { width: 100%; min-height: 80px; padding: 12px 16px; border-radius: var(--radius-md); border: 2px solid var(--pu); background: var(--wh); font-family: 'Nunito', sans-serif; font-size: 17px; color: var(--txt); outline: none; resize: none; }
+    .sentence-input:focus { border-color: var(--pu2); box-shadow: 0 0 0 4px rgba(176,125,224,0.18); }
+    .star-ladder { display: flex; gap: 6px; }
+    .sl-step { flex: 1; height: 8px; border-radius: 999px; background: rgba(176,125,224,0.18); transition: background 220ms ease; }
+    .sl-step.earned { background: var(--ye2); }
+    .star-score { font-family: 'Fredoka One', sans-serif; font-size: 22px; color: var(--ye3); text-align: center; }
+    .sentence-tip { font-size: 13px; color: var(--mut); font-style: italic; margin: 0; }
+    .sentences-done { background: rgba(255,255,255,0.96); border-radius: var(--radius-lg); padding: 28px 20px; box-shadow: var(--shadow-pop); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+
+    /* ---- Reading ---- */
+    .tab-row { display: flex; gap: 8px; margin-bottom: 16px; }
+    .tab-btn { flex: 1; min-height: var(--tap-min); border: 2px solid var(--pu); border-radius: var(--radius-md); background: var(--wh); color: var(--pu3); font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 16px; cursor: pointer; transition: all 120ms ease; }
+    .tab-btn.active { background: var(--pu2); color: #fff; border-color: var(--pu3); }
+    .reading-form { background: rgba(255,255,255,0.96); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-soft); display: flex; flex-direction: column; gap: 12px; }
+    .field-label { font-size: 13px; font-weight: 800; color: var(--mut); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+    .reading-preview { background: var(--ye); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 14px; font-weight: 700; color: var(--ye3); text-align: center; }
+    .reading-entry { background: rgba(255,255,255,0.96); border-radius: var(--radius-md); padding: 14px 16px; box-shadow: var(--shadow-soft); display: flex; justify-content: space-between; align-items: center; gap: 10px; border-left: 4px solid var(--gn2); margin-bottom: 10px; }
+    .re-title { font-weight: 800; color: var(--txt); font-size: 16px; }
+    .re-meta { font-size: 13px; color: var(--mut); }
+    .re-coins { font-size: 13px; font-weight: 800; color: var(--ye3); flex-shrink: 0; }
+
+    /* ---- Coins ---- */
+    .coin-hero { background: linear-gradient(135deg, var(--ye), var(--ye2)); border-radius: var(--radius-lg); padding: 28px 20px; text-align: center; box-shadow: var(--shadow-pop); }
+    .coin-hero-amt { font-family: 'Fredoka One', sans-serif; font-size: 64px; color: var(--ye3); line-height: 1; }
+    .coin-hero-label { font-size: 16px; color: var(--ye3); opacity: 0.85; margin-top: 4px; }
+    .coin-section { background: rgba(255,255,255,0.9); border-radius: var(--radius-lg); padding: 18px; box-shadow: var(--shadow-soft); margin-top: 14px; }
+    .coin-section h3 { margin-bottom: 12px; }
+    .coin-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(176,125,224,0.12); font-size: 15px; }
+    .coin-row:last-child { border-bottom: none; }
+    .coin-row-val { font-weight: 800; color: var(--ye3); }
+    .gems-display { display: flex; align-items: center; gap: 12px; }
+    .gems-big { font-family: 'Fredoka One', sans-serif; font-size: 36px; color: var(--pu3); }
+    .gems-sub { font-size: 13px; color: var(--mut); line-height: 1.5; }
+
+    /* ---- Ask Dad ---- */
+    .askdad-card { background: rgba(255,255,255,0.96); border-radius: var(--radius-lg); padding: 24px 20px; box-shadow: var(--shadow-pop); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+    .askdad-emoji { font-size: 56px; }
+    .askdad-title { font-family: 'Fredoka One', sans-serif; font-size: 26px; color: var(--pu3); margin: 0; }
+    .askdad-body { font-size: 16px; color: var(--txt); line-height: 1.45; margin: 0; }
+    .askdad-pending { background: var(--ye); border-radius: var(--radius-md); padding: 12px 18px; font-size: 15px; font-weight: 700; color: var(--ye3); width: 100%; text-align: center; }
+    .reward-opts { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+    .reward-opt { background: rgba(212,170,238,0.15); border: 2px solid var(--pu); border-radius: var(--radius-md); min-height: var(--tap-min); padding: 0 16px; cursor: pointer; font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 16px; color: var(--pu3); text-align: left; display: flex; justify-content: space-between; align-items: center; width: 100%; transition: background 100ms; }
+    .reward-opt:active:not([disabled]) { background: var(--pu2); color: #fff; border-color: var(--pu3); }
+    .reward-cost { font-size: 14px; font-weight: 800; color: var(--ye3); }
+    .confetti-area { position: relative; overflow: hidden; }
+    .conf-bit { position: absolute; width: 8px; height: 8px; border-radius: 2px; }
+    @keyframes confettiFall { 0% { transform: translateY(-20px) rotate(0deg); opacity: 1; } 100% { transform: translateY(140px) rotate(360deg); opacity: 0; } }
+
+    /* ============================================================
+       Stage 5 — Word Wall, Settings, Polish
+       ============================================================ */
+
+    /* ---- Home — secondary nav row ---- */
+    .home-nav-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+    .home-nav-btn { background: rgba(255,255,255,0.88); border: none; border-radius: var(--radius-lg); padding: 14px 14px; min-height: var(--tap-min); cursor: pointer; display: flex; align-items: center; gap: 10px; box-shadow: var(--shadow-soft); transition: transform 120ms ease; font-family: 'Nunito', sans-serif; text-align: left; }
+    .home-nav-btn:active { transform: scale(0.98); }
+    .hnb-icon  { font-size: 26px; }
+    .hnb-label { font-family: 'Fredoka One', sans-serif; font-size: 17px; color: var(--pu3); display: block; }
+    .hnb-desc  { font-size: 12px; color: var(--mut); display: block; }
+
+    /* ---- Word Wall ---- */
+    .wall-summary { background: rgba(255,255,255,0.9); border-radius: var(--radius-lg); padding: 14px 18px; box-shadow: var(--shadow-soft); margin-bottom: 16px; text-align: center; }
+    .wall-count { font-family: 'Fredoka One', sans-serif; font-size: 26px; color: var(--pu3); }
+    .wall-section { background: rgba(255,255,255,0.85); border-radius: var(--radius-lg); padding: 18px; box-shadow: var(--shadow-soft); margin-bottom: 14px; }
+    .wall-section-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .wall-section-emoji { font-size: 26px; }
+    .wall-section-name { font-family: 'Fredoka One', sans-serif; font-size: 17px; color: var(--pu3); }
+    .wall-team { margin-bottom: 10px; }
+    .wall-team:last-child { margin-bottom: 0; }
+    .wall-team-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--mut); margin-bottom: 6px; }
+    .word-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .word-chip { border-radius: 999px; padding: 6px 14px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 14px; display: inline-flex; align-items: center; }
+    .wall-empty-sound { color: var(--mut); font-size: 13px; font-style: italic; margin: 0; }
+
+    /* ---- Settings ---- */
+    .settings-section { background: rgba(255,255,255,0.9); border-radius: var(--radius-lg); padding: 18px; box-shadow: var(--shadow-soft); margin-bottom: 14px; }
+    .settings-section h3 { margin-bottom: 14px; }
+    .settings-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid rgba(176,125,224,0.12); }
+    .settings-row:last-child { border-bottom: none; }
+    .settings-label { font-size: 15px; font-weight: 700; color: var(--txt); }
+    .settings-sub { font-size: 12px; color: var(--mut); }
+    .level-tabs { display: flex; gap: 8px; }
+    .level-tab { flex: 1; min-height: 44px; border: 2px solid var(--pu); border-radius: var(--radius-md); background: var(--wh); color: var(--pu3); font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 14px; cursor: pointer; transition: all 120ms ease; }
+    .level-tab.active { background: var(--pu2); color: #fff; border-color: var(--pu3); }
+    .week-grid-sett { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; }
+    .week-card { border: 2px solid var(--pu); border-radius: var(--radius-md); padding: 12px; cursor: pointer; background: rgba(212,170,238,0.1); transition: all 120ms ease; font-family: 'Nunito', sans-serif; }
+    .week-card.active { background: var(--pu2); color: #fff; border-color: var(--pu3); }
+    .week-card.coming-soon { opacity: 0.45; cursor: default; border-style: dashed; }
+    .wc-emoji { font-size: 22px; display: block; }
+    .wc-label { font-family: 'Fredoka One', sans-serif; font-size: 15px; display: block; margin-top: 4px; }
+    .wc-sub { font-size: 12px; color: var(--mut); display: block; }
+    .week-card.active .wc-sub { color: rgba(255,255,255,0.8); }
+    .custom-word-row { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid rgba(176,125,224,0.1); }
+    .custom-word-row:last-child { border-bottom: none; }
+    .cw-text { flex: 1; font-weight: 700; color: var(--txt); font-size: 15px; }
+    .cw-meta { font-size: 12px; color: var(--mut); }
+    .del-btn { border: none; background: var(--pk); color: var(--pk3); border-radius: 50%; width: 32px; height: 32px; cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .del-btn:active { background: var(--pk2); }
+    .danger-zone { border: 2px solid rgba(204,48,96,0.3) !important; }
+    .info-card { background: rgba(212,170,238,0.12); border-radius: var(--radius-md); padding: 14px 16px; font-size: 14px; color: var(--txt); line-height: 1.5; border-left: 4px solid var(--pu2); }
+    .redemption-row { padding: 8px 0; border-bottom: 1px solid rgba(176,125,224,0.1); font-size: 14px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .redemption-row:last-child { border-bottom: none; }
+    .input-sm { min-height: 44px; width: 90px; padding: 0 12px; border-radius: var(--radius-md); border: 2px solid var(--pu); background: var(--wh); font-family: 'Nunito', sans-serif; font-size: 16px; color: var(--txt); outline: none; text-align: center; }
+    .input-sm:focus { border-color: var(--pu2); box-shadow: 0 0 0 3px rgba(176,125,224,0.15); }
+    .add-custom-form { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(176,125,224,0.15); }
+    .select-input { min-height: 44px; padding: 0 12px; border-radius: var(--radius-md); border: 2px solid var(--pu); background: var(--wh); font-family: 'Nunito', sans-serif; font-size: 16px; color: var(--txt); outline: none; width: 100%; }
+    .select-input:focus { border-color: var(--pu2); }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <!-- ============================================================
+         SCREEN: Profile select (fully built in Stage 1)
+         ============================================================ -->
+    <section class="screen" id="s-profiles">
+      <h1 class="center">Spell Dash</h1>
+      <div class="tagline">Your ears hear it. Your spelling brain writes it.</div>
+      <h2 class="center" style="margin-top:18px;">Which one are you?</h2>
+
+      <div id="profile-grid" class="profile-grid"></div>
+      <div id="first-launch-entry"></div>
+    </section>
+
+    <!-- ============================================================
+         SCREEN: Home / Journey hub (structure built, stubs inside)
+         ============================================================ -->
+    <section class="screen" id="s-home">
+      <button class="btn-back" data-back="s-profiles">← Switch player</button>
+
+      <div class="home-header">
+        <div id="home-avatar" class="avatar-circle avatar-pink">??</div>
+        <div class="who">
+          <div id="home-name" class="profile-name">—</div>
+          <div class="profile-sub">Avatar coming soon ✨</div>
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <div class="coin-card">
+          <div class="coin-amount">🪙 <span id="home-coins">0</span></div>
+          <div class="progress-track">
+            <div id="home-progress" class="progress-fill"></div>
+          </div>
+          <div class="progress-label">
+            Today: <span id="home-daily-coins">0</span> / 20 coins
+          </div>
+        </div>
+        <div class="gem-card">
+          <div class="gem-amount">💎 <span id="home-gems">0</span></div>
+          <div class="streak">🔥 <span id="home-streak">0</span> day streak</div>
+        </div>
+      </div>
+
+      <div class="tile-grid">
+        <button class="tile t-play"  data-go="s-play">
+          <span class="icon">🎮</span>
+          <span class="label">Play</span>
+          <span class="desc">Spelling round</span>
+        </button>
+        <button class="tile t-sent"  data-go="s-sentences">
+          <span class="icon">✍️</span>
+          <span class="label">Sentences</span>
+          <span class="desc">Use your words</span>
+        </button>
+        <button class="tile t-read"  data-go="s-reading">
+          <span class="icon">📖</span>
+          <span class="label">Reading</span>
+          <span class="desc">Log a book</span>
+        </button>
+        <button class="tile t-coins" data-go="s-coins">
+          <span class="icon">🪙</span>
+          <span class="label">Coins</span>
+          <span class="desc">Wallet & shop</span>
+        </button>
+      </div>
+
+      <button class="avatar-room" id="avatar-room-btn" type="button">
+        <span class="icon">🎀</span>
+        <span style="flex:1;">
+          <span class="label">Avatar Room</span><br />
+          <span class="desc" id="avatar-room-msg">Dress up coming soon</span>
+        </span>
+      </button>
+
+      <div class="week-track">
+        <h3>This week's journey</h3>
+        <div id="week-dots" class="dot-row"></div>
+      </div>
+
+      <div class="drops-area" id="drops-area"></div>
+
+      <div class="home-nav-row">
+        <button class="home-nav-btn" data-go="s-wall">
+          <span class="hnb-icon">🧱</span>
+          <span><span class="hnb-label">Word Wall</span><span class="hnb-desc">Words you've beaten</span></span>
+        </button>
+        <button class="home-nav-btn" data-go="s-settings">
+          <span class="hnb-icon">⚙️</span>
+          <span><span class="hnb-label">Settings</span><span class="hnb-desc">Week, level, custom words</span></span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Stub screens — content lands in later stages.
+         ============================================================ -->
+    <section class="screen" id="s-play">
+      <button class="btn-back" data-back="s-home">← Back</button>
+      <h2>Choose your game</h2>
+      <div class="play-grid">
+        <button class="play-tile pt-week" id="pt-thisweek" data-mode="thisweek">
+          <span class="pt-icon">📅</span>
+          <span class="pt-label">This Week</span>
+          <span class="pt-sub" id="pt-thisweek-sub">Loading…</span>
+          <span class="pt-coins">🪙 Earn up to 10 coins</span>
+        </button>
+        <button class="play-tile pt-surp" data-mode="surprise">
+          <span class="pt-icon">🎲</span>
+          <span class="pt-label">Surprise Me</span>
+          <span class="pt-sub">Random sound set</span>
+          <span class="pt-coins">🪙 Earn up to 10 coins</span>
+        </button>
+        <button class="play-tile pt-prob" id="pt-problems" data-mode="problems">
+          <span class="pt-icon">⚡</span>
+          <span class="pt-label">Problem Words</span>
+          <span class="pt-sub" id="pt-problems-sub">No problem words yet</span>
+          <span class="pt-coins">🪙 Earn up to 10 coins</span>
+        </button>
+        <button class="play-tile pt-choose" data-mode="choose">
+          <span class="pt-icon">🔍</span>
+          <span class="pt-label">Choose Your Sound</span>
+          <span class="pt-sub">All sound sets</span>
+          <span class="pt-coins">🪙 Earn up to 10 coins</span>
+        </button>
+      </div>
+      <div id="sound-picker" class="sound-picker hidden"></div>
+    </section>
+
+    <!-- s-game is fully rendered by JavaScript each session. -->
+    <section class="screen" id="s-game"></section>
+
+    <!-- s-sentences, s-reading, s-coins, s-askdad are fully JS-rendered (Stage 4). -->
+    <section class="screen" id="s-sentences"></section>
+    <section class="screen" id="s-reading"></section>
+    <section class="screen" id="s-coins"></section>
+    <section class="screen" id="s-askdad"></section>
+
+    <!-- s-wall and s-settings are fully JS-rendered (Stage 5). -->
+    <section class="screen" id="s-wall"></section>
+    <section class="screen" id="s-settings"></section>
+  </div>
+
+  <script>
+    // ============================================================
+    // Spell Dash — Stage 1 foundation.
+    // No game logic, no word data yet. Just profiles, navigation,
+    // voice setup, and the encouragement message bank.
+    // ============================================================
+
+    // -----------------------------------
+    // Storage helpers — single localStorage key.
+    // -----------------------------------
+    var STORAGE_KEY = 'spelldash-profiles';
+
+    // Default profile shape — used for fresh slots.
+    function freshProfile(name) {
+      return {
+        name: name || '',
+        avatar: {},
+        weekKey: '',
+        level: 'core',
+        minsPerPage: 1,
+        streak: 0,
+        lastPlayDate: null,
+        completedWeeks: [],
+        mistakes: [],
+        wall: {},
+        customWords: [],
+        economy: {
+          coins: 0,
+          gems: 0,
+          dailyCoins: 0,
+          dailyDate: null,
+          totalEarned: 0
+        },
+        coinHistory: [],
+        redemptions: [],
+        readingLog: [],
+        drops: []
+      };
+    }
+
+    // Always returns an array of length 2 (the two slots).
+    function loadProfiles() {
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return [null, null];
+        var data = JSON.parse(raw);
+        if (!Array.isArray(data)) return [null, null];
+        // Pad / trim to exactly two slots.
+        while (data.length < 2) data.push(null);
+        return data.slice(0, 2);
+      } catch (err) {
+        console.warn('[Spell Dash] Could not load profiles:', err);
+        return [null, null];
+      }
+    }
+
+    function saveProfiles(profiles) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(profiles));
+      } catch (err) {
+        console.warn('[Spell Dash] Could not save profiles:', err);
+      }
+    }
+
+    // -----------------------------------
+    // App state — kept simple at this stage.
+    // -----------------------------------
+    var state = {
+      profiles: loadProfiles(),
+      activeIndex: null
+    };
+
+    // -----------------------------------
+    // Encouragement message bank (Stage 1 init only — used in later stages).
+    // -----------------------------------
+    var CORRECT_MESSAGES = [
+      '🌟 Brilliant!',
+      '⭐ Correct!',
+      '✨ Nailed it!',
+      '🎉 Yes!',
+      '💜 Superstar!',
+      '🔥 On fire!',
+      '🏆 Champion!',
+      '⚡ Amazing!'
+    ];
+
+    // Wrong-answer text is always warm and explanatory.
+    // Format: "Good try — your ears did their job! [word] belongs with the [team] family: [family examples]"
+    function buildWrongMessage(word, team, familyExamples) {
+      return 'Good try — your ears did their job! ' +
+             word + ' belongs with the ' + team + ' family: ' + familyExamples;
+    }
+
+    var SESSION_COMPLETE_MESSAGES = [
+      'Amazing work!',
+      "You're a star!",
+      'Spelling superstar!',
+      'Brilliant effort!',
+      'You absolutely smashed it!'
+    ];
+
+    // -----------------------------------
+    // Australian voice setup.
+    // -----------------------------------
+    var ausVoice = null;
+    var voiceAvailable = ('speechSynthesis' in window);
+
+    function initVoice() {
+      if (!voiceAvailable) return;
+      var voices = speechSynthesis.getVoices();
+      ausVoice = voices.find(function (v) { return v.lang === 'en-AU' && v.localService; })
+              || voices.find(function (v) { return v.lang === 'en-AU'; })
+              || voices.find(function (v) { return v.lang.indexOf('en-') === 0 && v.localService; })
+              || voices.find(function (v) { return v.lang.indexOf('en') === 0; });
+    }
+
+    if (voiceAvailable) {
+      speechSynthesis.addEventListener('voiceschanged', initVoice);
+      initVoice();
+    }
+
+    // Speak helper — always tags Australian English.
+    // Hides speaker buttons gracefully if speechSynthesis is unavailable.
+    function speak(text, rate) {
+      if (!voiceAvailable) return;
+      try {
+        var u = new SpeechSynthesisUtterance(text);
+        u.lang = 'en-AU';
+        u.rate = (typeof rate === 'number') ? rate : 0.82;
+        if (ausVoice) u.voice = ausVoice;
+        speechSynthesis.cancel();
+        speechSynthesis.speak(u);
+      } catch (err) {
+        console.warn('[Spell Dash] speak failed:', err);
+      }
+    }
+
+    // If speech synthesis is missing, hide any element marked .speaker-btn.
+    if (!voiceAvailable) {
+      document.documentElement.classList.add('no-voice');
+      var styleEl = document.createElement('style');
+      styleEl.textContent = '.no-voice .speaker-btn { display: none !important; }';
+      document.head.appendChild(styleEl);
+    }
+
+    // -----------------------------------
+    // Tiny helpers
+    // -----------------------------------
+    function $(id) { return document.getElementById(id); }
+    function initialsOf(name) {
+      if (!name) return '??';
+      var parts = name.trim().split(/\s+/);
+      var first = parts[0] ? parts[0].charAt(0) : '';
+      var second = parts[1] ? parts[1].charAt(0) : (parts[0] && parts[0].length > 1 ? parts[0].charAt(1) : '');
+      return (first + second).toUpperCase();
+    }
+
+    var AVATAR_PALETTE = ['avatar-pink', 'avatar-blue', 'avatar-purple', 'avatar-green'];
+    function avatarClassFor(index) {
+      return AVATAR_PALETTE[index % AVATAR_PALETTE.length];
+    }
+
+    // -----------------------------------
+    // Navigation — single-source-of-truth.
+    // -----------------------------------
+    function showScreen(id) {
+      var screens = document.querySelectorAll('.screen');
+      for (var i = 0; i < screens.length; i++) {
+        screens[i].classList.toggle('active', screens[i].id === id);
+      }
+      if (id === 's-home')      renderHome();
+      if (id === 's-profiles')  renderProfiles();
+      if (id === 's-play')      renderPlayHub();
+      if (id === 's-sentences') renderSentencesScreen();
+      if (id === 's-reading')   renderReadingScreen();
+      if (id === 's-coins')     renderCoinsScreen();
+      if (id === 's-askdad')    renderAskDadScreen();
+      if (id === 's-wall')      renderWallScreen();
+      if (id === 's-settings')  renderSettingsScreen();
+      window.scrollTo(0, 0);
+    }
+
+    // Back-buttons & tile buttons wire up via data-attributes.
+    document.addEventListener('click', function (ev) {
+      var back = ev.target.closest('[data-back]');
+      if (back) {
+        showScreen(back.getAttribute('data-back'));
+        return;
+      }
+      var go = ev.target.closest('[data-go]');
+      if (go) {
+        showScreen(go.getAttribute('data-go'));
+        return;
+      }
+      if (ev.target.closest('#avatar-room-btn')) {
+        var msg = $('avatar-room-msg');
+        if (msg) msg.textContent = 'Coming in the next update! Keep earning gems.';
+      }
+    });
+
+    // -----------------------------------
+    // Screen 1 — Profile select rendering & long-press rename.
+    // -----------------------------------
+    function renderProfiles() {
+      var grid = $('profile-grid');
+      var entryWrap = $('first-launch-entry');
+      grid.innerHTML = '';
+      entryWrap.innerHTML = '';
+
+      var bothMissing = !state.profiles[0] && !state.profiles[1];
+
+      if (bothMissing) {
+        // First launch: ask for both names inline before showing the cards.
+        renderFirstLaunch(entryWrap);
+        return;
+      }
+
+      for (var i = 0; i < 2; i++) {
+        grid.appendChild(buildProfileCard(i));
+      }
+    }
+
+    function buildProfileCard(index) {
+      var profile = state.profiles[index];
+      var card = document.createElement('div');
+      card.className = 'profile-card';
+      card.setAttribute('role', 'button');
+      card.setAttribute('tabindex', '0');
+
+      if (profile) {
+        card.innerHTML =
+          '<div class="avatar-circle ' + avatarClassFor(index) + '">' + initialsOf(profile.name) + '</div>' +
+          '<div class="profile-name">' + escapeHtml(profile.name) + '</div>' +
+          '<div class="profile-sub">Avatar coming soon ✨</div>';
+      } else {
+        // Empty slot — let the user create a profile here.
+        card.innerHTML =
+          '<div class="avatar-circle ' + avatarClassFor(index) + '">+</div>' +
+          '<div class="profile-name">Add player</div>' +
+          '<div class="profile-sub">Tap to set up</div>';
+      }
+
+      // Tap = select / create. Long press = rename (only on populated slots).
+      attachProfileGestures(card, index);
+      return card;
+    }
+
+    // Long-press detection (500ms) without blocking normal taps.
+    function attachProfileGestures(card, index) {
+      var pressTimer = null;
+      var longFired = false;
+      var LONG_MS = 500;
+
+      function startPress() {
+        longFired = false;
+        clearTimeout(pressTimer);
+        pressTimer = setTimeout(function () {
+          longFired = true;
+          if (state.profiles[index]) {
+            promptRename(index);
+          }
+        }, LONG_MS);
+      }
+      function cancelPress() { clearTimeout(pressTimer); }
+      function endPress(ev) {
+        clearTimeout(pressTimer);
+        if (longFired) { ev.preventDefault(); return; }
+        handleProfileTap(index);
+      }
+
+      card.addEventListener('touchstart', startPress, { passive: true });
+      card.addEventListener('touchend', endPress);
+      card.addEventListener('touchcancel', cancelPress);
+      card.addEventListener('touchmove', cancelPress, { passive: true });
+
+      card.addEventListener('mousedown', startPress);
+      card.addEventListener('mouseup', endPress);
+      card.addEventListener('mouseleave', cancelPress);
+
+      card.addEventListener('keydown', function (ev) {
+        if (ev.key === 'Enter' || ev.key === ' ') {
+          ev.preventDefault();
+          handleProfileTap(index);
+        }
+      });
+    }
+
+    function handleProfileTap(index) {
+      if (!state.profiles[index]) {
+        // Empty slot — inline name entry.
+        var name = window.prompt('What name should we use?');
+        if (!name) return;
+        name = name.trim();
+        if (!name) return;
+        state.profiles[index] = freshProfile(name);
+        saveProfiles(state.profiles);
+        renderProfiles();
+        return;
+      }
+      state.activeIndex = index;
+      showScreen('s-home');
+    }
+
+    function promptRename(index) {
+      var current = state.profiles[index] ? state.profiles[index].name : '';
+      var next = window.prompt('Rename player', current);
+      if (next === null) return;
+      next = next.trim();
+      if (!next) return;
+      state.profiles[index].name = next;
+      saveProfiles(state.profiles);
+      renderProfiles();
+    }
+
+    // First-launch flow — collect both names before the picker appears.
+    function renderFirstLaunch(host) {
+      host.innerHTML =
+        '<div class="name-entry">' +
+        '  <h3 class="center">Welcome! Let\'s set up two players.</h3>' +
+        '  <input class="input" id="fl-name-1" placeholder="Player 1 name" maxlength="20" />' +
+        '  <input class="input" id="fl-name-2" placeholder="Player 2 name" maxlength="20" />' +
+        '  <button class="btn" id="fl-save">Start spelling →</button>' +
+        '</div>';
+
+      $('fl-save').addEventListener('click', function () {
+        var n1 = ($('fl-name-1').value || '').trim();
+        var n2 = ($('fl-name-2').value || '').trim();
+        if (!n1 && !n2) {
+          alert('Please enter at least one name.');
+          return;
+        }
+        state.profiles[0] = n1 ? freshProfile(n1) : null;
+        state.profiles[1] = n2 ? freshProfile(n2) : null;
+        saveProfiles(state.profiles);
+        renderProfiles();
+      });
+    }
+
+    // -----------------------------------
+    // Screen 2 — Home rendering (structure only; values from profile).
+    // -----------------------------------
+    function renderHome() {
+      var p = state.profiles[state.activeIndex];
+      if (!p) { showScreen('s-profiles'); return; }
+
+      $('home-name').textContent = p.name;
+      var av = $('home-avatar');
+      av.className = 'avatar-circle ' + avatarClassFor(state.activeIndex);
+      av.textContent = initialsOf(p.name);
+
+      var econ = p.economy || {};
+      $('home-coins').textContent = econ.coins || 0;
+      $('home-gems').textContent  = econ.gems  || 0;
+
+      var daily = econ.dailyCoins || 0;
+      $('home-daily-coins').textContent = daily;
+      var pct = Math.min(100, (daily / 20) * 100);
+      $('home-progress').style.width = pct + '%';
+
+      $('home-streak').textContent = p.streak || 0;
+
+      // Week dots populated from WEEKS array (Stage 2+).
+      renderWeekDots();
+      renderWeekBadge();
+
+      // Drops area — stub. Real drop rendering arrives later.
+      var dropsArea = $('drops-area');
+      dropsArea.innerHTML = '';
+      if (p.drops && p.drops.length > 0) {
+        var badge = document.createElement('div');
+        badge.className = 'drop-badge';
+        badge.textContent = '🎁 ' + p.drops.length + ' new drop' + (p.drops.length > 1 ? 's' : '');
+        dropsArea.appendChild(badge);
+      }
+
+      // Reset the avatar room hint each time we land here.
+      $('avatar-room-msg').textContent = 'Dress up coming soon';
+    }
+
+    // -----------------------------------
+    // Tiny HTML escaper for user-entered names.
+    // -----------------------------------
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, function (c) {
+        return ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;'
+        })[c];
+      });
+    }
+
+    // ============================================================
+    // Stage 2 — Sound data and week map.
+    // Stub sets: replace with full data when provided.
+    // ============================================================
+
+    var SOUNDS = {
+      'ai-ay-a_e': {
+        name: 'Long A (ai / ay / a_e)', emoji: '🐌',
+        teams: ['ai', 'ay', 'a_e'],
+        teamInfo: {
+          'ai':  { label: 'ai',  bg: '#FFB3C6', fg: '#CC3060', family: 'rain, train, snail, tail' },
+          'ay':  { label: 'ay',  bg: '#A8D8F0', fg: '#2878B8', family: 'play, day, stay, way' },
+          'a_e': { label: 'a_e', bg: '#D4AAEE', fg: '#7830B8', family: 'cake, made, name, game' }
+        },
+        compare: {
+          title: 'Three ways to write the long A sound',
+          words: ['rain', 'play', 'cake'],
+          lesson: 'ai sits in the middle of words. ay usually comes at the end. a_e uses a silent e at the end.'
+        },
+        cueLine: 'Can you hear the long A sound?',
+        sentenceStarters: ['On a rainy day I like to…', 'I made a huge…', 'We played a game of…'],
+        words: [
+          { w: 'rain',     team: 'ai',  lv: 'core',      hint: 'It falls from the sky on a cloudy day.',           ph: 'rayn' },
+          { w: 'train',    team: 'ai',  lv: 'core',      hint: 'You ride this on railway tracks.',                 ph: 'trayn' },
+          { w: 'tail',     team: 'ai',  lv: 'core',      hint: 'A dog wags this when happy.',                      ph: 'tale' },
+          { w: 'play',     team: 'ay',  lv: 'core',      hint: 'Children do this at the park.',                    ph: 'plae' },
+          { w: 'day',      team: 'ay',  lv: 'core',      hint: 'There are seven of these in a week.',              ph: 'dae' },
+          { w: 'stay',     team: 'ay',  lv: 'core',      hint: 'To remain in one place.',                          ph: 'stae' },
+          { w: 'cake',     team: 'a_e', lv: 'core',      hint: 'You eat this on a birthday.',                      ph: 'kaek' },
+          { w: 'make',     team: 'a_e', lv: 'core',      hint: 'To build or create something.',                    ph: 'maek' },
+          { w: 'name',     team: 'a_e', lv: 'core',      hint: 'What you are called.',                             ph: 'naem' },
+          { w: 'snail',    team: 'ai',  lv: 'challenge', hint: 'A slow creature that carries its house.',           ph: 'snayl' },
+          { w: 'crayon',   team: 'ay',  lv: 'challenge', hint: 'You colour with this waxy stick.',                 ph: 'craeun' },
+          { w: 'flame',    team: 'a_e', lv: 'challenge', hint: 'The glowing tip of a burning candle.',             ph: 'flaem' },
+          { w: 'campaign', team: 'ai',  lv: 'extension', hint: 'An organised effort to reach a goal.',             ph: 'campane' },
+          { w: 'display',  team: 'ay',  lv: 'extension', hint: 'To show something to others.',                     ph: 'displa' },
+          { w: 'pavement', team: 'a_e', lv: 'extension', hint: 'The hard surface you walk on beside a road.',      ph: 'pavemunt' }
+        ]
+      },
+      'ee-ea-e_e': {
+        name: 'Long E (ee / ea / e_e)', emoji: '🌿',
+        teams: ['ee', 'ea', 'e_e'],
+        teamInfo: {
+          'ee':  { label: 'ee',  bg: '#B8EED8', fg: '#1A6840', family: 'tree, feet, see, bee' },
+          'ea':  { label: 'ea',  bg: '#A8D8F0', fg: '#2878B8', family: 'read, beach, dream, team' },
+          'e_e': { label: 'e_e', bg: '#FFEC80', fg: '#806800', family: 'these, complete, theme' }
+        },
+        compare: {
+          title: 'Three ways to write the long E sound',
+          words: ['tree', 'beach', 'these'],
+          lesson: 'ee and ea are the most common. e_e is rarer and usually appears in longer words.'
+        },
+        cueLine: 'Listen for the long E — like saying "eee"!',
+        sentenceStarters: ['I love to read about…', 'At the beach we…', 'The green tree had…'],
+        words: [
+          { w: 'tree',        team: 'ee',  lv: 'core',      hint: 'A tall plant with branches and leaves.',        ph: 'trea' },
+          { w: 'feet',        team: 'ee',  lv: 'core',      hint: 'You stand and walk on these.',                  ph: 'feat' },
+          { w: 'see',         team: 'ee',  lv: 'core',      hint: 'To look at something with your eyes.',          ph: 'sea' },
+          { w: 'read',        team: 'ea',  lv: 'core',      hint: 'To look at words and understand them.',         ph: 'reed' },
+          { w: 'beach',       team: 'ea',  lv: 'core',      hint: 'Sand and water — great for summer holidays.',   ph: 'beech' },
+          { w: 'team',        team: 'ea',  lv: 'core',      hint: 'A group working or playing together.',          ph: 'teem' },
+          { w: 'these',       team: 'e_e', lv: 'core',      hint: 'Pointing to nearby things — not those ones.',   ph: 'theez' },
+          { w: 'queen',       team: 'ee',  lv: 'challenge', hint: 'A female ruler of a kingdom.',                  ph: 'kwean' },
+          { w: 'scream',      team: 'ea',  lv: 'challenge', hint: 'To yell very loudly.',                          ph: 'screem' },
+          { w: 'complete',    team: 'e_e', lv: 'challenge', hint: 'Finished — with nothing missing.',              ph: 'compleet' },
+          { w: 'achievement', team: 'ea',  lv: 'extension', hint: 'Something you worked hard to accomplish.',      ph: 'acheevment' },
+          { w: 'breathe',     team: 'ea',  lv: 'extension', hint: 'To take air in and out of your lungs.',         ph: 'breeth' }
+        ]
+      },
+      'er-ir-ur': {
+        name: 'Er sound (er / ir / ur)', emoji: '🐦',
+        teams: ['er', 'ir', 'ur'],
+        teamInfo: {
+          'er': { label: 'er', bg: '#FFB3C6', fg: '#CC3060', family: 'fern, her, term, verb' },
+          'ir': { label: 'ir', bg: '#A8D8F0', fg: '#2878B8', family: 'bird, girl, first, shirt' },
+          'ur': { label: 'ur', bg: '#D4AAEE', fg: '#7830B8', family: 'burn, turn, purple, turtle' }
+        },
+        compare: {
+          title: 'Three spellings for the same "er" sound',
+          words: ['fern', 'bird', 'burn'],
+          lesson: 'They all sound the same! er is most common. ir often comes before d and l. ur often comes before n.'
+        },
+        cueLine: 'These all make the same "er" sound — the tricky part is knowing which spelling!',
+        sentenceStarters: ['The bird flew over…', 'First she turned and then…', 'In her purple…'],
+        words: [
+          { w: 'fern',    team: 'er', lv: 'core',      hint: 'A leafy green plant that grows in the bush.',        ph: 'furn' },
+          { w: 'her',     team: 'er', lv: 'core',      hint: 'Belonging to a girl or woman.',                      ph: 'hur' },
+          { w: 'bird',    team: 'ir', lv: 'core',      hint: 'A feathered animal that usually flies.',             ph: 'burd' },
+          { w: 'girl',    team: 'ir', lv: 'core',      hint: 'A female child.',                                    ph: 'gurl' },
+          { w: 'first',   team: 'ir', lv: 'core',      hint: 'Number one — before everything else.',               ph: 'furst' },
+          { w: 'burn',    team: 'ur', lv: 'core',      hint: 'What fire does to something.',                       ph: 'bern' },
+          { w: 'turn',    team: 'ur', lv: 'core',      hint: 'To go around, or your go in a game.',                ph: 'tern' },
+          { w: 'purple',  team: 'ur', lv: 'core',      hint: 'A colour made by mixing red and blue.',              ph: 'perpul' },
+          { w: 'term',    team: 'er', lv: 'challenge', hint: 'A period of school — Australia has four a year.',    ph: 'turm' },
+          { w: 'twirl',   team: 'ir', lv: 'challenge', hint: 'To spin around gracefully.',                         ph: 'twerl' },
+          { w: 'urgent',  team: 'ur', lv: 'challenge', hint: 'Very important and needing quick action.',           ph: 'urgunt' },
+          { w: 'reverse', team: 'er', lv: 'extension', hint: 'To go or do something backwards.',                   ph: 'ruhvers' }
+        ]
+      }
+    };
+
+    var WEEKS = [
+      { weekKey: '2025-W01', label: 'Week 1', title: 'Long A sounds', soundId: 'ai-ay-a_e', emoji: '🐌', comingSoon: false },
+      { weekKey: '2025-W02', label: 'Week 2', title: 'Long E sounds', soundId: 'ee-ea-e_e', emoji: '🌿', comingSoon: false },
+      { weekKey: '2025-W03', label: 'Week 3', title: 'Er sound',      soundId: 'er-ir-ur',  emoji: '🐦', comingSoon: false },
+      { weekKey: '2025-W04', label: 'Week 4', title: 'More sounds',   soundId: null,         emoji: '🔒', comingSoon: true  },
+      { weekKey: '2025-W05', label: 'Week 5', title: 'Coming soon',   soundId: null,         emoji: '🔒', comingSoon: true  }
+    ];
+
+    // ============================================================
+    // Stage 3 — Play hub, full game screen, coin timer, streaks.
+    // ============================================================
+
+    // Sound IDs that show the comparison panel at session start.
+    var AMBIGUOUS_IDS = ['ai-ay-a_e', 'ee-ea-e_e', 'er-ir-ur', 'or-aw-ore', 'oa-ow-o_e', 'oi-oy'];
+
+    // Active game session — fully reset by startGame().
+    var gameSession = {
+      soundId: null, sound: null, mode: null,
+      words: [], index: 0, phase: 'warmup',
+      wrongThisWord: false, wrongCount: 0, correctFirst: 0,
+      wrongWords: [], fixWords: [], fixIndex: 0,
+      sessionCoins: 0, coinSeconds: 0,
+      coinTimerInterval: null, lastActiveMs: 0,
+      sessionDate: null
+    };
+
+    // ---- Small utilities ----------------------------------------
+
+    function todayKey() {
+      var d = new Date();
+      return d.getFullYear() + '-' +
+             String(d.getMonth() + 1).padStart(2, '0') + '-' +
+             String(d.getDate()).padStart(2, '0');
+    }
+
+    function activeProfile() { return state.profiles[state.activeIndex] || null; }
+    function saveActiveProfile() { saveProfiles(state.profiles); }
+
+    function shuffle(arr) {
+      var a = arr.slice();
+      for (var i = a.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = a[i]; a[i] = a[j]; a[j] = t;
+      }
+      return a;
+    }
+
+    function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+    function starsFromScore(correct, total) {
+      if (correct >= total) return 3;
+      if (correct >= Math.ceil(total * 0.7)) return 2;
+      return 1;
+    }
+
+    function starsHtml(n) { return '⭐'.repeat(n) + '☆'.repeat(3 - n); }
+
+    // ---- Week helpers -------------------------------------------
+
+    function currentWeekEntry() {
+      var p = activeProfile();
+      var wk = p && p.weekKey ? p.weekKey : null;
+      // Match stored weekKey; fall back to first non-comingSoon week.
+      var fallback = null;
+      for (var i = 0; i < WEEKS.length; i++) {
+        if (wk && WEEKS[i].weekKey === wk) return WEEKS[i];
+        if (!fallback && !WEEKS[i].comingSoon) fallback = WEEKS[i];
+      }
+      return fallback || (WEEKS.length ? WEEKS[0] : null);
+    }
+
+    // ---- Word selection -----------------------------------------
+
+    function selectWords(soundId, profileLevel, count) {
+      var sound = SOUNDS[soundId];
+      if (!sound) return [];
+      var pool = sound.words.filter(function(w) {
+        if (profileLevel === 'core')      return w.lv === 'core';
+        if (profileLevel === 'challenge') return w.lv === 'core' || w.lv === 'challenge';
+        return true;
+      });
+      // Merge custom words for this sound set.
+      var p = activeProfile();
+      var customs = (p && p.customWords || []).filter(function(cw) { return cw.soundId === soundId; });
+      customs.forEach(function(cw) {
+        if (!pool.find(function(w) { return w.w === cw.w; })) pool.push(cw);
+      });
+      return shuffle(pool).slice(0, count || 8);
+    }
+
+    // ---- Play hub rendering -------------------------------------
+
+    function renderPlayHub() {
+      var p = activeProfile();
+      if (!p) return;
+      var we = currentWeekEntry();
+
+      var twSub = $('pt-thisweek-sub');
+      var twBtn = $('pt-thisweek');
+      if (twSub) twSub.textContent = we ? (we.emoji + ' ' + we.title) : 'No week set';
+      if (twBtn) twBtn.disabled = !!(we && we.comingSoon);
+
+      var probSub = $('pt-problems-sub');
+      var probBtn = $('pt-problems');
+      var probCount = (p.mistakes || []).length;
+      if (probSub) {
+        probSub.textContent = probCount > 0
+          ? probCount + ' word' + (probCount !== 1 ? 's' : '') + ' to practise'
+          : 'No problem words yet — keep playing!';
+      }
+      if (probBtn) probBtn.disabled = probCount === 0;
+    }
+
+    // ---- Sound picker -------------------------------------------
+
+    function renderSoundPicker() {
+      var picker = $('sound-picker');
+      if (!picker) return;
+      picker.innerHTML = '<h3>Choose your sound</h3><div class="picker-grid" id="picker-grid"></div>';
+      var grid = $('picker-grid');
+      Object.keys(SOUNDS).forEach(function(id) {
+        var s = SOUNDS[id];
+        var card = document.createElement('button');
+        card.className = 'picker-card';
+        card.innerHTML =
+          '<span class="pc-icon">' + s.emoji + '</span>' +
+          '<span class="pc-name">' + escapeHtml(s.name) + '</span>';
+        card.addEventListener('click', function() {
+          hideSoundPicker();
+          startGame(id, 'choose');
+        });
+        grid.appendChild(card);
+      });
+      picker.classList.remove('hidden');
+    }
+
+    function hideSoundPicker() {
+      var p = $('sound-picker');
+      if (p) p.classList.add('hidden');
+    }
+
+    // ---- Start game ---------------------------------------------
+
+    function startGame(soundId, mode, wordsOverride) {
+      var p = activeProfile();
+      if (!p) return;
+      var sound = SOUNDS[soundId];
+      if (!sound) { alert('This sound set is not available yet. Try another!'); return; }
+      var words = wordsOverride || selectWords(soundId, p.level || 'core', 8);
+      if (!words.length) { alert('No words found for this level. Ask Dad to adjust Settings.'); return; }
+
+      gameSession = {
+        soundId: soundId, sound: sound, mode: mode,
+        words: words, index: 0, phase: 'warmup',
+        wrongThisWord: false, wrongCount: 0, correctFirst: 0,
+        wrongWords: [], fixWords: [], fixIndex: 0,
+        sessionCoins: 0, coinSeconds: 0,
+        coinTimerInterval: null, lastActiveMs: Date.now(),
+        sessionDate: todayKey()
+      };
+      showScreen('s-game');
+      buildGameScreen();
+    }
+
+    // ---- Game screen scaffold -----------------------------------
+
+    function buildGameScreen() {
+      var container = $('s-game');
+      container.innerHTML =
+        '<button class="btn-back" id="game-back">← Quit</button>' +
+        '<div id="phase-dots" class="phase-dots"></div>' +
+        '<div id="game-content" class="game-content"></div>';
+
+      $('game-back').addEventListener('click', function() {
+        if (confirm('Quit this game? Your coins will still be saved.')) {
+          stopCoinTimer();
+          awardSessionCoins();
+          showScreen('s-home');
+        }
+      });
+
+      updatePhaseDots();
+      var isAmb = AMBIGUOUS_IDS.indexOf(gameSession.soundId) > -1;
+      if (isAmb && gameSession.sound.compare) {
+        showComparePanel();
+      } else {
+        gameSession.phase = 'choose';
+        updatePhaseDots();
+        showChooseRound();
+      }
+    }
+
+    function updatePhaseDots() {
+      var el = $('phase-dots');
+      if (!el) return;
+      var order = ['warmup', 'choose', 'fix', 'done'];
+      var cur = order.indexOf(gameSession.phase);
+      el.innerHTML = order.map(function(ph, i) {
+        var cls = 'phase-dot';
+        if (i < cur)  cls += ' pd-done';
+        if (i === cur) cls += ' pd-active';
+        return '<span class="' + cls + '"></span>';
+      }).join('');
+    }
+
+    // ---- Warmup — comparison panel ------------------------------
+
+    function showComparePanel() {
+      var c = gameSession.sound.compare;
+      var content = $('game-content');
+
+      var teamsHtml = gameSession.sound.teams.map(function(team) {
+        var ti = gameSession.sound.teamInfo[team] || {};
+        return '<div class="compare-team" style="background:' + ti.bg + ';color:' + ti.fg + '">' +
+               '<strong>' + escapeHtml(ti.label || team) + '</strong>' +
+               '<span>' + escapeHtml(ti.family || '') + '</span></div>';
+      }).join('');
+
+      var wordsHtml = (c.words || []).map(function(w) {
+        return '<button class="compare-word" data-speak="' + escapeHtml(w) + '">🔊 ' + escapeHtml(w) + '</button>';
+      }).join('');
+
+      content.innerHTML =
+        '<div class="compare-panel">' +
+        '<p class="compare-cue">' + escapeHtml(gameSession.sound.cueLine || '') + '</p>' +
+        '<div class="compare-title">' + escapeHtml(c.title) + '</div>' +
+        '<div class="compare-teams">' + teamsHtml + '</div>' +
+        '<div class="compare-words">' + wordsHtml + '</div>' +
+        '<p class="compare-lesson">' + escapeHtml(c.lesson) + '</p>' +
+        '<button class="btn" id="compare-go">Got it — let\'s play! →</button>' +
+        '</div>';
+
+      content.querySelectorAll('.compare-word').forEach(function(btn) {
+        btn.addEventListener('click', function() { speak(btn.getAttribute('data-speak')); });
+      });
+      $('compare-go').addEventListener('click', function() {
+        gameSession.phase = 'choose';
+        updatePhaseDots();
+        showChooseRound();
+      });
+    }
+
+    // ---- makeWordDisplay ----------------------------------------
+    // a_e / o_e: blank only the vowel, leave the silent e visible.
+    // Other teams: replace the whole team string with ___.
+
+    function makeWordDisplay(word, team) {
+      if (team === 'a_e' || team === 'o_e') {
+        var vowel = team.charAt(0);
+        var idx = word.indexOf(vowel);
+        if (idx > -1) {
+          return escapeHtml(word.slice(0, idx)) +
+                 '<span class="gap">_</span>' +
+                 escapeHtml(word.slice(idx + 1));
+        }
+      }
+      var pos = word.indexOf(team);
+      if (pos > -1) {
+        return escapeHtml(word.slice(0, pos)) +
+               '<span class="gap">___</span>' +
+               escapeHtml(word.slice(pos + team.length));
+      }
+      return '<span class="gap">___</span>';
+    }
+
+    // ---- Choose round -------------------------------------------
+
+    function showChooseRound() {
+      if (gameSession.index >= gameSession.words.length) {
+        finishChoosePhase();
+        return;
+      }
+      var entry = gameSession.words[gameSession.index];
+      var sound = gameSession.sound;
+      gameSession.wrongThisWord = false;
+      startCoinTimer();
+
+      var progressPct = Math.round((gameSession.index / gameSession.words.length) * 100);
+      var teams = sound.teams;
+      var gridClass = teams.length >= 4 ? 'team-grid-2x2' : 'team-grid-row';
+      var teamsHtml = teams.map(function(team) {
+        var ti = sound.teamInfo[team] || {};
+        return '<button class="team-btn" data-team="' + escapeHtml(team) + '"' +
+               ' style="background:' + (ti.bg || '#eee') + ';color:' + (ti.fg || '#333') + '">' +
+               '<strong>' + escapeHtml(ti.label || team) + '</strong>' +
+               '<small>' + escapeHtml(ti.family || '') + '</small></button>';
+      }).join('');
+
+      var liveStars = gameSession.index > 0
+        ? starsFromScore(gameSession.correctFirst, gameSession.index)
+        : 3;
+
+      var content = $('game-content');
+      content.innerHTML =
+        '<div class="game-header">' +
+        '<div class="gh-sound">' + sound.emoji + ' ' + escapeHtml(sound.name) + '</div>' +
+        '<div class="gh-right">' +
+        '<div class="gh-stars">' + starsHtml(liveStars) + '</div>' +
+        '<div class="coin-timer" id="coin-timer">🪙 +1 in <span id="ct-secs">60</span>s</div>' +
+        '</div></div>' +
+        '<div class="progress-track"><div class="progress-fill" style="width:' + progressPct + '%"></div></div>' +
+        '<div class="score-badge">Word ' + (gameSession.index + 1) + ' of ' + gameSession.words.length + '</div>' +
+        '<div id="feedback-area"></div>' +
+        '<div class="game-card">' +
+        '<div class="word-display">' + makeWordDisplay(entry.w, entry.team) + '</div>' +
+        '<button class="speaker-btn" id="speak-btn">🔊</button>' +
+        '<p class="word-hint">' + escapeHtml(entry.hint) + '</p>' +
+        '<div class="' + gridClass + '">' + teamsHtml + '</div>' +
+        '</div>' +
+        '<div id="say-why-area"></div>';
+
+      $('speak-btn').addEventListener('click', function() { speak(entry.w); });
+      content.querySelectorAll('.team-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          handleChooseAnswer(btn.getAttribute('data-team'), entry);
+        });
+      });
+      setTimeout(function() { speak(entry.w); }, 320);
+    }
+
+    function handleChooseAnswer(selectedTeam, entry) {
+      pauseCoinTimer();
+      document.querySelectorAll('.team-btn').forEach(function(b) { b.disabled = true; });
+
+      if (selectedTeam === entry.team) {
+        if (!gameSession.wrongThisWord) gameSession.correctFirst++;
+        addToWall(entry);
+        showFeedback(true, entry);
+        setTimeout(function() { showSayWhy(entry); }, 900);
+      } else {
+        gameSession.wrongThisWord = true;
+        gameSession.wrongCount++;
+        if (!gameSession.wrongWords.find(function(w) { return w.w === entry.w; })) {
+          gameSession.wrongWords.push(entry);
+        }
+        addToMistakes(entry);
+        showFeedback(false, entry);
+        setTimeout(function() { advanceChoiceWord(); }, 2600);
+      }
+    }
+
+    function advanceChoiceWord() {
+      gameSession.index++;
+      showChooseRound();
+    }
+
+    function finishChoosePhase() {
+      stopCoinTimer();
+      if (gameSession.wrongWords.length > 0) {
+        gameSession.phase = 'fix';
+        gameSession.fixWords = shuffle(gameSession.wrongWords);
+        gameSession.fixIndex = 0;
+        updatePhaseDots();
+        showFixRound();
+      } else {
+        awardSessionCoins();
+        showDoneScreen();
+      }
+    }
+
+    // ---- Fix Dad round ------------------------------------------
+    // Shows the phonetic misspelling and asks for the correct word.
+
+    function buildDistracts(entry, count) {
+      var pool = gameSession.sound.words.filter(function(w) { return w.w !== entry.w; });
+      return shuffle(pool).slice(0, count).map(function(w) { return w.w; });
+    }
+
+    function showFixRound() {
+      if (gameSession.fixIndex >= gameSession.fixWords.length) {
+        awardSessionCoins();
+        showDoneScreen();
+        return;
+      }
+      var entry = gameSession.fixWords[gameSession.fixIndex];
+      startCoinTimer();
+
+      var options = shuffle([entry.w].concat(buildDistracts(entry, 3)));
+      var optHtml = options.map(function(opt) {
+        return '<button class="fix-opt" data-word="' + escapeHtml(opt) + '">' + escapeHtml(opt) + '</button>';
+      }).join('');
+
+      var content = $('game-content');
+      content.innerHTML =
+        '<div class="game-header">' +
+        '<div class="gh-sound">' + gameSession.sound.emoji + ' Fix it up!</div>' +
+        '<div class="gh-right">' +
+        '<div class="coin-timer" id="coin-timer">🪙 +1 in <span id="ct-secs">60</span>s</div>' +
+        '</div></div>' +
+        '<div class="score-badge">Fix-up round ' + (gameSession.fixIndex + 1) + ' of ' + gameSession.fixWords.length + '</div>' +
+        '<div id="feedback-area"></div>' +
+        '<div class="game-card">' +
+        '<span class="fix-label">😬 Dad wrote:</span>' +
+        '<div class="fix-misspell">' + escapeHtml(entry.ph) + '</div>' +
+        '<button class="speaker-btn" id="speak-btn">🔊</button>' +
+        '<p class="word-hint">' + escapeHtml(entry.hint) + '</p>' +
+        '<div class="fix-grid">' + optHtml + '</div>' +
+        '</div>';
+
+      $('speak-btn').addEventListener('click', function() { speak(entry.ph); });
+      content.querySelectorAll('.fix-opt').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          handleFixAnswer(btn.getAttribute('data-word'), entry);
+        });
+      });
+      setTimeout(function() { speak(entry.ph); }, 320);
+    }
+
+    function handleFixAnswer(chosen, entry) {
+      pauseCoinTimer();
+      document.querySelectorAll('.fix-opt').forEach(function(b) { b.disabled = true; });
+      showFeedback(chosen === entry.w, entry);
+      setTimeout(function() {
+        gameSession.fixIndex++;
+        showFixRound();
+      }, chosen === entry.w ? 1600 : 2400);
+    }
+
+    // ---- Feedback -----------------------------------------------
+
+    function showFeedback(isCorrect, entry) {
+      var area = $('feedback-area');
+      if (!area) return;
+      var msg, cls;
+      if (isCorrect) {
+        msg = pick(CORRECT_MESSAGES);
+        cls = 'feedback-correct';
+      } else {
+        var ti = (gameSession.sound.teamInfo || {})[entry.team] || {};
+        msg = buildWrongMessage(entry.w, ti.label || entry.team, ti.family || entry.team);
+        cls = 'feedback-wrong';
+      }
+      area.innerHTML = '<div class="feedback-bubble ' + cls + '">' + escapeHtml(msg) + '</div>';
+      setTimeout(function() { if (area) area.innerHTML = ''; }, isCorrect ? 1800 : 2300);
+    }
+
+    // ---- Say Why — metacognition after every correct answer -----
+
+    function showSayWhy(entry) {
+      var area = $('say-why-area');
+      if (!area) return;
+      var ti = (gameSession.sound.teamInfo || {})[entry.team] || {};
+      var fam = ti.label || entry.team;
+      var opts = [
+        'It\'s in the MIDDLE of the word',
+        'It\'s at the END of the word',
+        'It belongs with the ' + fam + ' word family',
+        'I just know this word!'
+      ];
+      var html = '<div class="say-why-card"><p class="say-why-q">Why did you choose <strong>' +
+                 escapeHtml(fam) + '</strong>?</p><div class="say-why-opts">';
+      opts.forEach(function(opt) {
+        html += '<button class="say-why-btn">' + escapeHtml(opt) + '</button>';
+      });
+      html += '</div></div>';
+      area.innerHTML = html;
+      area.querySelectorAll('.say-why-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          area.innerHTML = '';
+          advanceChoiceWord();
+        });
+      });
+    }
+
+    // ---- Coin timer ---------------------------------------------
+    // 60 continuous active seconds = 1 coin.
+    // Pauses when tab is hidden or idle > 30 s.
+
+    function startCoinTimer() {
+      stopCoinTimer();
+      gameSession.lastActiveMs = Date.now();
+      gameSession.coinTimerInterval = setInterval(function() {
+        if (document.hidden) return;
+        if (Date.now() - gameSession.lastActiveMs > 30000) return;
+        gameSession.coinSeconds++;
+        var el = $('ct-secs');
+        if (el) el.textContent = Math.max(1, 60 - (gameSession.coinSeconds % 60));
+      }, 1000);
+      document.addEventListener('touchstart', resetCoinIdle, { passive: true });
+      document.addEventListener('click', resetCoinIdle);
+    }
+
+    function resetCoinIdle() { gameSession.lastActiveMs = Date.now(); }
+
+    function pauseCoinTimer() {
+      // Freeze the idle timestamp so the interval skips counting.
+      gameSession.lastActiveMs = 0;
+    }
+
+    function stopCoinTimer() {
+      if (gameSession.coinTimerInterval) {
+        clearInterval(gameSession.coinTimerInterval);
+        gameSession.coinTimerInterval = null;
+      }
+      document.removeEventListener('touchstart', resetCoinIdle);
+      document.removeEventListener('click', resetCoinIdle);
+    }
+
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) gameSession.lastActiveMs = 0;
+      else gameSession.lastActiveMs = Date.now();
+    });
+
+    // ---- Award coins at session end -----------------------------
+
+    function getDailyCap(p) {
+      return (p && p.economy && p.economy.dailyCap) ? p.economy.dailyCap : 20;
+    }
+
+    function awardSessionCoins() {
+      var coinsEarned = Math.floor(gameSession.coinSeconds / 60);
+      var p = activeProfile();
+      if (!p) { gameSession.sessionCoins = coinsEarned; return; }
+
+      var today = todayKey();
+      if (p.economy.dailyDate !== today) {
+        p.economy.dailyDate  = today;
+        p.economy.dailyCoins = 0;
+      }
+      var cap      = getDailyCap(p);
+      var awarded  = Math.min(coinsEarned, Math.max(0, cap - (p.economy.dailyCoins || 0)));
+      p.economy.coins      = (p.economy.coins      || 0) + awarded;
+      p.economy.dailyCoins = (p.economy.dailyCoins || 0) + awarded;
+      p.economy.totalEarned = (p.economy.totalEarned || 0) + awarded;
+      if (awarded > 0) {
+        p.coinHistory.push({ date: today, amount: awarded, soundId: gameSession.soundId });
+      }
+      gameSession.sessionCoins = awarded;
+      updateStreak(p);
+      saveActiveProfile();
+    }
+
+    // ---- Streak -------------------------------------------------
+
+    function updateStreak(p) {
+      var today = todayKey();
+      if (p.lastPlayDate === today) return;
+      p.streak = isYesterday(p.lastPlayDate) ? (p.streak || 0) + 1 : 1;
+      p.lastPlayDate = today;
+    }
+
+    function isYesterday(dateStr) {
+      if (!dateStr) return false;
+      var d = new Date();
+      d.setDate(d.getDate() - 1);
+      return dateStr === d.getFullYear() + '-' +
+             String(d.getMonth() + 1).padStart(2, '0') + '-' +
+             String(d.getDate()).padStart(2, '0');
+    }
+
+    // ---- Word wall & mistakes -----------------------------------
+
+    function addToWall(entry) {
+      var p = activeProfile();
+      if (!p) return;
+      if (!p.wall) p.wall = {};
+      var sid = gameSession.soundId;
+      if (!p.wall[sid]) p.wall[sid] = {};
+      if (!p.wall[sid][entry.team]) p.wall[sid][entry.team] = [];
+      if (p.wall[sid][entry.team].indexOf(entry.w) === -1) {
+        p.wall[sid][entry.team].push(entry.w);
+      }
+    }
+
+    function addToMistakes(entry) {
+      var p = activeProfile();
+      if (!p) return;
+      if (!p.mistakes) p.mistakes = [];
+      if (!p.mistakes.find(function(m) { return m.w === entry.w; })) {
+        p.mistakes.push({ w: entry.w, team: entry.team, soundId: gameSession.soundId, date: todayKey() });
+      }
+    }
+
+    // ---- Surprise drop ------------------------------------------
+
+    function checkAndTriggerDrop(p) {
+      var today = todayKey();
+      var dropsToday = (p.drops || []).filter(function(d) { return d.date === today; }).length;
+      if (dropsToday >= 2) return false;
+      var isPerfect = gameSession.wrongCount === 0;
+      var chance = dropsToday === 0 ? 1 : (isPerfect ? 0.5 : 0.33);
+      if (Math.random() >= chance) return false;
+      if (!p.drops) p.drops = [];
+      p.drops.push({ date: today, itemId: 'avatar_item_' + Date.now(), seen: false });
+      return true;
+    }
+
+    // ---- Done screen --------------------------------------------
+
+    function showDoneScreen() {
+      gameSession.phase = 'done';
+      updatePhaseDots();
+
+      var p = activeProfile();
+      var total   = gameSession.words.length;
+      var correct = gameSession.correctFirst;
+      var stars   = starsFromScore(correct, total);
+      var drop    = p ? checkAndTriggerDrop(p) : false;
+      if (p) saveActiveProfile();
+
+      var coinsMsg = gameSession.sessionCoins > 0
+        ? '🪙 You earned <strong>' + gameSession.sessionCoins + ' coin' +
+          (gameSession.sessionCoins !== 1 ? 's' : '') + '</strong> this session!'
+        : 'You played for less than a minute — come back for coins!';
+
+      var econ   = p ? (p.economy || {}) : {};
+      var capMsg = econ.dailyCoins >= 20
+        ? '<p class="cap-msg">Daily coin cap reached! Come back tomorrow 🌟' +
+          '<br>Your hard work was brilliant either way.</p>'
+        : '';
+
+      var dropHtml = drop
+        ? '<div class="drop-modal"><span class="drop-box">🎁</span>' +
+          '<p>You got a surprise!<br><small>Your avatar item will unlock in the next update. Keep collecting!</small></p></div>'
+        : '';
+
+      var content = $('game-content');
+      content.innerHTML =
+        '<div class="done-screen">' +
+        '<div class="done-stars">' + starsHtml(stars) + '</div>' +
+        '<h2 class="done-msg">' + escapeHtml(pick(SESSION_COMPLETE_MESSAGES)) + '</h2>' +
+        '<p class="done-score">' + correct + ' of ' + total + ' correct on the first try</p>' +
+        '<p class="done-coins">' + coinsMsg + '</p>' +
+        capMsg + dropHtml +
+        '<button class="btn" id="done-home">Back to home</button>' +
+        '<button class="btn btn-secondary" id="done-again">Play again 🎲</button>' +
+        '</div>';
+
+      $('done-home').addEventListener('click', function() { showScreen('s-home'); });
+      $('done-again').addEventListener('click', function() { startGame(gameSession.soundId, 'surprise'); });
+    }
+
+    // ---- Play tile clicks (delegated) ---------------------------
+
+    document.addEventListener('click', function(ev) {
+      var tile = ev.target.closest('.play-tile');
+      if (!tile || tile.disabled) return;
+      var mode = tile.getAttribute('data-mode');
+      if (!mode) return;
+
+      if (mode === 'thisweek') {
+        var we = currentWeekEntry();
+        if (we && we.comingSoon) {
+          alert("This week's content is coming soon! Try Surprise Me or Choose Your Sound.");
+          return;
+        }
+        if (we && we.soundId) startGame(we.soundId, 'thisweek');
+        else alert('No week content set. Try Surprise Me or Choose Your Sound.');
+
+      } else if (mode === 'surprise') {
+        var ids = Object.keys(SOUNDS);
+        startGame(ids[Math.floor(Math.random() * ids.length)], 'surprise');
+
+      } else if (mode === 'problems') {
+        var p = activeProfile();
+        if (!p || !(p.mistakes || []).length) return;
+        var seen = {};
+        var problemWords = [];
+        p.mistakes.forEach(function(m) {
+          if (seen[m.w]) return;
+          seen[m.w] = true;
+          var s = SOUNDS[m.soundId];
+          if (!s) return;
+          var entry = s.words.find(function(w) { return w.w === m.w; });
+          if (entry) problemWords.push(entry);
+        });
+        if (!problemWords.length) return;
+        startGame(p.mistakes[0].soundId, 'problems', problemWords);
+
+      } else if (mode === 'choose') {
+        renderSoundPicker();
+      }
+    });
+
+    // Dismiss sound picker when tapping outside it.
+    document.addEventListener('click', function(ev) {
+      var picker = $('sound-picker');
+      if (!picker || picker.classList.contains('hidden')) return;
+      if (!ev.target.closest('#sound-picker') && !ev.target.closest('[data-mode="choose"]')) {
+        hideSoundPicker();
+      }
+    });
+
+    // ---- Week dots and badge on Home screen ---------------------
+
+    function renderWeekDots() {
+      var dotsEl = $('week-dots');
+      if (!dotsEl) return;
+      dotsEl.innerHTML = '';
+      var p = activeProfile();
+      var cwEntry = currentWeekEntry();
+      var cwk = cwEntry ? cwEntry.weekKey : null;
+      WEEKS.forEach(function(we) {
+        var dot = document.createElement('div');
+        dot.className = 'week-dot';
+        var isDone = p && (p.completedWeeks || []).indexOf(we.weekKey) > -1;
+        if (isDone)                  dot.classList.add('done');
+        else if (we.weekKey === cwk) dot.classList.add('active');
+        else if (we.comingSoon)      dot.classList.add('coming-soon');
+        dot.title = we.label + ': ' + we.title;
+        dotsEl.appendChild(dot);
+      });
+    }
+
+    function renderWeekBadge() {
+      var home = $('s-home');
+      if (!home) return;
+      var old = $('week-badge');
+      if (old) old.remove();
+      var we = currentWeekEntry();
+      if (!we) return;
+      var badge = document.createElement('div');
+      badge.id = 'week-badge';
+      badge.className = 'week-badge';
+      if (we.comingSoon) {
+        badge.innerHTML =
+          '<span class="wb-emoji">🔒</span>' +
+          '<div class="wb-text"><strong>' + escapeHtml(we.label) + '</strong>' +
+          '<span>This week\'s content is coming soon! Try Surprise Me or Choose Your Sound.</span></div>';
+      } else {
+        badge.innerHTML =
+          '<span class="wb-emoji">' + we.emoji + '</span>' +
+          '<div class="wb-text"><strong>' + escapeHtml(we.label) + ' · ' + escapeHtml(we.title) + '</strong>' +
+          '<span>Tap <em>Play → This Week</em> to start</span></div>';
+      }
+      var track = home.querySelector('.week-track');
+      if (track) track.insertAdjacentElement('afterend', badge);
+    }
+
+    // ============================================================
+    // Stage 4 — Sentences, Reading, Coins, Ask Dad
+    // ============================================================
+
+    // ---- State --------------------------------------------------
+    var sentenceSession = {
+      starters: [], index: 0, sentences: [], coins: 0,
+      targetBonusUsed: false, soundId: null
+    };
+    var STAR_COINS = [0, 0, 1, 2, 2, 3]; // index = star count 0–5
+
+    var readingTab = 'add'; // 'add' | 'history'
+
+    var askDadSubView = 'emelia'; // 'emelia' | 'waiting' | 'dad' | 'celebration'
+    var askDadRequest = null; // { rewardId, cost, date }
+
+    var REWARDS = [
+      { id: 'screen', label: 'Extra screen time (30 min)', emoji: '📱', cost: 10 },
+      { id: 'lolly',  label: 'Treat from the treat box',   emoji: '🍬', cost: 8  },
+      { id: 'game',   label: 'Choose tonight\'s game',     emoji: '🎲', cost: 6  },
+      { id: 'late',   label: 'Stay up 20 minutes later',   emoji: '🌙', cost: 12 }
+    ];
+
+    // ---- assessSentence -----------------------------------------
+    // Returns star count 1–5 based on sequential quality gates.
+
+    function assessSentence(text, targetWords) {
+      var t = (text || '').trim();
+      if (!t) return 0;
+      var words = t.split(/\s+/).filter(function(w) { return w.length > 0; });
+      if (words.length < 3) return 1;
+      var stars = 1;
+      if (words.length >= 6 || /\b(big|small|tiny|huge|beautiful|wonderful|amazing|colourful|bright|dark|soft|loud|funny|silly|happy|sad|scary|dangerous|enormous|fantastic|strange|weird|lovely)\b/i.test(t)) {
+        stars = 2;
+      }
+      if (stars >= 2 && /\b\w+ly\b/i.test(t)) stars = 3;
+      if (stars >= 3 && /\b(when|while|after|before|because|where|until|although|however|suddenly|yesterday|tomorrow|always|sometimes|finally|eventually)\b/i.test(t)) stars = 4;
+      if (stars >= 4 && hasTargetWord(t, targetWords)) stars = 5;
+      return stars;
+    }
+
+    function hasTargetWord(text, wordList) {
+      if (!wordList || !wordList.length) return false;
+      var lower = text.toLowerCase();
+      return wordList.some(function(w) {
+        return lower.indexOf(w.toLowerCase()) > -1;
+      });
+    }
+
+    // ---- Sentences screen ---------------------------------------
+
+    function renderSentencesScreen() {
+      var p = activeProfile();
+      if (!p) { showScreen('s-profiles'); return; }
+
+      var we = currentWeekEntry();
+      var sound = we && we.soundId ? SOUNDS[we.soundId] : null;
+      var starters = sound && sound.sentenceStarters && sound.sentenceStarters.length
+        ? sound.sentenceStarters.slice()
+        : ['Tell me about your day…', 'My favourite thing is…', 'I wish I could…'];
+
+      sentenceSession = {
+        starters: starters, index: 0, sentences: [], coins: 0,
+        targetBonusUsed: false, soundId: we ? we.soundId : null
+      };
+      renderSentenceCard();
+    }
+
+    function renderSentenceCard() {
+      var container = $('s-sentences');
+      if (sentenceSession.index >= sentenceSession.starters.length) {
+        showSentencesDone();
+        return;
+      }
+
+      var starter = sentenceSession.starters[sentenceSession.index];
+      var total = sentenceSession.starters.length;
+      var targetWords = sentenceSession.soundId && SOUNDS[sentenceSession.soundId]
+        ? SOUNDS[sentenceSession.soundId].words.map(function(w) { return w.w; })
+        : [];
+
+      container.innerHTML =
+        '<button class="btn-back" data-back="s-home">← Back</button>' +
+        '<div class="sentences-screen">' +
+        '<div class="starter-card">' +
+        '<div class="starter-label">Sentence ' + (sentenceSession.index + 1) + ' of ' + total + '</div>' +
+        '<p class="starter-text">' + escapeHtml(starter) + '</p>' +
+        '<textarea class="sentence-input" id="sentence-input" placeholder="Type your sentence here…" rows="3"></textarea>' +
+        '<div class="star-ladder">' +
+        '<div class="sl-step" id="sl-0"></div>' +
+        '<div class="sl-step" id="sl-1"></div>' +
+        '<div class="sl-step" id="sl-2"></div>' +
+        '<div class="sl-step" id="sl-3"></div>' +
+        '<div class="sl-step" id="sl-4"></div>' +
+        '</div>' +
+        '<div class="star-score" id="star-score">✦ Start typing…</div>' +
+        '<p class="sentence-tip">Use adjectives, adverbs, and this week\'s words for more stars!</p>' +
+        '</div>' +
+        '<button class="btn" id="sentence-submit">Submit →</button>' +
+        '</div>';
+
+      var input = $('sentence-input');
+      var scoreEl = $('star-score');
+
+      input.addEventListener('input', function() {
+        var stars = assessSentence(input.value, targetWords);
+        updateStarLadder(stars);
+        scoreEl.textContent = stars > 0 ? starsHtml(stars) + '  ' + stars + ' star' + (stars !== 1 ? 's' : '') : '✦ Keep going…';
+      });
+
+      $('sentence-submit').addEventListener('click', function() {
+        var text = (input.value || '').trim();
+        if (!text) { input.focus(); return; }
+        var stars = Math.max(1, assessSentence(text, targetWords));
+        var coinsEarned = STAR_COINS[stars] || 0;
+        sentenceSession.sentences.push({ text: text, stars: stars, coins: coinsEarned });
+        sentenceSession.coins += coinsEarned;
+        sentenceSession.index++;
+        renderSentenceCard();
+      });
+    }
+
+    function updateStarLadder(stars) {
+      for (var i = 0; i < 5; i++) {
+        var el = $('sl-' + i);
+        if (el) el.className = 'sl-step' + (i < stars ? ' earned' : '');
+      }
+    }
+
+    function showSentencesDone() {
+      var p = activeProfile();
+      var total = sentenceSession.sentences.length;
+      var totalStars = sentenceSession.sentences.reduce(function(acc, s) { return acc + s.stars; }, 0);
+      var coinsToAward = sentenceSession.coins;
+
+      if (p && coinsToAward > 0) {
+        var today = todayKey();
+        if (p.economy.dailyDate !== today) { p.economy.dailyDate = today; p.economy.dailyCoins = 0; }
+        var awarded = Math.min(coinsToAward, Math.max(0, getDailyCap(p) - (p.economy.dailyCoins || 0)));
+        p.economy.coins       = (p.economy.coins       || 0) + awarded;
+        p.economy.dailyCoins  = (p.economy.dailyCoins  || 0) + awarded;
+        p.economy.totalEarned = (p.economy.totalEarned || 0) + awarded;
+        if (awarded > 0) {
+          p.coinHistory.push({ date: today, amount: awarded, soundId: sentenceSession.soundId, source: 'sentences' });
+        }
+        coinsToAward = awarded;
+        updateStreak(p);
+        saveActiveProfile();
+      }
+
+      var avgStars = total > 0 ? Math.round(totalStars / total) : 1;
+      var container = $('s-sentences');
+      container.innerHTML =
+        '<button class="btn-back" data-back="s-home">← Back</button>' +
+        '<div class="sentences-done">' +
+        '<div style="font-size:56px;">✍️</div>' +
+        '<h2 style="color:var(--pu3);">Great sentences!</h2>' +
+        '<div class="done-stars">' + starsHtml(Math.min(3, avgStars)) + '</div>' +
+        '<p style="color:var(--mut);">' + total + ' sentence' + (total !== 1 ? 's' : '') + ' · ' + totalStars + ' stars total</p>' +
+        (coinsToAward > 0 ? '<p style="color:var(--ye3);font-weight:800;">🪙 +' + coinsToAward + ' coins earned!</p>' : '<p style="color:var(--mut);">Keep practising to earn coins!</p>') +
+        '<button class="btn" id="sent-home" style="width:100%;">Back to home</button>' +
+        '</div>';
+
+      $('sent-home').addEventListener('click', function() { showScreen('s-home'); });
+    }
+
+    // ---- Reading screen -----------------------------------------
+
+    function renderReadingScreen() {
+      var container = $('s-reading');
+      container.innerHTML =
+        '<button class="btn-back" data-back="s-home">← Back</button>' +
+        '<h2>Reading Log</h2>' +
+        '<div class="tab-row">' +
+        '<button class="tab-btn' + (readingTab === 'add' ? ' active' : '') + '" id="tab-add">Add Entry</button>' +
+        '<button class="tab-btn' + (readingTab === 'history' ? ' active' : '') + '" id="tab-hist">History</button>' +
+        '</div>' +
+        '<div id="reading-content"></div>';
+
+      $('tab-add').addEventListener('click', function() {
+        readingTab = 'add';
+        $('tab-add').classList.add('active');
+        $('tab-hist').classList.remove('active');
+        renderAddEntryTab();
+      });
+      $('tab-hist').addEventListener('click', function() {
+        readingTab = 'history';
+        $('tab-hist').classList.add('active');
+        $('tab-add').classList.remove('active');
+        renderHistoryTab();
+      });
+
+      if (readingTab === 'add') renderAddEntryTab();
+      else renderHistoryTab();
+    }
+
+    function renderAddEntryTab() {
+      var p = activeProfile();
+      var mpp = (p && p.minsPerPage) ? p.minsPerPage : 1;
+      $('reading-content').innerHTML =
+        '<div class="reading-form">' +
+        '<div><div class="field-label">Book title</div>' +
+        '<input class="input" id="r-title" placeholder="What are you reading?" maxlength="80" /></div>' +
+        '<div><div class="field-label">Author (optional)</div>' +
+        '<input class="input" id="r-author" placeholder="Who wrote it?" maxlength="60" /></div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">' +
+        '<div><div class="field-label">Pages read</div>' +
+        '<input class="input" id="r-pages" type="number" min="1" max="999" placeholder="12" /></div>' +
+        '<div><div class="field-label">Minutes read</div>' +
+        '<input class="input" id="r-mins" type="number" min="1" max="600" placeholder="20" /></div></div>' +
+        '<div class="reading-preview" id="r-preview">Fill in pages and minutes to see your coins</div>' +
+        '<button class="btn" id="r-submit">Log this reading 📖</button>' +
+        '</div>';
+
+      $('r-pages').addEventListener('input', function() { updateReadingPreview(mpp); });
+      $('r-mins').addEventListener('input', function() { updateReadingPreview(mpp); });
+      $('r-submit').addEventListener('click', function() { submitReadingEntry(mpp); });
+    }
+
+    function updateReadingPreview(minsPerPage) {
+      var pages = parseInt(($('r-pages') || {}).value, 10) || 0;
+      var mins  = parseInt(($('r-mins')  || {}).value, 10) || 0;
+      var el = $('r-preview');
+      if (!el) return;
+      if (!pages || !mins) {
+        el.textContent = 'Fill in pages and minutes to see your coins';
+        return;
+      }
+      var coins = Math.floor(mins / minsPerPage);
+      el.textContent = '🪙 You\'ll earn ' + coins + ' coin' + (coins !== 1 ? 's' : '') + ' for this reading!';
+    }
+
+    function submitReadingEntry(minsPerPage) {
+      var title  = ($('r-title')  ? $('r-title').value  : '').trim();
+      var author = ($('r-author') ? $('r-author').value : '').trim();
+      var pages  = parseInt(($('r-pages') ? $('r-pages').value : ''), 10) || 0;
+      var mins   = parseInt(($('r-mins')  ? $('r-mins').value  : ''), 10) || 0;
+
+      if (!title)         { alert('Please enter the book title.');        return; }
+      if (pages < 1)      { alert('Please enter how many pages you read.'); return; }
+      if (mins  < 1)      { alert('Please enter how many minutes you read.'); return; }
+
+      var coinsEarned = Math.floor(mins / minsPerPage);
+      var today = todayKey();
+      var entry = { date: today, title: title, author: author, pages: pages, mins: mins, coins: coinsEarned };
+
+      var p = activeProfile();
+      if (p) {
+        if (!p.readingLog) p.readingLog = [];
+        p.readingLog.unshift(entry);
+        if (coinsEarned > 0) {
+          if (p.economy.dailyDate !== today) { p.economy.dailyDate = today; p.economy.dailyCoins = 0; }
+          var awarded = Math.min(coinsEarned, Math.max(0, getDailyCap(p) - (p.economy.dailyCoins || 0)));
+          p.economy.coins       = (p.economy.coins       || 0) + awarded;
+          p.economy.dailyCoins  = (p.economy.dailyCoins  || 0) + awarded;
+          p.economy.totalEarned = (p.economy.totalEarned || 0) + awarded;
+          if (awarded > 0) {
+            p.coinHistory.push({ date: today, amount: awarded, source: 'reading', title: title });
+          }
+          entry.coins = awarded;
+          updateStreak(p);
+        }
+        saveActiveProfile();
+      }
+      readingTab = 'history';
+      renderReadingScreen();
+    }
+
+    function renderHistoryTab() {
+      var p = activeProfile();
+      var log = p ? (p.readingLog || []) : [];
+      var content = $('reading-content');
+      if (!content) return;
+      if (!log.length) {
+        content.innerHTML = '<div class="stub"><p style="text-align:center;color:var(--mut);">No reading logged yet — add your first book!</p></div>';
+        return;
+      }
+      content.innerHTML = log.slice(0, 20).map(function(entry) {
+        return '<div class="reading-entry">' +
+          '<div><div class="re-title">' + escapeHtml(entry.title) + '</div>' +
+          '<div class="re-meta">' + (entry.author ? escapeHtml(entry.author) + ' · ' : '') +
+          entry.pages + ' pages · ' + entry.mins + ' min · ' + escapeHtml(entry.date) + '</div></div>' +
+          '<div class="re-coins">🪙 +' + (entry.coins || 0) + '</div>' +
+          '</div>';
+      }).join('');
+    }
+
+    // ---- Coins screen -------------------------------------------
+
+    function renderCoinsScreen() {
+      var p = activeProfile();
+      if (!p) { showScreen('s-profiles'); return; }
+
+      var econ = p.economy || {};
+      var coins       = econ.coins       || 0;
+      var gems        = econ.gems        || 0;
+      var totalEarned = econ.totalEarned || 0;
+      var today = todayKey();
+      var dailyCoins  = econ.dailyDate === today ? (econ.dailyCoins || 0) : 0;
+      var gemProgress = totalEarned % 50;
+
+      var history = (p.coinHistory || []).slice(-10).reverse();
+      var histHtml = history.length
+        ? history.map(function(h) {
+            var label = h.source === 'sentences' ? '✍️ Sentences'
+                      : h.source === 'reading'   ? '📖 Reading'
+                      : '🎮 Spelling';
+            return '<div class="coin-row"><span>' + label + ' · ' + escapeHtml(h.date) + '</span>' +
+                   '<span class="coin-row-val">+' + h.amount + '</span></div>';
+          }).join('')
+        : '<p style="color:var(--mut);font-size:14px;margin:0;">No coins yet — play some games!</p>';
+
+      var container = $('s-coins');
+      container.innerHTML =
+        '<button class="btn-back" data-back="s-home">← Back</button>' +
+        '<div class="coin-hero">' +
+        '<div class="coin-hero-amt">🪙 ' + coins + '</div>' +
+        '<div class="coin-hero-label">coins available</div>' +
+        '<div class="progress-track" style="margin-top:14px;background:rgba(255,255,255,0.3);">' +
+        '<div class="progress-fill" style="width:' + Math.min(100, (dailyCoins / 20) * 100) + '%;"></div></div>' +
+        '<div style="font-size:13px;color:var(--ye3);margin-top:6px;">Today: ' + dailyCoins + ' / 20 coins</div>' +
+        '</div>' +
+        '<div class="coin-section">' +
+        '<div class="gems-display">' +
+        '<div class="gems-big">💎 ' + gems + '</div>' +
+        '<div class="gems-sub">' + gemProgress + ' / 50 coins to next gem<br>' +
+        '<span style="font-size:12px;">' + totalEarned + ' total earned</span></div></div>' +
+        '<div class="progress-track" style="margin-top:10px;">' +
+        '<div class="progress-fill" style="width:' + Math.min(100, (gemProgress / 50) * 100) + '%;' +
+        'background:linear-gradient(90deg,var(--pu2),var(--pu3));"></div></div>' +
+        '</div>' +
+        '<div class="coin-section"><h3>Recent earnings</h3>' + histHtml + '</div>' +
+        '<button class="btn" id="ask-dad-btn" style="width:100%;margin-top:14px;">🎀 Ask Dad for a reward</button>';
+
+      $('ask-dad-btn').addEventListener('click', function() {
+        askDadSubView = 'emelia';
+        askDadRequest = null;
+        showScreen('s-askdad');
+      });
+    }
+
+    // ---- Ask Dad screen -----------------------------------------
+
+    function renderAskDadScreen() {
+      renderAskDadSubView(askDadSubView);
+    }
+
+    function renderAskDadSubView(view) {
+      askDadSubView = view;
+      var p = activeProfile();
+      var coins = p ? ((p.economy || {}).coins || 0) : 0;
+      var container = $('s-askdad');
+      container.innerHTML = '<button class="btn-back" data-back="s-coins">← Back</button>';
+
+      if (view === 'emelia') {
+        var rewardsHtml = REWARDS.map(function(r) {
+          var canAfford = coins >= r.cost;
+          return '<button class="reward-opt"' + (canAfford ? '' : ' disabled style="opacity:0.5;cursor:default;"') +
+            ' data-reward="' + r.id + '">' +
+            '<span>' + r.emoji + ' ' + escapeHtml(r.label) + '</span>' +
+            '<span class="reward-cost">🪙 ' + r.cost + '</span></button>';
+        }).join('');
+        container.innerHTML +=
+          '<div class="askdad-card">' +
+          '<div class="askdad-emoji">🌟</div>' +
+          '<h2 class="askdad-title">Choose a reward!</h2>' +
+          '<p class="askdad-body">You have <strong>🪙 ' + coins + ' coins</strong>. Pick something to ask Dad for.</p>' +
+          '<div class="reward-opts">' + rewardsHtml + '</div>' +
+          '</div>';
+        container.querySelectorAll('.reward-opt:not([disabled])').forEach(function(btn) {
+          btn.addEventListener('click', function() { sendDadRequest(btn.getAttribute('data-reward')); });
+        });
+
+      } else if (view === 'waiting') {
+        var rw = REWARDS.find(function(x) { return x.id === (askDadRequest && askDadRequest.rewardId); });
+        container.innerHTML +=
+          '<div class="askdad-card">' +
+          '<div class="askdad-emoji">🕐</div>' +
+          '<h2 class="askdad-title">Waiting for Dad…</h2>' +
+          '<p class="askdad-body">Your request is in! Show Dad this screen.</p>' +
+          '<div class="askdad-pending">' + (rw ? rw.emoji + ' ' + escapeHtml(rw.label) : 'A special reward') + '</div>' +
+          '<button class="btn btn-secondary" id="dad-view-btn" style="width:100%;">Dad — tap here to approve 👆</button>' +
+          '</div>';
+        $('dad-view-btn').addEventListener('click', function() { renderAskDadSubView('dad'); });
+
+      } else if (view === 'dad') {
+        var rd = REWARDS.find(function(x) { return x.id === (askDadRequest && askDadRequest.rewardId); });
+        var pname = p ? escapeHtml(p.name) : 'Your child';
+        container.innerHTML +=
+          '<div class="askdad-card">' +
+          '<div class="askdad-emoji">👨</div>' +
+          '<h2 class="askdad-title">Dad\'s decision</h2>' +
+          '<p class="askdad-body">' + pname + ' is asking for:<br>' +
+          '<strong>' + (rd ? rd.emoji + ' ' + escapeHtml(rd.label) : 'a reward') + '</strong><br>' +
+          'Cost: 🪙 ' + (askDadRequest ? askDadRequest.cost : '?') + ' coins</p>' +
+          '<button class="btn" id="dad-approve" style="width:100%;">✅ Approved!</button>' +
+          '<button class="btn btn-secondary" id="dad-reject" style="width:100%;margin-top:8px;">❌ Not right now</button>' +
+          '</div>';
+        $('dad-approve').addEventListener('click', function() { approveDadRequest(); });
+        $('dad-reject').addEventListener('click', function() { renderAskDadSubView('emelia'); });
+
+      } else if (view === 'celebration') {
+        var rc = REWARDS.find(function(x) { return x.id === (askDadRequest && askDadRequest.rewardId); });
+        container.innerHTML +=
+          '<div class="askdad-card confetti-area" id="confetti-area">' +
+          '<div class="askdad-emoji">🎉</div>' +
+          '<h2 class="askdad-title">Enjoy your reward!</h2>' +
+          '<p class="askdad-body">' + (rc ? rc.emoji + ' ' + escapeHtml(rc.label) : 'You did it!') + '</p>' +
+          '<button class="btn" id="celebrate-home" style="width:100%;">Back to home 🏠</button>' +
+          '</div>';
+        launchConfetti();
+        $('celebrate-home').addEventListener('click', function() { showScreen('s-home'); });
+      }
+    }
+
+    function sendDadRequest(rewardId) {
+      var r = REWARDS.find(function(x) { return x.id === rewardId; });
+      if (!r) return;
+      askDadRequest = { rewardId: rewardId, cost: r.cost, date: todayKey() };
+      renderAskDadSubView('waiting');
+    }
+
+    function approveDadRequest() {
+      if (!askDadRequest) return;
+      var p = activeProfile();
+      if (!p) return;
+      if ((p.economy.coins || 0) < askDadRequest.cost) { alert('Not enough coins!'); return; }
+      p.economy.coins = (p.economy.coins || 0) - askDadRequest.cost;
+      if (!p.redemptions) p.redemptions = [];
+      p.redemptions.push({ date: todayKey(), rewardId: askDadRequest.rewardId, cost: askDadRequest.cost });
+      saveActiveProfile();
+      renderAskDadSubView('celebration');
+    }
+
+    function launchConfetti() {
+      var area = $('confetti-area');
+      if (!area) return;
+      var colors = ['#FFB3C6', '#A8D8F0', '#D4AAEE', '#FFEC80', '#B8EED8'];
+      for (var i = 0; i < 28; i++) {
+        var bit = document.createElement('div');
+        bit.className = 'conf-bit';
+        bit.style.cssText =
+          'left:' + (Math.random() * 100) + '%;' +
+          'top:' + (Math.random() * 25) + '%;' +
+          'background:' + colors[Math.floor(Math.random() * colors.length)] + ';' +
+          'animation:confettiFall ' + (0.8 + Math.random() * 0.8) + 's ' +
+          (Math.random() * 0.5) + 's ease-in forwards;';
+        area.appendChild(bit);
+      }
+    }
+
+    // ============================================================
+    // Stage 5 — Word Wall, Settings, Polish
+    // ============================================================
+
+    // ---- Word Wall screen ---------------------------------------
+
+    function renderWallScreen() {
+      var p = activeProfile();
+      if (!p) { showScreen('s-profiles'); return; }
+
+      var wall = p.wall || {};
+      var totalWords = 0;
+      Object.keys(wall).forEach(function(sid) {
+        Object.keys(wall[sid]).forEach(function(team) {
+          totalWords += (wall[sid][team] || []).length;
+        });
+      });
+
+      var container = $('s-wall');
+      container.innerHTML =
+        '<button class="btn-back" data-back="s-home">← Back</button>' +
+        '<h2>Your Word Wall 🧱</h2>' +
+        '<div class="wall-summary"><div class="wall-count">You\'ve beaten ' +
+        totalWords + ' word' + (totalWords !== 1 ? 's' : '') + '!</div></div>';
+
+      Object.keys(SOUNDS).forEach(function(sid) {
+        var sound = SOUNDS[sid];
+        var wallData = wall[sid] || {};
+        var hasAnyWords = sound.teams.some(function(team) {
+          return (wallData[team] || []).length > 0;
+        });
+
+        var section = document.createElement('div');
+        section.className = 'wall-section';
+
+        var headHtml =
+          '<div class="wall-section-head">' +
+          '<span class="wall-section-emoji">' + sound.emoji + '</span>' +
+          '<span class="wall-section-name">' + escapeHtml(sound.name) + '</span>' +
+          '</div>';
+
+        if (!hasAnyWords) {
+          section.innerHTML = headHtml +
+            '<p class="wall-empty-sound">Play ' + escapeHtml(sound.name) + ' to add words here</p>';
+        } else {
+          var teamsHtml = sound.teams.map(function(team) {
+            var words = wallData[team] || [];
+            if (!words.length) return '';
+            var ti = sound.teamInfo[team] || {};
+            var chips = words.map(function(w) {
+              return '<span class="word-chip" style="background:' + (ti.bg || '#eee') +
+                     ';color:' + (ti.fg || '#333') + ';">' + escapeHtml(w) + '</span>';
+            }).join('');
+            return '<div class="wall-team">' +
+              '<div class="wall-team-label">' + escapeHtml(ti.label || team) + ' family</div>' +
+              '<div class="word-chips">' + chips + '</div>' +
+              '</div>';
+          }).join('');
+          section.innerHTML = headHtml + teamsHtml;
+        }
+        container.appendChild(section);
+      });
+    }
+
+    // ---- Settings screen ----------------------------------------
+
+    function renderSettingsScreen() {
+      var p = activeProfile();
+      if (!p) { showScreen('s-profiles'); return; }
+
+      var container = $('s-settings');
+      container.innerHTML =
+        '<button class="btn-back" data-back="s-home">← Back</button>' +
+        '<h2>Settings ⚙️</h2>' +
+        settingsProfileHtml(p) +
+        settingsWeekHtml(p) +
+        settingsLevelHtml(p) +
+        settingsReadingHtml(p) +
+        settingsCoinCapHtml(p) +
+        settingsCustomWordsHtml(p) +
+        settingsAusNoteHtml() +
+        settingsVoiceHtml() +
+        settingsHistoryHtml(p) +
+        settingsDangerHtml();
+
+      wireSettingsEvents(p);
+    }
+
+    function settingsProfileHtml(p) {
+      return '<div class="settings-section">' +
+        '<h3>Profile</h3>' +
+        '<div class="settings-row"><span class="settings-label">Name</span>' +
+        '<input class="input" id="sett-name" value="' + escapeHtml(p.name) + '" maxlength="20" style="width:180px;" /></div>' +
+        '<div class="settings-row"><span class="settings-label">Avatar</span>' +
+        '<span class="settings-sub">Full avatar coming in next update ✨</span></div>' +
+        '<button class="btn btn-secondary" id="sett-save-name" style="width:100%;margin-top:12px;">Save name</button>' +
+        '<button class="btn btn-secondary" id="sett-reset-profile" style="width:100%;margin-top:10px;border-color:var(--pk2);color:var(--pk3);">Reset this profile</button>' +
+        '</div>';
+    }
+
+    function settingsWeekHtml(p) {
+      var cwk = p.weekKey || (currentWeekEntry() || {}).weekKey;
+      var cards = WEEKS.map(function(we) {
+        var isCurrent = we.weekKey === cwk;
+        var cls = 'week-card' + (we.comingSoon ? ' coming-soon' : '') + (isCurrent ? ' active' : '');
+        return '<div class="' + cls + '"' + (!we.comingSoon ? ' data-week="' + escapeHtml(we.weekKey) + '"' : '') + '>' +
+          '<span class="wc-emoji">' + we.emoji + '</span>' +
+          '<strong class="wc-label">' + escapeHtml(we.label) + '</strong>' +
+          '<span class="wc-sub">' + escapeHtml(we.title) + '</span>' +
+          '</div>';
+      }).join('');
+      return '<div class="settings-section"><h3>Current Week</h3>' +
+        '<div class="week-grid-sett">' + cards + '</div></div>';
+    }
+
+    function settingsLevelHtml(p) {
+      var level = p.level || 'core';
+      var tabs = ['core', 'challenge', 'extension'].map(function(lv) {
+        return '<button class="level-tab' + (level === lv ? ' active' : '') +
+          '" data-level="' + lv + '">' + lv.charAt(0).toUpperCase() + lv.slice(1) + '</button>';
+      }).join('');
+      return '<div class="settings-section"><h3>Difficulty Level</h3>' +
+        '<p style="font-size:13px;color:var(--mut);margin:0 0 10px;">Core: everyday words. Challenge: harder words added. Extension: all words.</p>' +
+        '<div class="level-tabs">' + tabs + '</div></div>';
+    }
+
+    function settingsReadingHtml(p) {
+      return '<div class="settings-section"><h3>Reading</h3>' +
+        '<div class="settings-row"><div><div class="settings-label">Minutes per page</div>' +
+        '<div class="settings-sub">Used to calculate reading coins</div></div>' +
+        '<input class="input-sm" id="sett-mpp" type="number" min="1" max="60" value="' + (p.minsPerPage || 1) + '" /></div>' +
+        '<button class="btn btn-secondary" id="sett-save-mpp" style="width:100%;margin-top:12px;">Save</button>' +
+        '</div>';
+    }
+
+    function settingsCoinCapHtml(p) {
+      var cap = (p.economy && p.economy.dailyCap) ? p.economy.dailyCap : 20;
+      return '<div class="settings-section"><h3>Daily Coin Cap</h3>' +
+        '<div class="settings-row"><div><div class="settings-label">Max coins per day</div>' +
+        '<div class="settings-sub">Default is 20</div></div>' +
+        '<input class="input-sm" id="sett-cap" type="number" min="5" max="100" value="' + cap + '" /></div>' +
+        '<button class="btn btn-secondary" id="sett-save-cap" style="width:100%;margin-top:12px;">Save</button>' +
+        '</div>';
+    }
+
+    function settingsCustomWordsHtml(p) {
+      var customs = p.customWords || [];
+      var listHtml = customs.length
+        ? customs.map(function(cw, i) {
+            return '<div class="custom-word-row">' +
+              '<div><div class="cw-text">' + escapeHtml(cw.w) + '</div>' +
+              '<div class="cw-meta">' + escapeHtml(cw.soundId) + ' · ' + escapeHtml(cw.team) + '</div></div>' +
+              '<button class="del-btn" data-cw-index="' + i + '">✕</button></div>';
+          }).join('')
+        : '<p style="color:var(--mut);font-size:14px;margin:0 0 8px;">No custom words yet.</p>';
+
+      var firstSid = Object.keys(SOUNDS)[0] || '';
+      var soundOpts = Object.keys(SOUNDS).map(function(sid) {
+        return '<option value="' + escapeHtml(sid) + '">' + escapeHtml(SOUNDS[sid].name) + '</option>';
+      }).join('');
+      var teamOpts = ((SOUNDS[firstSid] || {}).teams || []).map(function(t) {
+        return '<option value="' + escapeHtml(t) + '">' + escapeHtml(t) + '</option>';
+      }).join('');
+
+      return '<div class="settings-section"><h3>Custom Words</h3>' +
+        listHtml +
+        '<div class="add-custom-form">' +
+        '<select class="select-input" id="cw-sound">' + soundOpts + '</select>' +
+        '<select class="select-input" id="cw-team">' + teamOpts + '</select>' +
+        '<input class="input" id="cw-word" placeholder="New word" maxlength="30" />' +
+        '<input class="input" id="cw-hint" placeholder="Hint (optional)" maxlength="80" />' +
+        '<button class="btn" id="cw-add" style="width:100%;">+ Add word</button>' +
+        '</div></div>';
+    }
+
+    function settingsAusNoteHtml() {
+      return '<div class="settings-section"><h3>Australian English</h3>' +
+        '<div class="info-card">This app uses Australian English spelling throughout. ' +
+        'If a word looks different to American spelling — that\'s intentional! ' +
+        'colour, favourite, recognise, organise — all correct here.</div></div>';
+    }
+
+    function settingsVoiceHtml() {
+      var msg;
+      if (!voiceAvailable) {
+        msg = '🔇 Voice is not available on this device. Spelling cards still work — just no audio.';
+      } else if (ausVoice) {
+        msg = '🔊 Australian English voice is active (' + escapeHtml(ausVoice.name) + '). Tap the speaker button in any game to hear words spoken.';
+      } else {
+        msg = '🔊 Voice is active but no Australian English voice was found. Words will be spoken using the best available voice.';
+      }
+      return '<div class="settings-section"><h3>Voice</h3>' +
+        '<div class="info-card">' + msg + '</div></div>';
+    }
+
+    function settingsHistoryHtml(p) {
+      var redemptions = (p.redemptions || []).slice(-10).reverse();
+      var redHtml = redemptions.length
+        ? redemptions.map(function(r) {
+            var rr = REWARDS.find(function(x) { return x.id === r.rewardId; });
+            return '<div class="redemption-row">' +
+              '<span>' + (rr ? rr.emoji + ' ' + escapeHtml(rr.label) : escapeHtml(r.rewardId || '')) + '</span>' +
+              '<span style="color:var(--ye3);">🪙 −' + r.cost + ' · ' + escapeHtml(r.date) + '</span></div>';
+          }).join('')
+        : '<p style="color:var(--mut);font-size:14px;margin:0 0 10px;">No rewards redeemed yet.</p>';
+
+      return '<div class="settings-section"><h3>History</h3>' +
+        redHtml +
+        '<button class="btn btn-secondary" id="go-reading-log" style="width:100%;margin-top:10px;">📖 View reading log</button>' +
+        '</div>';
+    }
+
+    function settingsDangerHtml() {
+      return '<div class="settings-section danger-zone"><h3 style="color:var(--pk3);">Danger Zone</h3>' +
+        '<button class="btn btn-secondary" id="sett-clear-mistakes" style="width:100%;border-color:var(--pk2);color:var(--pk3);">Clear problem words list</button>' +
+        '<button class="btn btn-secondary" id="sett-reset-all" style="width:100%;margin-top:10px;border-color:var(--pk3);color:var(--pk3);">Reset ALL data</button>' +
+        '</div>';
+    }
+
+    function wireSettingsEvents(p) {
+      // Name
+      var saveName = $('sett-save-name');
+      if (saveName) saveName.addEventListener('click', function() {
+        var val = ($('sett-name').value || '').trim();
+        if (!val) { alert('Please enter a name.'); return; }
+        p.name = val;
+        saveActiveProfile();
+        alert('Name saved!');
+      });
+
+      // Reset profile
+      var resetProf = $('sett-reset-profile');
+      if (resetProf) resetProf.addEventListener('click', function() {
+        if (!confirm('Reset ' + p.name + '\'s profile? This will delete all their progress.')) return;
+        state.profiles[state.activeIndex] = freshProfile(p.name);
+        saveActiveProfile();
+        showScreen('s-home');
+      });
+
+      // Week cards
+      $('s-settings').querySelectorAll('.week-card:not(.coming-soon)').forEach(function(card) {
+        card.addEventListener('click', function() {
+          var wk = card.getAttribute('data-week');
+          if (!wk) return;
+          p.weekKey = wk;
+          saveActiveProfile();
+          renderSettingsScreen();
+        });
+      });
+
+      // Level tabs
+      $('s-settings').querySelectorAll('.level-tab').forEach(function(tab) {
+        tab.addEventListener('click', function() {
+          p.level = tab.getAttribute('data-level');
+          saveActiveProfile();
+          $('s-settings').querySelectorAll('.level-tab').forEach(function(t) {
+            t.classList.toggle('active', t.getAttribute('data-level') === p.level);
+          });
+        });
+      });
+
+      // Reading — mins per page
+      var saveMpp = $('sett-save-mpp');
+      if (saveMpp) saveMpp.addEventListener('click', function() {
+        var val = parseInt(($('sett-mpp') || {}).value, 10);
+        if (!val || val < 1) { alert('Please enter a valid number (minimum 1).'); return; }
+        p.minsPerPage = val;
+        saveActiveProfile();
+        alert('Reading setting saved!');
+      });
+
+      // Coin cap
+      var saveCap = $('sett-save-cap');
+      if (saveCap) saveCap.addEventListener('click', function() {
+        var val = parseInt(($('sett-cap') || {}).value, 10);
+        if (!val || val < 5) { alert('Minimum daily cap is 5 coins.'); return; }
+        if (!p.economy) p.economy = {};
+        p.economy.dailyCap = val;
+        saveActiveProfile();
+        alert('Daily cap saved!');
+      });
+
+      // Custom word — update team options when sound changes
+      var cwSound = $('cw-sound');
+      if (cwSound) cwSound.addEventListener('change', function() {
+        var sound = SOUNDS[cwSound.value];
+        var teamSel = $('cw-team');
+        if (teamSel && sound) {
+          teamSel.innerHTML = (sound.teams || []).map(function(t) {
+            return '<option value="' + escapeHtml(t) + '">' + escapeHtml(t) + '</option>';
+          }).join('');
+        }
+      });
+
+      // Add custom word
+      var cwAdd = $('cw-add');
+      if (cwAdd) cwAdd.addEventListener('click', function() {
+        var word = ($('cw-word') ? $('cw-word').value : '').trim().toLowerCase();
+        var hint = ($('cw-hint') ? $('cw-hint').value : '').trim();
+        var sid  = $('cw-sound') ? $('cw-sound').value : '';
+        var team = $('cw-team')  ? $('cw-team').value  : '';
+        if (!word)        { alert('Please enter a word.'); return; }
+        if (!sid || !team){ alert('Please select a sound set and team.'); return; }
+        if (!p.customWords) p.customWords = [];
+        if (p.customWords.find(function(cw) { return cw.w === word && cw.soundId === sid; })) {
+          alert('That word is already in your list.'); return;
+        }
+        p.customWords.push({ w: word, team: team, soundId: sid, lv: 'core', hint: hint || word, ph: word + '?' });
+        saveActiveProfile();
+        renderSettingsScreen();
+      });
+
+      // Delete custom word
+      $('s-settings').querySelectorAll('.del-btn[data-cw-index]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var idx = parseInt(btn.getAttribute('data-cw-index'), 10);
+          if (!p.customWords || idx < 0 || idx >= p.customWords.length) return;
+          if (!confirm('Delete "' + p.customWords[idx].w + '"?')) return;
+          p.customWords.splice(idx, 1);
+          saveActiveProfile();
+          renderSettingsScreen();
+        });
+      });
+
+      // Reading log link
+      var goReading = $('go-reading-log');
+      if (goReading) goReading.addEventListener('click', function() {
+        readingTab = 'history';
+        showScreen('s-reading');
+      });
+
+      // Clear mistakes
+      var clearMistakes = $('sett-clear-mistakes');
+      if (clearMistakes) clearMistakes.addEventListener('click', function() {
+        if (!confirm('Clear ' + p.name + '\'s problem words list?')) return;
+        p.mistakes = [];
+        saveActiveProfile();
+        alert('Problem words cleared.');
+      });
+
+      // Reset ALL data — two-step confirmation
+      var resetAll = $('sett-reset-all');
+      if (resetAll) resetAll.addEventListener('click', function() {
+        if (!confirm('This will delete ALL data for BOTH players. There is no undo. Continue?')) return;
+        if (!confirm('Last chance — delete everything and start fresh?')) return;
+        localStorage.removeItem(STORAGE_KEY);
+        state.profiles = [null, null];
+        state.activeIndex = null;
+        showScreen('s-profiles');
+      });
+    }
+
+    // -----------------------------------
+    // Boot
+    // -----------------------------------
+    showScreen('s-profiles');
+  </script>
+</body>
+</html>
