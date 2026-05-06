@@ -750,6 +750,43 @@
     .add-custom-form { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(176,125,224,0.15); }
     .select-input { min-height: 44px; padding: 0 12px; border-radius: var(--radius-md); border: 2px solid var(--pu); background: var(--wh); font-family: 'Nunito', sans-serif; font-size: 16px; color: var(--txt); outline: none; width: 100%; }
     .select-input:focus { border-color: var(--pu2); }
+
+    /* ---- Sentence star display (improved) ---- */
+    .star-big { font-size: 44px; text-align: center; letter-spacing: 3px; min-height: 52px; display: block; transition: transform 180ms ease; }
+    .star-big.pulse { animation: starPulse 300ms ease-out; }
+    @keyframes starPulse { 0% { transform: scale(1); } 50% { transform: scale(1.18); } 100% { transform: scale(1); } }
+    .star-tip { font-size: 14px; color: var(--pu3); font-weight: 700; text-align: center; min-height: 20px; margin-top: 4px; }
+
+    /* ---- Drop emoji picker ---- */
+    .drop-emoji-row { display: flex; justify-content: center; gap: 12px; margin-top: 10px; }
+    .drop-emoji-btn { font-size: 36px; border: 3px solid transparent; border-radius: var(--radius-md); padding: 8px 12px; background: rgba(255,255,255,0.25); cursor: pointer; transition: transform 100ms ease, border-color 100ms; min-height: 54px; }
+    .drop-emoji-btn:active { transform: scale(1.12); border-color: rgba(255,255,255,0.8); }
+
+    /* ---- Avatar Room ---- */
+    .avatar-preview-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 20px; background: rgba(255,255,255,0.96); border-radius: var(--radius-lg); box-shadow: var(--shadow-pop); }
+    .avatar-preview-big { width: 100px; height: 100px; font-size: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-pop); }
+    .colour-row { display: flex; gap: 10px; }
+    .colour-swatch { width: 44px; height: 44px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; transition: transform 120ms ease, border-color 120ms; }
+    .colour-swatch.selected { border-color: var(--txt); transform: scale(1.15); }
+    .colour-swatch:active { transform: scale(1.1); }
+    .emoji-section { background: rgba(255,255,255,0.9); border-radius: var(--radius-lg); padding: 18px; box-shadow: var(--shadow-soft); }
+    .emoji-section h3 { margin-bottom: 12px; }
+    .emoji-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+    .emoji-btn { font-size: 28px; border: 3px solid transparent; border-radius: var(--radius-md); padding: 6px; min-height: 54px; background: rgba(212,170,238,0.12); cursor: pointer; transition: transform 100ms ease; display: flex; align-items: center; justify-content: center; }
+    .emoji-btn.selected { border-color: var(--pu3); background: var(--pu); }
+    .emoji-btn:active { transform: scale(1.1); }
+    .emoji-locked { opacity: 0.3; cursor: default; filter: grayscale(1); }
+
+    /* ---- PIN overlay ---- */
+    .pin-overlay { background: rgba(255,255,255,0.97); border-radius: var(--radius-lg); padding: 28px 20px 20px; box-shadow: var(--shadow-pop); text-align: center; }
+    .pin-dots { display: flex; justify-content: center; gap: 14px; margin: 16px 0; }
+    .pin-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--pu2); background: transparent; transition: background 120ms; }
+    .pin-dot.filled { background: var(--pu2); }
+    .pin-dot.error { border-color: var(--pk3); background: var(--pk3); }
+    .pin-keypad { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 10px; }
+    .pin-key { min-height: 60px; font-size: 22px; font-family: 'Fredoka One', sans-serif; border-radius: var(--radius-md); border: 2px solid var(--pu); background: rgba(212,170,238,0.12); cursor: pointer; color: var(--pu3); transition: background 80ms; }
+    .pin-key:active { background: var(--pu); color: #fff; }
+    .pin-key.wide { grid-column: span 2; }
   </style>
 </head>
 <body>
@@ -792,7 +829,7 @@
         </div>
         <div class="gem-card">
           <div class="gem-amount">💎 <span id="home-gems">0</span></div>
-          <div class="streak">🔥 <span id="home-streak">0</span> day streak</div>
+          <div class="streak">🎮 <span id="home-streak">0</span> sessions</div>
         </div>
       </div>
 
@@ -823,7 +860,7 @@
         <span class="icon">🎀</span>
         <span style="flex:1;">
           <span class="label">Avatar Room</span><br />
-          <span class="desc" id="avatar-room-msg">Dress up coming soon</span>
+          <span class="desc" id="avatar-room-msg">Customise your look</span>
         </span>
       </button>
 
@@ -893,6 +930,7 @@
     <!-- s-wall and s-settings are fully JS-rendered (Stage 5). -->
     <section class="screen" id="s-wall"></section>
     <section class="screen" id="s-settings"></section>
+    <section class="screen" id="s-avatarroom"></section>
   </div>
 
   <script>
@@ -911,11 +949,11 @@
     function freshProfile(name) {
       return {
         name: name || '',
-        avatar: {},
+        avatar: { colour: 'pink', emoji: null, unlockedEmojis: [] },
         weekKey: '',
         level: 'core',
         minsPerPage: 1,
-        streak: 0,
+        totalSessions: 0,
         lastPlayDate: null,
         completedWeeks: [],
         mistakes: [],
@@ -1053,6 +1091,12 @@
     }
 
     var AVATAR_PALETTE = ['avatar-pink', 'avatar-blue', 'avatar-purple', 'avatar-green'];
+
+    var AVATAR_EMOJIS = [
+      '🦄','🐉','🦋','🐬','🦊','🐼','🐸','🦁','🐨','🦔',
+      '🌈','⭐','🌙','☀️','🌺','🌸','🍀','🍉','🍕','🎸',
+      '🚀','🎠','🏆','💎','🎯','🪄','🎭','🎪','🎨','🎬'
+    ];
     function avatarClassFor(index) {
       return AVATAR_PALETTE[index % AVATAR_PALETTE.length];
     }
@@ -1072,8 +1116,9 @@
       if (id === 's-reading')   renderReadingScreen();
       if (id === 's-coins')     renderCoinsScreen();
       if (id === 's-askdad')    renderAskDadScreen();
-      if (id === 's-wall')      renderWallScreen();
-      if (id === 's-settings')  renderSettingsScreen();
+      if (id === 's-wall')       renderWallScreen();
+      if (id === 's-settings')   renderSettingsScreen();
+      if (id === 's-avatarroom') renderAvatarRoom();
       window.scrollTo(0, 0);
     }
 
@@ -1090,8 +1135,7 @@
         return;
       }
       if (ev.target.closest('#avatar-room-btn')) {
-        var msg = $('avatar-room-msg');
-        if (msg) msg.textContent = 'Coming in the next update! Keep earning gems.';
+        showScreen('s-avatarroom');
       }
     });
 
@@ -1117,6 +1161,15 @@
       }
     }
 
+    function getAvatarContent(profile) {
+      return (profile && profile.avatar && profile.avatar.emoji) || initialsOf(profile ? profile.name : '');
+    }
+
+    function getAvatarClass(profile, index) {
+      if (profile && profile.avatar && profile.avatar.colour) return 'avatar-' + profile.avatar.colour;
+      return avatarClassFor(index);
+    }
+
     function buildProfileCard(index) {
       var profile = state.profiles[index];
       var card = document.createElement('div');
@@ -1126,9 +1179,9 @@
 
       if (profile) {
         card.innerHTML =
-          '<div class="avatar-circle ' + avatarClassFor(index) + '">' + initialsOf(profile.name) + '</div>' +
+          '<div class="avatar-circle ' + getAvatarClass(profile, index) + '">' + getAvatarContent(profile) + '</div>' +
           '<div class="profile-name">' + escapeHtml(profile.name) + '</div>' +
-          '<div class="profile-sub">Avatar coming soon ✨</div>';
+          '<div class="profile-sub">🎮 ' + (profile.totalSessions || 0) + ' sessions</div>';
       } else {
         // Empty slot — let the user create a profile here.
         card.innerHTML =
@@ -1242,8 +1295,8 @@
 
       $('home-name').textContent = p.name;
       var av = $('home-avatar');
-      av.className = 'avatar-circle ' + avatarClassFor(state.activeIndex);
-      av.textContent = initialsOf(p.name);
+      av.className = 'avatar-circle ' + getAvatarClass(p, state.activeIndex);
+      av.textContent = getAvatarContent(p);
 
       var econ = p.economy || {};
       $('home-coins').textContent = econ.coins || 0;
@@ -1254,7 +1307,7 @@
       var pct = Math.min(100, (daily / 20) * 100);
       $('home-progress').style.width = pct + '%';
 
-      $('home-streak').textContent = p.streak || 0;
+      $('home-streak').textContent = p.totalSessions || 0;
 
       // Week dots populated from WEEKS array (Stage 2+).
       renderWeekDots();
@@ -1270,8 +1323,10 @@
         dropsArea.appendChild(badge);
       }
 
-      // Reset the avatar room hint each time we land here.
-      $('avatar-room-msg').textContent = 'Dress up coming soon';
+      var unlockCount = (p.avatar && p.avatar.unlockedEmojis) ? p.avatar.unlockedEmojis.length : 0;
+      $('avatar-room-msg').textContent = unlockCount > 0
+        ? unlockCount + ' emoji' + (unlockCount !== 1 ? 's' : '') + ' unlocked!'
+        : 'Customise your look';
     }
 
     // -----------------------------------
@@ -1405,6 +1460,9 @@
     // Sound IDs that show the comparison panel at session start.
     var AMBIGUOUS_IDS = ['ai-ay-a_e', 'ee-ea-e_e', 'er-ir-ur', 'or-aw-ore', 'oa-ow-o_e', 'oi-oy'];
 
+    // Passed from done screen → sentences screen so flow is seamless.
+    var pendingSoundId = null;
+
     // Active game session — fully reset by startGame().
     var gameSession = {
       soundId: null, sound: null, mode: null,
@@ -1418,11 +1476,17 @@
 
     // ---- Small utilities ----------------------------------------
 
+    function pad2(n) { return n < 10 ? '0' + n : '' + n; }
+
     function todayKey() {
       var d = new Date();
-      return d.getFullYear() + '-' +
-             String(d.getMonth() + 1).padStart(2, '0') + '-' +
-             String(d.getDate()).padStart(2, '0');
+      return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+    }
+
+    function repeatStr(str, n) {
+      var out = '';
+      for (var i = 0; i < n; i++) out += str;
+      return out;
     }
 
     function activeProfile() { return state.profiles[state.activeIndex] || null; }
@@ -1445,7 +1509,7 @@
       return 1;
     }
 
-    function starsHtml(n) { return '⭐'.repeat(n) + '☆'.repeat(3 - n); }
+    function starsHtml(n) { return repeatStr('⭐', n) + repeatStr('☆', 3 - n); }
 
     // ---- Week helpers -------------------------------------------
 
@@ -1538,7 +1602,8 @@
       if (!p) return;
       var sound = SOUNDS[soundId];
       if (!sound) { alert('This sound set is not available yet. Try another!'); return; }
-      var words = wordsOverride || selectWords(soundId, p.level || 'core', 8);
+      var levelForGame = (mode === 'thisweek') ? 'extension' : (p.level || 'core');
+      var words = wordsOverride || selectWords(soundId, levelForGame, 8);
       if (!words.length) { alert('No words found for this level. Ask Dad to adjust Settings.'); return; }
 
       gameSession = {
@@ -1925,19 +1990,8 @@
     // ---- Streak -------------------------------------------------
 
     function updateStreak(p) {
-      var today = todayKey();
-      if (p.lastPlayDate === today) return;
-      p.streak = isYesterday(p.lastPlayDate) ? (p.streak || 0) + 1 : 1;
-      p.lastPlayDate = today;
-    }
-
-    function isYesterday(dateStr) {
-      if (!dateStr) return false;
-      var d = new Date();
-      d.setDate(d.getDate() - 1);
-      return dateStr === d.getFullYear() + '-' +
-             String(d.getMonth() + 1).padStart(2, '0') + '-' +
-             String(d.getDate()).padStart(2, '0');
+      p.totalSessions = (p.totalSessions || 0) + 1;
+      p.lastPlayDate = todayKey();
     }
 
     // ---- Word wall & mistakes -----------------------------------
@@ -1968,13 +2022,20 @@
     function checkAndTriggerDrop(p) {
       var today = todayKey();
       var dropsToday = (p.drops || []).filter(function(d) { return d.date === today; }).length;
-      if (dropsToday >= 2) return false;
+      if (dropsToday >= 2) return null;
       var isPerfect = gameSession.wrongCount === 0;
       var chance = dropsToday === 0 ? 1 : (isPerfect ? 0.5 : 0.33);
-      if (Math.random() >= chance) return false;
+      if (Math.random() >= chance) return null;
+      if (!p.avatar) p.avatar = { colour: 'pink', emoji: null, unlockedEmojis: [] };
+      if (!p.avatar.unlockedEmojis) p.avatar.unlockedEmojis = [];
+      var pool = AVATAR_EMOJIS.filter(function(e) {
+        return p.avatar.unlockedEmojis.indexOf(e) === -1;
+      });
+      if (!pool.length) return null;
+      var choices = shuffle(pool).slice(0, 3);
       if (!p.drops) p.drops = [];
-      p.drops.push({ date: today, itemId: 'avatar_item_' + Date.now(), seen: false });
-      return true;
+      p.drops.push({ date: today, seen: false });
+      return choices;
     }
 
     // ---- Done screen --------------------------------------------
@@ -1987,7 +2048,7 @@
       var total   = gameSession.words.length;
       var correct = gameSession.correctFirst;
       var stars   = starsFromScore(correct, total);
-      var drop    = p ? checkAndTriggerDrop(p) : false;
+      var dropChoices = p ? checkAndTriggerDrop(p) : null;
       if (p) saveActiveProfile();
 
       var coinsMsg = gameSession.sessionCoins > 0
@@ -1996,15 +2057,24 @@
         : 'You played for less than a minute — come back for coins!';
 
       var econ   = p ? (p.economy || {}) : {};
-      var capMsg = econ.dailyCoins >= 20
+      var capMsg = econ.dailyCoins >= getDailyCap(p)
         ? '<p class="cap-msg">Daily coin cap reached! Come back tomorrow 🌟' +
           '<br>Your hard work was brilliant either way.</p>'
         : '';
 
-      var dropHtml = drop
-        ? '<div class="drop-modal"><span class="drop-box">🎁</span>' +
-          '<p>You got a surprise!<br><small>Your avatar item will unlock in the next update. Keep collecting!</small></p></div>'
+      var dropHtml = dropChoices
+        ? '<div class="drop-modal" id="drop-modal"><span class="drop-box">🎁</span>' +
+          '<p>Surprise! Pick a new avatar emoji:</p>' +
+          '<div class="drop-emoji-row">' +
+          dropChoices.map(function(e) {
+            return '<button class="drop-emoji-btn" data-emoji="' + e + '">' + e + '</button>';
+          }).join('') +
+          '</div></div>'
         : '';
+
+      var hasSentences = !!(gameSession.soundId && SOUNDS[gameSession.soundId] &&
+        SOUNDS[gameSession.soundId].sentenceStarters &&
+        SOUNDS[gameSession.soundId].sentenceStarters.length);
 
       var content = $('game-content');
       content.innerHTML =
@@ -2014,12 +2084,38 @@
         '<p class="done-score">' + correct + ' of ' + total + ' correct on the first try</p>' +
         '<p class="done-coins">' + coinsMsg + '</p>' +
         capMsg + dropHtml +
-        '<button class="btn" id="done-home">Back to home</button>' +
-        '<button class="btn btn-secondary" id="done-again">Play again 🎲</button>' +
+        (hasSentences
+          ? '<button class="btn" id="done-sentences">✍️ Write sentences →</button>'
+          : '') +
+        '<button class="btn btn-secondary" id="done-home">Back to home</button>' +
+        '<button class="btn btn-ghost" id="done-again">Play again 🎲</button>' +
         '</div>';
 
+      if (hasSentences) {
+        $('done-sentences').addEventListener('click', function() {
+          pendingSoundId = gameSession.soundId;
+          showScreen('s-sentences');
+        });
+      }
       $('done-home').addEventListener('click', function() { showScreen('s-home'); });
       $('done-again').addEventListener('click', function() { startGame(gameSession.soundId, 'surprise'); });
+
+      if (dropChoices) {
+        content.querySelectorAll('.drop-emoji-btn').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            var chosen = btn.getAttribute('data-emoji');
+            var pp = activeProfile();
+            if (pp) {
+              if (!pp.avatar) pp.avatar = { colour: 'pink', emoji: null, unlockedEmojis: [] };
+              if (!pp.avatar.unlockedEmojis) pp.avatar.unlockedEmojis = [];
+              if (pp.avatar.unlockedEmojis.indexOf(chosen) === -1) pp.avatar.unlockedEmojis.push(chosen);
+              saveActiveProfile();
+            }
+            $('drop-modal').innerHTML = '<span style="font-size:46px;">' + chosen + '</span>' +
+              '<p style="margin:6px 0 0;font-weight:800;">Added to your avatar room! 🎉</p>';
+          });
+        });
+      }
     }
 
     // ---- Play tile clicks (delegated) ---------------------------
@@ -2135,12 +2231,71 @@
     var askDadSubView = 'emelia'; // 'emelia' | 'waiting' | 'dad' | 'celebration'
     var askDadRequest = null; // { rewardId, cost, date }
 
-    var REWARDS = [
-      { id: 'screen', label: 'Extra screen time (30 min)', emoji: '📱', cost: 10 },
-      { id: 'lolly',  label: 'Treat from the treat box',   emoji: '🍬', cost: 8  },
-      { id: 'game',   label: 'Choose tonight\'s game',     emoji: '🎲', cost: 6  },
-      { id: 'late',   label: 'Stay up 20 minutes later',   emoji: '🌙', cost: 12 }
-    ];
+    // 1 coin = 1 minute of extra iPad time. Kids choose how many minutes.
+    var IPAD_REWARD = { id: 'ipad', label: 'Extra iPad time', emoji: '📱', costPerMin: 1 };
+
+    // ---- Settings PIN -------------------------------------------
+    var PIN_KEY = 'spelldash-pin';
+    var settingsPinUnlocked = false;
+
+    function getSettingsPin() { return localStorage.getItem(PIN_KEY) || ''; }
+    function saveSettingsPin(pin) {
+      if (pin) localStorage.setItem(PIN_KEY, pin);
+      else localStorage.removeItem(PIN_KEY);
+    }
+
+    function renderPinEntry(onSuccess) {
+      var container = $('s-settings');
+      var entered = '';
+      function draw() {
+        container.innerHTML =
+          '<button class="btn-back" data-back="s-home">← Back</button>' +
+          '<div class="pin-overlay">' +
+          '<div style="font-size:36px;">🔒</div>' +
+          '<h2 style="margin:8px 0 0;">Settings PIN</h2>' +
+          '<p style="color:var(--mut);font-size:14px;margin:4px 0 0;">Enter your 4-digit PIN</p>' +
+          '<div class="pin-dots" id="pin-dots">' +
+          [0,1,2,3].map(function(i) {
+            return '<div class="pin-dot' + (i < entered.length ? ' filled' : '') + '" id="pd-' + i + '"></div>';
+          }).join('') +
+          '</div>' +
+          '<div class="pin-keypad">' +
+          [1,2,3,4,5,6,7,8,9].map(function(n) {
+            return '<button class="pin-key" data-digit="' + n + '">' + n + '</button>';
+          }).join('') +
+          '<button class="pin-key" id="pin-del">⌫</button>' +
+          '<button class="pin-key" data-digit="0">0</button>' +
+          '</div></div>';
+
+        container.querySelectorAll('[data-digit]').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            if (entered.length < 4) {
+              entered += btn.getAttribute('data-digit');
+              if (entered.length === 4) checkPin();
+              else draw();
+            }
+          });
+        });
+        var del = $('pin-del');
+        if (del) del.addEventListener('click', function() {
+          entered = entered.slice(0, -1);
+          draw();
+        });
+      }
+
+      function checkPin() {
+        draw();
+        if (entered === getSettingsPin()) {
+          settingsPinUnlocked = true;
+          onSuccess();
+        } else {
+          var dots = container.querySelectorAll('.pin-dot');
+          for (var i = 0; i < dots.length; i++) dots[i].className = 'pin-dot error';
+          setTimeout(function() { entered = ''; draw(); }, 800);
+        }
+      }
+      draw();
+    }
 
     // ---- assessSentence -----------------------------------------
     // Returns star count 1–5 based on sequential quality gates.
@@ -2174,15 +2329,17 @@
       var p = activeProfile();
       if (!p) { showScreen('s-profiles'); return; }
 
-      var we = currentWeekEntry();
-      var sound = we && we.soundId ? SOUNDS[we.soundId] : null;
+      var soundId = pendingSoundId || (function() { var we = currentWeekEntry(); return we ? we.soundId : null; })();
+      pendingSoundId = null;
+
+      var sound = soundId ? SOUNDS[soundId] : null;
       var starters = sound && sound.sentenceStarters && sound.sentenceStarters.length
         ? sound.sentenceStarters.slice()
         : ['Tell me about your day…', 'My favourite thing is…', 'I wish I could…'];
 
       sentenceSession = {
         starters: starters, index: 0, sentences: [], coins: 0,
-        targetBonusUsed: false, soundId: we ? we.soundId : null
+        targetBonusUsed: false, soundId: soundId
       };
       renderSentenceCard();
     }
@@ -2207,6 +2364,8 @@
         '<div class="starter-label">Sentence ' + (sentenceSession.index + 1) + ' of ' + total + '</div>' +
         '<p class="starter-text">' + escapeHtml(starter) + '</p>' +
         '<textarea class="sentence-input" id="sentence-input" placeholder="Type your sentence here…" rows="3"></textarea>' +
+        '<span class="star-big" id="star-big">⬜⬜⬜⬜⬜</span>' +
+        '<div class="star-tip" id="star-tip">Start typing your sentence!</div>' +
         '<div class="star-ladder">' +
         '<div class="sl-step" id="sl-0"></div>' +
         '<div class="sl-step" id="sl-1"></div>' +
@@ -2214,19 +2373,34 @@
         '<div class="sl-step" id="sl-3"></div>' +
         '<div class="sl-step" id="sl-4"></div>' +
         '</div>' +
-        '<div class="star-score" id="star-score">✦ Start typing…</div>' +
-        '<p class="sentence-tip">Use adjectives, adverbs, and this week\'s words for more stars!</p>' +
         '</div>' +
         '<button class="btn" id="sentence-submit">Submit →</button>' +
         '</div>';
 
       var input = $('sentence-input');
-      var scoreEl = $('star-score');
+      var starBig = $('star-big');
+      var starTip = $('star-tip');
+
+      var STAR_TIPS = [
+        'Start typing your sentence!',
+        'Good start — try adding more detail.',
+        'Nice! Add a describing word (adjective) for another star.',
+        'Great! Try adding a -ly word (like "quickly") for even more.',
+        'Amazing! Use one of this week\'s spelling words to go all the way!',
+        '🌟 Perfect sentence! All 5 stars!'
+      ];
 
       input.addEventListener('input', function() {
         var stars = assessSentence(input.value, targetWords);
         updateStarLadder(stars);
-        scoreEl.textContent = stars > 0 ? starsHtml(stars) + '  ' + stars + ' star' + (stars !== 1 ? 's' : '') : '✦ Keep going…';
+        var filled = repeatStr('⭐', stars) + repeatStr('⬜', 5 - stars);
+        if (starBig.textContent !== filled) {
+          starBig.textContent = filled;
+          starBig.classList.remove('pulse');
+          void starBig.offsetWidth;
+          starBig.classList.add('pulse');
+        }
+        starTip.textContent = STAR_TIPS[stars] || STAR_TIPS[0];
       });
 
       $('sentence-submit').addEventListener('click', function() {
@@ -2324,46 +2498,54 @@
         '<input class="input" id="r-title" placeholder="What are you reading?" maxlength="80" /></div>' +
         '<div><div class="field-label">Author (optional)</div>' +
         '<input class="input" id="r-author" placeholder="Who wrote it?" maxlength="60" /></div>' +
-        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">' +
-        '<div><div class="field-label">Pages read</div>' +
-        '<input class="input" id="r-pages" type="number" min="1" max="999" placeholder="12" /></div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">' +
+        '<div><div class="field-label">Page start</div>' +
+        '<input class="input" id="r-start" type="number" min="1" max="9999" placeholder="10" /></div>' +
+        '<div><div class="field-label">Page finish</div>' +
+        '<input class="input" id="r-finish" type="number" min="1" max="9999" placeholder="22" /></div>' +
         '<div><div class="field-label">Minutes read</div>' +
         '<input class="input" id="r-mins" type="number" min="1" max="600" placeholder="20" /></div></div>' +
         '<div class="reading-preview" id="r-preview">Fill in pages and minutes to see your coins</div>' +
         '<button class="btn" id="r-submit">Log this reading 📖</button>' +
         '</div>';
 
-      $('r-pages').addEventListener('input', function() { updateReadingPreview(mpp); });
+      $('r-start').addEventListener('input', function() { updateReadingPreview(mpp); });
+      $('r-finish').addEventListener('input', function() { updateReadingPreview(mpp); });
       $('r-mins').addEventListener('input', function() { updateReadingPreview(mpp); });
       $('r-submit').addEventListener('click', function() { submitReadingEntry(mpp); });
     }
 
     function updateReadingPreview(minsPerPage) {
-      var pages = parseInt(($('r-pages') || {}).value, 10) || 0;
-      var mins  = parseInt(($('r-mins')  || {}).value, 10) || 0;
+      var start  = parseInt(($('r-start')  || {}).value, 10) || 0;
+      var finish = parseInt(($('r-finish') || {}).value, 10) || 0;
+      var mins   = parseInt(($('r-mins')   || {}).value, 10) || 0;
       var el = $('r-preview');
       if (!el) return;
+      var pages = (start && finish && finish >= start) ? finish - start + 1 : 0;
       if (!pages || !mins) {
         el.textContent = 'Fill in pages and minutes to see your coins';
         return;
       }
       var coins = Math.floor(mins / minsPerPage);
-      el.textContent = '🪙 You\'ll earn ' + coins + ' coin' + (coins !== 1 ? 's' : '') + ' for this reading!';
+      el.textContent = pages + ' pages · 🪙 You\'ll earn ' + coins + ' coin' + (coins !== 1 ? 's' : '') + ' for this reading!';
     }
 
     function submitReadingEntry(minsPerPage) {
       var title  = ($('r-title')  ? $('r-title').value  : '').trim();
       var author = ($('r-author') ? $('r-author').value : '').trim();
-      var pages  = parseInt(($('r-pages') ? $('r-pages').value : ''), 10) || 0;
-      var mins   = parseInt(($('r-mins')  ? $('r-mins').value  : ''), 10) || 0;
+      var start  = parseInt(($('r-start')  ? $('r-start').value  : ''), 10) || 0;
+      var finish = parseInt(($('r-finish') ? $('r-finish').value : ''), 10) || 0;
+      var mins   = parseInt(($('r-mins')   ? $('r-mins').value   : ''), 10) || 0;
+      var pages  = (start && finish && finish >= start) ? finish - start + 1 : 0;
 
-      if (!title)         { alert('Please enter the book title.');        return; }
-      if (pages < 1)      { alert('Please enter how many pages you read.'); return; }
-      if (mins  < 1)      { alert('Please enter how many minutes you read.'); return; }
+      if (!title)    { alert('Please enter the book title.'); return; }
+      if (start < 1) { alert('Please enter your starting page number.'); return; }
+      if (finish < start) { alert('Finish page must be greater than or equal to start page.'); return; }
+      if (mins  < 1) { alert('Please enter how many minutes you read.'); return; }
 
       var coinsEarned = Math.floor(mins / minsPerPage);
       var today = todayKey();
-      var entry = { date: today, title: title, author: author, pages: pages, mins: mins, coins: coinsEarned };
+      var entry = { date: today, title: title, author: author, pageStart: start, pageFinish: finish, pages: pages, mins: mins, coins: coinsEarned };
 
       var p = activeProfile();
       if (p) {
@@ -2400,7 +2582,8 @@
         return '<div class="reading-entry">' +
           '<div><div class="re-title">' + escapeHtml(entry.title) + '</div>' +
           '<div class="re-meta">' + (entry.author ? escapeHtml(entry.author) + ' · ' : '') +
-          entry.pages + ' pages · ' + entry.mins + ' min · ' + escapeHtml(entry.date) + '</div></div>' +
+          (entry.pageStart ? 'pp.' + entry.pageStart + '–' + entry.pageFinish : entry.pages + ' pages') +
+          ' · ' + entry.mins + ' min · ' + escapeHtml(entry.date) + '</div></div>' +
           '<div class="re-coins">🪙 +' + (entry.coins || 0) + '</div>' +
           '</div>';
       }).join('');
@@ -2474,46 +2657,69 @@
       container.innerHTML = '<button class="btn-back" data-back="s-coins">← Back</button>';
 
       if (view === 'emelia') {
-        var rewardsHtml = REWARDS.map(function(r) {
-          var canAfford = coins >= r.cost;
-          return '<button class="reward-opt"' + (canAfford ? '' : ' disabled style="opacity:0.5;cursor:default;"') +
-            ' data-reward="' + r.id + '">' +
-            '<span>' + r.emoji + ' ' + escapeHtml(r.label) + '</span>' +
-            '<span class="reward-cost">🪙 ' + r.cost + '</span></button>';
-        }).join('');
+        var maxMins = Math.min(coins, 60);
+        var canAfford = coins >= 1;
         container.innerHTML +=
           '<div class="askdad-card">' +
-          '<div class="askdad-emoji">🌟</div>' +
-          '<h2 class="askdad-title">Choose a reward!</h2>' +
-          '<p class="askdad-body">You have <strong>🪙 ' + coins + ' coins</strong>. Pick something to ask Dad for.</p>' +
-          '<div class="reward-opts">' + rewardsHtml + '</div>' +
+          '<div class="askdad-emoji">📱</div>' +
+          '<h2 class="askdad-title">Extra iPad time!</h2>' +
+          '<p class="askdad-body">You have <strong>🪙 ' + coins + ' coin' + (coins !== 1 ? 's' : '') + '</strong>.<br>' +
+          '1 coin = 1 extra minute of iPad time.</p>' +
+          (canAfford
+            ? '<div style="display:flex;align-items:center;justify-content:center;gap:16px;margin:8px 0;">' +
+              '<button class="btn btn-secondary" id="mins-down" style="min-width:54px;font-size:24px;padding:0;">−</button>' +
+              '<div style="text-align:center;">' +
+              '<div style="font-size:40px;font-family:\'Fredoka One\',sans-serif;color:var(--pu3);" id="mins-val">1</div>' +
+              '<div style="font-size:13px;color:var(--mut);">minutes</div></div>' +
+              '<button class="btn btn-secondary" id="mins-up" style="min-width:54px;font-size:24px;padding:0;">+</button>' +
+              '</div>' +
+              '<p style="color:var(--ye3);font-weight:800;margin:4px 0;" id="mins-cost">Cost: 🪙 1 coin</p>' +
+              '<button class="btn" id="dad-request-btn" style="width:100%;">Ask Dad 🙋</button>'
+            : '<p style="color:var(--pk3);font-weight:700;">You need at least 1 coin to redeem time!</p>') +
           '</div>';
-        container.querySelectorAll('.reward-opt:not([disabled])').forEach(function(btn) {
-          btn.addEventListener('click', function() { sendDadRequest(btn.getAttribute('data-reward')); });
-        });
+
+        if (canAfford) {
+          var minsChosen = 1;
+          var minsVal = $('mins-val');
+          var minsCost = $('mins-cost');
+          function updateMinsDisplay() {
+            minsVal.textContent = minsChosen;
+            minsCost.textContent = 'Cost: 🪙 ' + minsChosen + ' coin' + (minsChosen !== 1 ? 's' : '');
+          }
+          $('mins-down').addEventListener('click', function() {
+            if (minsChosen > 1) { minsChosen--; updateMinsDisplay(); }
+          });
+          $('mins-up').addEventListener('click', function() {
+            if (minsChosen < maxMins) { minsChosen++; updateMinsDisplay(); }
+          });
+          $('dad-request-btn').addEventListener('click', function() {
+            askDadRequest = { rewardId: 'ipad', mins: minsChosen, cost: minsChosen, date: todayKey() };
+            renderAskDadSubView('waiting');
+          });
+        }
 
       } else if (view === 'waiting') {
-        var rw = REWARDS.find(function(x) { return x.id === (askDadRequest && askDadRequest.rewardId); });
+        var mins = askDadRequest ? askDadRequest.mins : 1;
         container.innerHTML +=
           '<div class="askdad-card">' +
           '<div class="askdad-emoji">🕐</div>' +
           '<h2 class="askdad-title">Waiting for Dad…</h2>' +
           '<p class="askdad-body">Your request is in! Show Dad this screen.</p>' +
-          '<div class="askdad-pending">' + (rw ? rw.emoji + ' ' + escapeHtml(rw.label) : 'A special reward') + '</div>' +
+          '<div class="askdad-pending">📱 ' + mins + ' extra minute' + (mins !== 1 ? 's' : '') + ' of iPad time</div>' +
           '<button class="btn btn-secondary" id="dad-view-btn" style="width:100%;">Dad — tap here to approve 👆</button>' +
           '</div>';
         $('dad-view-btn').addEventListener('click', function() { renderAskDadSubView('dad'); });
 
       } else if (view === 'dad') {
-        var rd = REWARDS.find(function(x) { return x.id === (askDadRequest && askDadRequest.rewardId); });
         var pname = p ? escapeHtml(p.name) : 'Your child';
+        var dm = askDadRequest ? askDadRequest.mins : 1;
         container.innerHTML +=
           '<div class="askdad-card">' +
           '<div class="askdad-emoji">👨</div>' +
           '<h2 class="askdad-title">Dad\'s decision</h2>' +
           '<p class="askdad-body">' + pname + ' is asking for:<br>' +
-          '<strong>' + (rd ? rd.emoji + ' ' + escapeHtml(rd.label) : 'a reward') + '</strong><br>' +
-          'Cost: 🪙 ' + (askDadRequest ? askDadRequest.cost : '?') + ' coins</p>' +
+          '<strong>📱 ' + dm + ' extra minute' + (dm !== 1 ? 's' : '') + ' of iPad time</strong><br>' +
+          'Cost: 🪙 ' + dm + ' coin' + (dm !== 1 ? 's' : '') + '</p>' +
           '<button class="btn" id="dad-approve" style="width:100%;">✅ Approved!</button>' +
           '<button class="btn btn-secondary" id="dad-reject" style="width:100%;margin-top:8px;">❌ Not right now</button>' +
           '</div>';
@@ -2521,24 +2727,17 @@
         $('dad-reject').addEventListener('click', function() { renderAskDadSubView('emelia'); });
 
       } else if (view === 'celebration') {
-        var rc = REWARDS.find(function(x) { return x.id === (askDadRequest && askDadRequest.rewardId); });
+        var cm = askDadRequest ? askDadRequest.mins : 1;
         container.innerHTML +=
           '<div class="askdad-card confetti-area" id="confetti-area">' +
           '<div class="askdad-emoji">🎉</div>' +
-          '<h2 class="askdad-title">Enjoy your reward!</h2>' +
-          '<p class="askdad-body">' + (rc ? rc.emoji + ' ' + escapeHtml(rc.label) : 'You did it!') + '</p>' +
+          '<h2 class="askdad-title">Enjoy your time!</h2>' +
+          '<p class="askdad-body">📱 ' + cm + ' extra minute' + (cm !== 1 ? 's' : '') + ' — you earned it!</p>' +
           '<button class="btn" id="celebrate-home" style="width:100%;">Back to home 🏠</button>' +
           '</div>';
         launchConfetti();
         $('celebrate-home').addEventListener('click', function() { showScreen('s-home'); });
       }
-    }
-
-    function sendDadRequest(rewardId) {
-      var r = REWARDS.find(function(x) { return x.id === rewardId; });
-      if (!r) return;
-      askDadRequest = { rewardId: rewardId, cost: r.cost, date: todayKey() };
-      renderAskDadSubView('waiting');
     }
 
     function approveDadRequest() {
@@ -2548,7 +2747,7 @@
       if ((p.economy.coins || 0) < askDadRequest.cost) { alert('Not enough coins!'); return; }
       p.economy.coins = (p.economy.coins || 0) - askDadRequest.cost;
       if (!p.redemptions) p.redemptions = [];
-      p.redemptions.push({ date: todayKey(), rewardId: askDadRequest.rewardId, cost: askDadRequest.cost });
+      p.redemptions.push({ date: todayKey(), rewardId: 'ipad', mins: askDadRequest.mins, cost: askDadRequest.cost });
       saveActiveProfile();
       renderAskDadSubView('celebration');
     }
@@ -2640,6 +2839,13 @@
       var p = activeProfile();
       if (!p) { showScreen('s-profiles'); return; }
 
+      var pin = getSettingsPin();
+      if (pin && !settingsPinUnlocked) {
+        renderPinEntry(function() { renderSettingsScreen(); });
+        return;
+      }
+      settingsPinUnlocked = false; // consume the unlock — require PIN again next visit
+
       var container = $('s-settings');
       container.innerHTML =
         '<button class="btn-back" data-back="s-home">← Back</button>' +
@@ -2650,6 +2856,7 @@
         settingsReadingHtml(p) +
         settingsCoinCapHtml(p) +
         settingsCustomWordsHtml(p) +
+        settingsPinHtml() +
         settingsAusNoteHtml() +
         settingsVoiceHtml() +
         settingsHistoryHtml(p) +
@@ -2769,9 +2976,9 @@
       var redemptions = (p.redemptions || []).slice(-10).reverse();
       var redHtml = redemptions.length
         ? redemptions.map(function(r) {
-            var rr = REWARDS.find(function(x) { return x.id === r.rewardId; });
+            var label = r.mins ? '📱 ' + r.mins + ' min iPad time' : escapeHtml(r.rewardId || '');
             return '<div class="redemption-row">' +
-              '<span>' + (rr ? rr.emoji + ' ' + escapeHtml(rr.label) : escapeHtml(r.rewardId || '')) + '</span>' +
+              '<span>' + label + '</span>' +
               '<span style="color:var(--ye3);">🪙 −' + r.cost + ' · ' + escapeHtml(r.date) + '</span></div>';
           }).join('')
         : '<p style="color:var(--mut);font-size:14px;margin:0 0 10px;">No rewards redeemed yet.</p>';
@@ -2779,6 +2986,18 @@
       return '<div class="settings-section"><h3>History</h3>' +
         redHtml +
         '<button class="btn btn-secondary" id="go-reading-log" style="width:100%;margin-top:10px;">📖 View reading log</button>' +
+        '</div>';
+    }
+
+    function settingsPinHtml() {
+      var hasPin = !!getSettingsPin();
+      return '<div class="settings-section">' +
+        '<h3>Parental PIN 🔒</h3>' +
+        '<p style="font-size:13px;color:var(--mut);margin:0 0 10px;">Protect settings with a 4-digit PIN so kids can\'t change them.</p>' +
+        (hasPin
+          ? '<button class="btn btn-secondary" id="sett-change-pin" style="width:100%;">Change PIN</button>' +
+            '<button class="btn btn-ghost" id="sett-remove-pin" style="width:100%;margin-top:8px;color:var(--pk3);">Remove PIN</button>'
+          : '<button class="btn btn-secondary" id="sett-set-pin" style="width:100%;">Set a PIN</button>') +
         '</div>';
     }
 
@@ -2901,6 +3120,89 @@
         showScreen('s-reading');
       });
 
+      // PIN management
+      function startPinSetup(isChange) {
+        var container = $('s-settings');
+        var newPin = '';
+        var step = isChange ? 'verify' : 'enter';
+
+        function drawSetup() {
+          var heading = step === 'verify' ? 'Verify current PIN' :
+                        step === 'enter'  ? 'Choose a new 4-digit PIN' :
+                                           'Confirm your PIN';
+          container.innerHTML =
+            '<button class="btn-back" data-back="s-home">← Back</button>' +
+            '<div class="pin-overlay">' +
+            '<div style="font-size:36px;">' + (step === 'verify' ? '🔒' : '🔑') + '</div>' +
+            '<h2 style="margin:8px 0 0;">Settings PIN</h2>' +
+            '<p style="color:var(--mut);font-size:14px;margin:4px 0 0;">' + heading + '</p>' +
+            '<div class="pin-dots" id="pin-dots">' +
+            [0,1,2,3].map(function(i) {
+              return '<div class="pin-dot' + (i < newPin.length ? ' filled' : '') + '"></div>';
+            }).join('') + '</div>' +
+            '<div class="pin-keypad">' +
+            [1,2,3,4,5,6,7,8,9].map(function(n) {
+              return '<button class="pin-key" data-digit="' + n + '">' + n + '</button>';
+            }).join('') +
+            '<button class="pin-key" id="pin-del">⌫</button>' +
+            '<button class="pin-key" data-digit="0">0</button>' +
+            '</div></div>';
+
+          container.querySelectorAll('[data-digit]').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+              if (newPin.length < 4) {
+                newPin += btn.getAttribute('data-digit');
+                if (newPin.length === 4) handleFull();
+                else drawSetup();
+              }
+            });
+          });
+          var del = $('pin-del');
+          if (del) del.addEventListener('click', function() { newPin = newPin.slice(0,-1); drawSetup(); });
+        }
+
+        var firstEntry = '';
+        function handleFull() {
+          if (step === 'verify') {
+            if (newPin !== getSettingsPin()) {
+              newPin = ''; step = 'verify';
+              drawSetup();
+              var dots = container.querySelectorAll('.pin-dot');
+              for (var i = 0; i < dots.length; i++) dots[i].className = 'pin-dot error';
+              return;
+            }
+            newPin = ''; step = 'enter'; drawSetup();
+          } else if (step === 'enter') {
+            firstEntry = newPin; newPin = ''; step = 'confirm'; drawSetup();
+          } else if (step === 'confirm') {
+            if (newPin !== firstEntry) {
+              newPin = ''; step = 'enter'; firstEntry = '';
+              drawSetup();
+              var dots2 = container.querySelectorAll('.pin-dot');
+              for (var j = 0; j < dots2.length; j++) dots2[j].className = 'pin-dot error';
+              return;
+            }
+            saveSettingsPin(newPin);
+            settingsPinUnlocked = true;
+            renderSettingsScreen();
+          }
+        }
+        drawSetup();
+      }
+
+      var setPin = $('sett-set-pin');
+      if (setPin) setPin.addEventListener('click', function() { startPinSetup(false); });
+
+      var changePin = $('sett-change-pin');
+      if (changePin) changePin.addEventListener('click', function() { startPinSetup(true); });
+
+      var removePin = $('sett-remove-pin');
+      if (removePin) removePin.addEventListener('click', function() {
+        if (!confirm('Remove the settings PIN? Anyone will be able to access settings.')) return;
+        saveSettingsPin('');
+        renderSettingsScreen();
+      });
+
       // Clear mistakes
       var clearMistakes = $('sett-clear-mistakes');
       if (clearMistakes) clearMistakes.addEventListener('click', function() {
@@ -2920,6 +3222,88 @@
         state.activeIndex = null;
         showScreen('s-profiles');
       });
+    }
+
+    // -----------------------------------
+    // Avatar Room
+    // -----------------------------------
+    var COLOUR_OPTIONS = [
+      { key: 'pink',   label: 'Pink',   bg: 'linear-gradient(135deg,#FF85A1,#CC3060)' },
+      { key: 'blue',   label: 'Blue',   bg: 'linear-gradient(135deg,#5CB8E8,#2878B8)' },
+      { key: 'purple', label: 'Purple', bg: 'linear-gradient(135deg,#B07DE0,#7830B8)' },
+      { key: 'green',  label: 'Green',  bg: 'linear-gradient(135deg,#3CB87A,#1A6840)' }
+    ];
+
+    function renderAvatarRoom() {
+      var p = activeProfile();
+      if (!p) { showScreen('s-profiles'); return; }
+      if (!p.avatar) p.avatar = { colour: 'pink', emoji: null, unlockedEmojis: [] };
+
+      var unlocked = p.avatar.unlockedEmojis || [];
+      var current  = p.avatar.emoji;
+      var colour   = p.avatar.colour || 'pink';
+
+      var colourSwatches = COLOUR_OPTIONS.map(function(c) {
+        return '<button class="colour-swatch' + (colour === c.key ? ' selected' : '') +
+          '" data-colour="' + c.key + '" style="background:' + c.bg + ';" aria-label="' + c.label + '"></button>';
+      }).join('');
+
+      var emojiButtons = AVATAR_EMOJIS.map(function(e) {
+        var isUnlocked = unlocked.indexOf(e) !== -1;
+        var isSelected = current === e;
+        var cls = 'emoji-btn' + (isSelected ? ' selected' : '') + (isUnlocked ? '' : ' emoji-locked');
+        return '<button class="' + cls + '" data-emoji="' + e + '"' +
+          (isUnlocked ? '' : ' disabled title="Earn this in a surprise drop!"') + '>' + e + '</button>';
+      }).join('');
+
+      var avatarClass = 'avatar-preview-big avatar-' + colour;
+      var avatarContent = current || initialsOf(p.name);
+
+      var container = $('s-avatarroom');
+      container.innerHTML =
+        '<button class="btn-back" data-back="s-home">← Back</button>' +
+        '<h2 style="margin-bottom:16px;">Avatar Room</h2>' +
+        '<div class="avatar-preview-wrap">' +
+        '<div class="' + avatarClass + '" id="ar-preview">' + avatarContent + '</div>' +
+        '<div style="font-size:15px;font-weight:700;color:var(--pu3);">' + escapeHtml(p.name) + '</div>' +
+        '<div style="font-size:13px;color:var(--mut);">' + unlocked.length + ' emoji' + (unlocked.length !== 1 ? 's' : '') + ' unlocked</div>' +
+        '</div>' +
+        '<div class="emoji-section" style="margin-top:18px;">' +
+        '<h3>Background colour</h3>' +
+        '<div class="colour-row">' + colourSwatches + '</div>' +
+        '</div>' +
+        '<div class="emoji-section" style="margin-top:14px;">' +
+        '<h3>Your emoji</h3>' +
+        '<p style="font-size:13px;color:var(--mut);margin:0 0 10px;">Earn more in surprise drops after games!</p>' +
+        '<div class="emoji-grid">' + emojiButtons + '</div>' +
+        (current ? '<button class="btn btn-ghost" id="ar-remove-emoji" style="margin-top:14px;width:100%;">Use initials instead</button>' : '') +
+        '</div>';
+
+      container.querySelectorAll('.colour-swatch').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          p.avatar.colour = btn.getAttribute('data-colour');
+          saveActiveProfile();
+          renderAvatarRoom();
+        });
+      });
+
+      container.querySelectorAll('.emoji-btn:not(.emoji-locked)').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var chosen = btn.getAttribute('data-emoji');
+          p.avatar.emoji = (p.avatar.emoji === chosen) ? null : chosen;
+          saveActiveProfile();
+          renderAvatarRoom();
+        });
+      });
+
+      var removeBtn = $('ar-remove-emoji');
+      if (removeBtn) {
+        removeBtn.addEventListener('click', function() {
+          p.avatar.emoji = null;
+          saveActiveProfile();
+          renderAvatarRoom();
+        });
+      }
     }
 
     // -----------------------------------
