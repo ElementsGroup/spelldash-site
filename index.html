@@ -500,6 +500,7 @@
     .dad-wrong-word { font-family: 'Fredoka One', sans-serif; font-size: 38px; color: var(--pk3); letter-spacing: 1px; }
     .dad-feedback { text-align: center; font-size: 26px; min-height: 36px; font-weight: 800; }
     .dad-progress { font-size: 13px; color: var(--mut); text-align: center; margin-bottom: 6px; }
+    .dw-hint { background: rgba(255,243,205,0.7); border-left: 3px solid #F0BA00; border-radius: 0 var(--radius-md) var(--radius-md) 0; padding: 8px 12px; font-size: 13px; color: var(--txt); margin-bottom: 4px; }
 
     /* ---- Sound picker ---- */
     .sound-picker { margin-top: 18px; background: rgba(255,255,255,0.96); border-radius: var(--radius-lg); padding: 18px; box-shadow: var(--shadow-pop); }
@@ -3369,7 +3370,7 @@
       dadWrongSession = {
         soundId: soundId,
         words: pool.map(function(w) {
-          return { correct: w.w, wrong: makeDadMistake(w.w), firstTry: false };
+          return { correct: w.w, wrong: makeDadMistake(w.w), hint: w.hint || '', firstTry: false };
         }),
         index: 0, score: 0, coins: 0, attempts: 0
       };
@@ -3391,6 +3392,10 @@
       var total = dadWrongSession.words.length;
       var progress = dadWrongSession.index + 1;
 
+      var hintHtml = current.hint
+        ? '<div class="dw-hint">💡 ' + escapeHtml(current.hint) + '</div>'
+        : '';
+
       container.innerHTML =
         '<button class="btn-back" data-back="s-play">← Back</button>' +
         '<div style="padding-bottom:24px;">' +
@@ -3401,12 +3406,18 @@
         '<div class="dad-bubble">' +
         '<div class="dad-wrong-word" id="dw-wrong">' + escapeHtml(current.wrong) + '</div>' +
         '</div>' +
+        hintHtml +
+        '<button class="btn btn-ghost dw-hear-btn" id="dw-hear" style="width:100%;margin:10px 0 14px;">🔊 Hear the word</button>' +
         '<div style="font-size:15px;font-weight:700;color:var(--txt);margin-bottom:10px;">What should it be? ✏️</div>' +
         '<input class="input" id="dw-input" type="text" autocomplete="off" autocorrect="off" ' +
           'autocapitalize="none" spellcheck="false" placeholder="Type the correct spelling…" />' +
         '<div class="dad-feedback" id="dw-feedback"></div>' +
         '<button class="btn" id="dw-check" style="width:100%;margin-top:14px;">Check ✓</button>' +
         '</div>';
+
+      $('dw-hear').addEventListener('click', function() {
+        speak(current.correct);
+      });
 
       var input = $('dw-input');
       var feedback = $('dw-feedback');
@@ -3469,6 +3480,7 @@
         coinsEarned = awarded;
       }
 
+      var stars = Math.min(5, score * 2);
       var emoji = score === total ? '🏆' : score >= total * 0.7 ? '🎉' : '💪';
       var msg   = score === total ? 'Perfect! Dad needs lessons from you!' :
                   score >= total * 0.7 ? 'Great work! You\'re a better speller than Dad!' :
@@ -3479,6 +3491,7 @@
         '<button class="btn-back" data-back="s-play">← Back</button>' +
         '<div style="text-align:center;padding:20px 0;">' +
         '<div style="font-size:64px;">' + emoji + '</div>' +
+        '<div class="done-stars" style="margin:8px 0;">' + starsHtml(stars) + '</div>' +
         '<h2 style="color:var(--pu3);">Dad corrected!</h2>' +
         '<p style="font-size:18px;font-weight:700;">' + score + ' of ' + total + ' fixed on first try</p>' +
         '<p style="color:var(--mut);">' + msg + '</p>' +
