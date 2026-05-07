@@ -926,9 +926,11 @@
     .av-display-bg { position: absolute; inset: 0; }
     .av-display-ground { position: absolute; bottom: 0; left: 0; right: 0; height: 30%; }
     .av-display-char { position: absolute; bottom: 12%; left: 50%; transform: translateX(-50%); width: 45%; }
-    .av-display-house { position: absolute; top: 8%; right: 6%; font-size: 48px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
-    .av-display-vehicle { position: absolute; bottom: 10%; left: 5%; font-size: 40px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
-    .av-display-toy { position: absolute; bottom: 22%; right: 5%; font-size: 32px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15)); }
+    .av-display-house { position: absolute; top: 2%; right: 2%; font-size: 80px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25)); }
+    .av-display-vehicle { position: absolute; bottom: 8%; left: 2%; font-size: 72px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25)); }
+    .av-display-toy { position: absolute; bottom: 28%; right: 2%; font-size: 64px; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.2)); }
+    .av-display-decor { position: absolute; pointer-events: none; }
+    .av-display-pet { position: absolute; bottom: 14%; right: 12%; }
     .av-display-name { position: absolute; bottom: 4%; left: 50%; transform: translateX(-50%); font-family: 'Fredoka One', sans-serif; font-size: 18px; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.4); }
     .av-display-clouds { position: absolute; top: 10%; left: 10%; font-size: 24px; opacity: 0.5; }
     .av-room-display-btn { display: block; width: 100%; padding: 14px; margin-top: 12px; border-radius: var(--radius-lg); border: 2px solid var(--pu); background: linear-gradient(135deg, #F0E6FF, #E6F0FF); font-family: 'Fredoka One', sans-serif; font-size: 15px; color: var(--pu3); cursor: pointer; text-align: center; }
@@ -1349,14 +1351,14 @@
       { key: 'dragon', label: 'Dragon', icon: '🐲' }
     ];
     var AVATAR_BACKGROUNDS = [
-      { key: 'beach',     label: 'Beach',      icon: '🏖️', colors: ['#87CEEB', '#F5DEB3', '#00B4D8'] },
-      { key: 'city',      label: 'City',       icon: '🏙️', colors: ['#4A5568', '#CBD5E0', '#F6AD55'] },
-      { key: 'jungle',    label: 'Jungle',     icon: '🌴', colors: ['#2D6A4F', '#95D5B2', '#40916C'] },
-      { key: 'waterpark', label: 'Water Park',  icon: '🎢', colors: ['#48CAE4', '#00B4D8', '#FFD166'] },
-      { key: 'space',     label: 'Space',       icon: '🚀', colors: ['#1B1B3A', '#3D2C8D', '#8338EC'] },
-      { key: 'farm',      label: 'Farm',        icon: '🌾', colors: ['#7CB518', '#F4D35E', '#A3C9A8'] },
-      { key: 'snow',      label: 'Snow',        icon: '❄️', colors: ['#D6E4F0', '#EEF2F7', '#A8DADC'] },
-      { key: 'candy',     label: 'Candy Land',  icon: '🍭', colors: ['#FF85A1', '#FFC2D1', '#FFD166'] }
+      { key: 'beach',     label: 'Beach',      icon: '🏖️', colors: ['#87CEEB', '#F5DEB3', '#00B4D8'], ground: '#F5DEB3', decor: ['🌴','⛱️','🐚','🌊'] },
+      { key: 'city',      label: 'City',       icon: '🏙️', colors: ['#4A5568', '#CBD5E0', '#F6AD55'], ground: '#555', decor: ['🏢','🏬','🚦','💡'] },
+      { key: 'jungle',    label: 'Jungle',     icon: '🌴', colors: ['#2D6A4F', '#95D5B2', '#40916C'], ground: '#2D6A4F', decor: ['🌿','🌴','🍃','🦜'] },
+      { key: 'waterpark', label: 'Water Park',  icon: '🎢', colors: ['#48CAE4', '#00B4D8', '#FFD166'], ground: '#48CAE4', decor: ['🎢','🌊','💦','🏊'] },
+      { key: 'space',     label: 'Space',       icon: '🚀', colors: ['#1B1B3A', '#3D2C8D', '#8338EC'], ground: '#1B1B3A', decor: ['⭐','🌙','🪐','✨'] },
+      { key: 'farm',      label: 'Farm',        icon: '🌾', colors: ['#7CB518', '#F4D35E', '#A3C9A8'], ground: '#7CB518', decor: ['🌻','🐔','🌾','🐑'] },
+      { key: 'snow',      label: 'Snow',        icon: '❄️', colors: ['#D6E4F0', '#EEF2F7', '#A8DADC'], ground: '#EEF2F7', decor: ['❄️','⛄','🎿','🌲'] },
+      { key: 'candy',     label: 'Candy Land',  icon: '🍭', colors: ['#FF85A1', '#FFC2D1', '#FFD166'], ground: '#FFC2D1', decor: ['🍭','🍬','🧁','🍩'] }
     ];
     var AVATAR_TOYS = [
       { key: 'teddy',     label: 'Teddy Bear',   icon: '🧸' },
@@ -1463,7 +1465,7 @@
     }
 
     function migrateAvatar(p) {
-      if (!p.avatar) { p.avatar = { gender:'girl', skinKey:'light', hairStyle:'long', hairColour:'brown', eyeColour:'blue', eyeStyle:'round', shirtColour:'pink', outfitStyle:'tshirt', outfitColour:'pink', svgPet:'none', unlocked:[], accessory:null, pet:null, hat:null, hairAcc:null, outfit:null, bag:null, background:null, toy:null, vehicle:null, house:null }; return; }
+      if (!p.avatar) { p.avatar = { gender:'girl', skinKey:'light', hairStyle:'long', hairColour:'brown', eyeColour:'blue', eyeStyle:'round', shirtColour:'pink', outfitStyle:'tshirt', outfitColour:'pink', svgPet:'none', unlocked:[], accessory:null, pet:null, hat:null, hairAcc:null, outfit:null, bag:null, background:null, toys:[], vehicles:[], house:null }; return; }
       var a = p.avatar;
       if (a.unlocked     === undefined) { a.unlocked = a.unlockedEmojis || []; delete a.unlockedEmojis; }
       if (a.gender       === undefined) a.gender       = 'girl';
@@ -1483,8 +1485,9 @@
       if (a.outfit       === undefined) a.outfit       = null;
       if (a.bag          === undefined) a.bag          = null;
       if (a.background   === undefined) a.background   = null;
-      if (a.toy          === undefined) a.toy          = null;
-      if (a.vehicle      === undefined) a.vehicle      = null;
+      if (a.toys === undefined) a.toys = a.toy ? [a.toy] : [];
+      if (a.vehicles === undefined) a.vehicles = a.vehicle ? [a.vehicle] : [];
+      delete a.toy; delete a.vehicle;
       if (a.house        === undefined) a.house        = null;
       delete a.colour; delete a.character; delete a.emoji;
       // TEMP: unlock all items for testing
@@ -1525,13 +1528,24 @@
       } else if (AVATAR_PETS.indexOf(itemKey) !== -1) {
         p.avatar.pet = itemKey;
       } else if (itemKey.indexOf('toy:') === 0) {
-        p.avatar.toy = itemKey;
+        toggleArraySlot(p.avatar, 'toys', itemKey, 3);
       } else if (itemKey.indexOf('veh:') === 0) {
-        p.avatar.vehicle = itemKey;
+        toggleArraySlot(p.avatar, 'vehicles', itemKey, 2);
       } else if (itemKey.indexOf('house:') === 0) {
         p.avatar.house = itemKey;
       } else if (itemKey.indexOf('bg:') === 0) {
         p.avatar.background = itemKey;
+      }
+    }
+
+    function toggleArraySlot(avatar, field, key, max) {
+      if (!avatar[field]) avatar[field] = [];
+      var idx = avatar[field].indexOf(key);
+      if (idx !== -1) {
+        avatar[field].splice(idx, 1);
+      } else {
+        if (avatar[field].length >= max) avatar[field].shift();
+        avatar[field].push(key);
       }
     }
 
@@ -1723,25 +1737,59 @@
           '<path d="M ' + (hx - hr * 0.6) + ' ' + (hy - hr * 0.75) + ' Q ' + (hx - hr * 0.9) + ' ' + (hy - hr * 1.1) + ' ' + hx + ' ' + (hy - hr * 1.25) + ' Q ' + (hx + hr * 0.9) + ' ' + (hy - hr * 1.1) + ' ' + (hx + hr * 0.6) + ' ' + (hy - hr * 0.75) + '" stroke="' + hairDk + '" stroke-width="' + bcW + '" fill="none" stroke-linecap="round"/>' +
           '<path d="M ' + (hx - hr * 0.55) + ' ' + (hy - hr * 0.7) + ' Q ' + (hx - hr * 0.85) + ' ' + (hy - hr * 1.05) + ' ' + hx + ' ' + (hy - hr * 1.2) + ' Q ' + (hx + hr * 0.85) + ' ' + (hy - hr * 1.05) + ' ' + (hx + hr * 0.55) + ' ' + (hy - hr * 0.7) + '" stroke="' + hairLt + '" stroke-width="' + (bcW * 0.4) + '" fill="none" stroke-linecap="round" opacity="0.4"/>';
       } else if (sty === 'buzzcut') {
-        hf = '<path d="M ' + (hx - hr * 0.88) + ' ' + (hy + hr * 0.1) + ' C ' + (hx - hr * 0.95) + ' ' + (hy - hr * 1.15) + ' ' + (hx + hr * 0.95) + ' ' + (hy - hr * 1.15) + ' ' + (hx + hr * 0.88) + ' ' + (hy + hr * 0.1) + ' L ' + (hx + hr * 0.82) + ' ' + (hy - hr * 0.25) + ' C ' + (hx + hr * 0.78) + ' ' + (hy - hr * 0.85) + ' ' + (hx - hr * 0.78) + ' ' + (hy - hr * 0.85) + ' ' + (hx - hr * 0.82) + ' ' + (hy - hr * 0.25) + ' Z" fill="' + hg + '"/>';
+        // Tight-cropped stubble dome sitting close to head with texture marks
+        hf = '<path d="M ' + (hx - hr * 0.88) + ' ' + (hy + hr * 0.08) + ' C ' + (hx - hr * 0.94) + ' ' + (hy - hr * 1.05) + ' ' + (hx + hr * 0.94) + ' ' + (hy - hr * 1.05) + ' ' + (hx + hr * 0.88) + ' ' + (hy + hr * 0.08) + ' L ' + (hx + hr * 0.84) + ' ' + (hy - hr * 0.15) + ' C ' + (hx + hr * 0.8) + ' ' + (hy - hr * 0.82) + ' ' + (hx - hr * 0.8) + ' ' + (hy - hr * 0.82) + ' ' + (hx - hr * 0.84) + ' ' + (hy - hr * 0.15) + ' Z" fill="' + hairDk + '"/>' +
+          '<path d="M ' + (hx - hr * 0.82) + ' ' + (hy + hr * 0.02) + ' C ' + (hx - hr * 0.88) + ' ' + (hy - hr * 0.95) + ' ' + (hx + hr * 0.88) + ' ' + (hy - hr * 0.95) + ' ' + (hx + hr * 0.82) + ' ' + (hy + hr * 0.02) + ' L ' + (hx + hr * 0.78) + ' ' + (hy - hr * 0.2) + ' C ' + (hx + hr * 0.74) + ' ' + (hy - hr * 0.75) + ' ' + (hx - hr * 0.74) + ' ' + (hy - hr * 0.75) + ' ' + (hx - hr * 0.78) + ' ' + (hy - hr * 0.2) + ' Z" fill="' + hair + '" opacity="0.6"/>' +
+          '<path d="M ' + (hx - hr * 0.5) + ' ' + (hy - hr * 0.8) + ' L ' + (hx - hr * 0.48) + ' ' + (hy - hr * 0.7) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.04) + '" stroke-linecap="round" opacity="0.25"/>' +
+          '<path d="M ' + (hx - hr * 0.2) + ' ' + (hy - hr * 0.88) + ' L ' + (hx - hr * 0.18) + ' ' + (hy - hr * 0.78) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.04) + '" stroke-linecap="round" opacity="0.25"/>' +
+          '<path d="M ' + (hx + hr * 0.1) + ' ' + (hy - hr * 0.9) + ' L ' + (hx + hr * 0.12) + ' ' + (hy - hr * 0.8) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.04) + '" stroke-linecap="round" opacity="0.25"/>' +
+          '<path d="M ' + (hx + hr * 0.4) + ' ' + (hy - hr * 0.82) + ' L ' + (hx + hr * 0.42) + ' ' + (hy - hr * 0.72) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.04) + '" stroke-linecap="round" opacity="0.25"/>' +
+          '<path d="M ' + (hx - hr * 0.35) + ' ' + (hy - hr * 0.55) + ' L ' + (hx - hr * 0.33) + ' ' + (hy - hr * 0.45) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.04) + '" stroke-linecap="round" opacity="0.2"/>' +
+          '<path d="M ' + (hx + hr * 0.25) + ' ' + (hy - hr * 0.6) + ' L ' + (hx + hr * 0.27) + ' ' + (hy - hr * 0.5) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.04) + '" stroke-linecap="round" opacity="0.2"/>';
       } else if (sty === 'combover') {
-        hf = '<path d="M ' + (hx - hr * 0.9) + ' ' + (hy + hr * 0.12) + ' C ' + (hx - hr * 1.05) + ' ' + (hy - hr * 1.4) + ' ' + (hx + hr * 1.05) + ' ' + (hy - hr * 1.4) + ' ' + (hx + hr * 0.9) + ' ' + (hy + hr * 0.12) + ' L ' + (hx + hr * 0.78) + ' ' + (hy - hr * 0.3) + ' C ' + (hx + hr * 0.72) + ' ' + (hy - hr * 1.0) + ' ' + (hx - hr * 0.72) + ' ' + (hy - hr * 1.0) + ' ' + (hx - hr * 0.78) + ' ' + (hy - hr * 0.3) + ' Z" fill="' + hg + '"/>' +
-          '<path d="M ' + (hx + hr * 0.3) + ' ' + (hy - hr * 1.0) + ' Q ' + (hx - hr * 0.1) + ' ' + (hy - hr * 1.3) + ' ' + (hx - hr * 0.85) + ' ' + (hy - hr * 0.4) + '" stroke="' + hair + '" stroke-width="' + (hr * 0.35) + '" fill="none" stroke-linecap="round" opacity="0.7"/>';
+        // Classic side-parted comb-over with volume and defined part line
+        hf = '<path d="M ' + (hx - hr * 0.92) + ' ' + (hy + hr * 0.12) + ' C ' + (hx - hr * 1.05) + ' ' + (hy - hr * 1.45) + ' ' + (hx + hr * 1.05) + ' ' + (hy - hr * 1.45) + ' ' + (hx + hr * 0.92) + ' ' + (hy + hr * 0.12) + ' L ' + (hx + hr * 0.78) + ' ' + (hy - hr * 0.3) + ' C ' + (hx + hr * 0.72) + ' ' + (hy - hr * 1.05) + ' ' + (hx - hr * 0.72) + ' ' + (hy - hr * 1.05) + ' ' + (hx - hr * 0.78) + ' ' + (hy - hr * 0.3) + ' Z" fill="' + hg + '"/>' +
+          '<path d="M ' + (hx + hr * 0.35) + ' ' + (hy - hr * 1.1) + ' Q ' + (hx + hr * 0.1) + ' ' + (hy - hr * 1.35) + ' ' + (hx - hr * 0.3) + ' ' + (hy - hr * 1.15) + ' Q ' + (hx - hr * 0.65) + ' ' + (hy - hr * 0.9) + ' ' + (hx - hr * 0.9) + ' ' + (hy - hr * 0.2) + ' L ' + (hx - hr * 0.75) + ' ' + (hy - hr * 0.35) + ' Q ' + (hx - hr * 0.5) + ' ' + (hy - hr * 0.85) + ' ' + (hx - hr * 0.15) + ' ' + (hy - hr * 1.0) + ' Q ' + (hx + hr * 0.1) + ' ' + (hy - hr * 1.1) + ' ' + (hx + hr * 0.35) + ' ' + (hy - hr * 0.95) + ' Z" fill="' + hair + '" opacity="0.5"/>' +
+          '<path d="M ' + (hx + hr * 0.35) + ' ' + (hy - hr * 1.05) + ' Q ' + (hx + hr * 0.15) + ' ' + (hy - hr * 1.3) + ' ' + (hx - hr * 0.2) + ' ' + (hy - hr * 1.15) + '" stroke="' + hairDk + '" stroke-width="' + (hr * 0.05) + '" fill="none" stroke-linecap="round" opacity="0.6"/>' +
+          '<path d="M ' + (hx - hr * 0.4) + ' ' + (hy - hr * 0.95) + ' Q ' + (hx - hr * 0.6) + ' ' + (hy - hr * 0.7) + ' ' + (hx - hr * 0.8) + ' ' + (hy - hr * 0.2) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.06) + '" fill="none" stroke-linecap="round" opacity="0.3"/>' +
+          '<path d="M ' + (hx - hr * 0.15) + ' ' + (hy - hr * 1.05) + ' Q ' + (hx - hr * 0.35) + ' ' + (hy - hr * 0.75) + ' ' + (hx - hr * 0.55) + ' ' + (hy - hr * 0.25) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.05) + '" fill="none" stroke-linecap="round" opacity="0.2"/>';
       } else if (sty === 'fauxhawk') {
-        hf = '<path d="M ' + (hx - hr * 0.85) + ' ' + (hy + hr * 0.12) + ' C ' + (hx - hr * 0.95) + ' ' + (hy - hr * 1.1) + ' ' + (hx + hr * 0.95) + ' ' + (hy - hr * 1.1) + ' ' + (hx + hr * 0.85) + ' ' + (hy + hr * 0.12) + ' L ' + (hx + hr * 0.72) + ' ' + (hy - hr * 0.3) + ' C ' + (hx + hr * 0.68) + ' ' + (hy - hr * 0.85) + ' ' + (hx - hr * 0.68) + ' ' + (hy - hr * 0.85) + ' ' + (hx - hr * 0.72) + ' ' + (hy - hr * 0.3) + ' Z" fill="' + hg + '"/>' +
-          '<path d="M ' + (hx - hr * 0.25) + ' ' + (hy - hr * 0.7) + ' Q ' + hx + ' ' + (hy - hr * 1.6) + ' ' + (hx + hr * 0.25) + ' ' + (hy - hr * 0.7) + ' Z" fill="' + hg + '"/>' +
-          '<path d="M ' + (hx - hr * 0.15) + ' ' + (hy - hr * 0.65) + ' Q ' + hx + ' ' + (hy - hr * 1.35) + ' ' + (hx + hr * 0.15) + ' ' + (hy - hr * 0.65) + '" fill="none" stroke="' + hairLt + '" stroke-width="' + (hr * 0.06) + '" opacity="0.3"/>';
+        // Mohawk-lite: short textured sides with a tall defined center ridge
+        hf = '<path d="M ' + (hx - hr * 0.88) + ' ' + (hy + hr * 0.1) + ' C ' + (hx - hr * 0.92) + ' ' + (hy - hr * 0.8) + ' ' + (hx + hr * 0.92) + ' ' + (hy - hr * 0.8) + ' ' + (hx + hr * 0.88) + ' ' + (hy + hr * 0.1) + ' L ' + (hx + hr * 0.8) + ' ' + (hy - hr * 0.15) + ' C ' + (hx + hr * 0.76) + ' ' + (hy - hr * 0.6) + ' ' + (hx - hr * 0.76) + ' ' + (hy - hr * 0.6) + ' ' + (hx - hr * 0.8) + ' ' + (hy - hr * 0.15) + ' Z" fill="' + hairDk + '"/>' +
+          '<path d="M ' + (hx - hr * 0.35) + ' ' + (hy - hr * 0.6) + ' Q ' + (hx - hr * 0.3) + ' ' + (hy - hr * 1.25) + ' ' + hx + ' ' + (hy - hr * 1.55) + ' Q ' + (hx + hr * 0.3) + ' ' + (hy - hr * 1.25) + ' ' + (hx + hr * 0.35) + ' ' + (hy - hr * 0.6) + ' L ' + (hx + hr * 0.2) + ' ' + (hy - hr * 0.65) + ' Q ' + (hx + hr * 0.15) + ' ' + (hy - hr * 1.1) + ' ' + hx + ' ' + (hy - hr * 1.3) + ' Q ' + (hx - hr * 0.15) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.2) + ' ' + (hy - hr * 0.65) + ' Z" fill="' + hg + '"/>' +
+          '<path d="M ' + (hx - hr * 0.1) + ' ' + (hy - hr * 0.7) + ' Q ' + hx + ' ' + (hy - hr * 1.35) + ' ' + (hx + hr * 0.1) + ' ' + (hy - hr * 0.7) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.06) + '" fill="none" stroke-linecap="round" opacity="0.35"/>' +
+          '<path d="M ' + (hx - hr * 0.6) + ' ' + (hy - hr * 0.4) + ' L ' + (hx - hr * 0.55) + ' ' + (hy - hr * 0.55) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.04) + '" stroke-linecap="round" opacity="0.2"/>' +
+          '<path d="M ' + (hx + hr * 0.6) + ' ' + (hy - hr * 0.4) + ' L ' + (hx + hr * 0.55) + ' ' + (hy - hr * 0.55) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.04) + '" stroke-linecap="round" opacity="0.2"/>' +
+          '<path d="M ' + (hx - hr * 0.7) + ' ' + (hy - hr * 0.2) + ' L ' + (hx - hr * 0.68) + ' ' + (hy - hr * 0.35) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.04) + '" stroke-linecap="round" opacity="0.2"/>' +
+          '<path d="M ' + (hx + hr * 0.7) + ' ' + (hy - hr * 0.2) + ' L ' + (hx + hr * 0.68) + ' ' + (hy - hr * 0.35) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.04) + '" stroke-linecap="round" opacity="0.2"/>';
       } else if (sty === 'curtains') {
-        hf = '<path d="M ' + (hx - hr * 0.92) + ' ' + (hy + hr * 0.15) + ' C ' + (hx - hr * 1.05) + ' ' + (hy - hr * 1.45) + ' ' + (hx + hr * 1.05) + ' ' + (hy - hr * 1.45) + ' ' + (hx + hr * 0.92) + ' ' + (hy + hr * 0.15) + ' L ' + (hx + hr * 0.78) + ' ' + (hy - hr * 0.35) + ' C ' + (hx + hr * 0.72) + ' ' + (hy - hr * 1.05) + ' ' + (hx - hr * 0.72) + ' ' + (hy - hr * 1.05) + ' ' + (hx - hr * 0.78) + ' ' + (hy - hr * 0.35) + ' Z" fill="' + hg + '"/>' +
-          '<path d="M ' + hx + ' ' + (hy - hr * 1.0) + ' Q ' + (hx - hr * 0.5) + ' ' + (hy - hr * 0.6) + ' ' + (hx - hr * 0.85) + ' ' + (hy + hr * 0.1) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.06) + '" fill="none" opacity="0.3"/>' +
-          '<path d="M ' + hx + ' ' + (hy - hr * 1.0) + ' Q ' + (hx + hr * 0.5) + ' ' + (hy - hr * 0.6) + ' ' + (hx + hr * 0.85) + ' ' + (hy + hr * 0.1) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.06) + '" fill="none" opacity="0.3"/>';
+        // Center-parted curtain hair with two flowy sections framing the face
+        hf = '<path d="M ' + (hx - hr * 0.95) + ' ' + (hy + hr * 0.2) + ' C ' + (hx - hr * 1.08) + ' ' + (hy - hr * 1.5) + ' ' + (hx + hr * 1.08) + ' ' + (hy - hr * 1.5) + ' ' + (hx + hr * 0.95) + ' ' + (hy + hr * 0.2) + ' L ' + (hx + hr * 0.8) + ' ' + (hy - hr * 0.3) + ' C ' + (hx + hr * 0.75) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.75) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.8) + ' ' + (hy - hr * 0.3) + ' Z" fill="' + hg + '"/>' +
+          '<path d="M ' + hx + ' ' + (hy - hr * 1.15) + ' Q ' + (hx - hr * 0.15) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.4) + ' ' + (hy - hr * 0.85) + ' Q ' + (hx - hr * 0.7) + ' ' + (hy - hr * 0.5) + ' ' + (hx - hr * 0.9) + ' ' + (hy + hr * 0.1) + ' Q ' + (hx - hr * 0.95) + ' ' + (hy + hr * 0.25) + ' ' + (hx - hr * 0.85) + ' ' + (hy + hr * 0.35) + ' L ' + (hx - hr * 0.65) + ' ' + (hy + hr * 0.15) + ' Q ' + (hx - hr * 0.55) + ' ' + (hy - hr * 0.3) + ' ' + (hx - hr * 0.35) + ' ' + (hy - hr * 0.65) + ' Q ' + (hx - hr * 0.15) + ' ' + (hy - hr * 0.9) + ' ' + hx + ' ' + (hy - hr * 0.95) + ' Z" fill="' + hair + '" opacity="0.5"/>' +
+          '<path d="M ' + hx + ' ' + (hy - hr * 1.15) + ' Q ' + (hx + hr * 0.15) + ' ' + (hy - hr * 1.1) + ' ' + (hx + hr * 0.4) + ' ' + (hy - hr * 0.85) + ' Q ' + (hx + hr * 0.7) + ' ' + (hy - hr * 0.5) + ' ' + (hx + hr * 0.9) + ' ' + (hy + hr * 0.1) + ' Q ' + (hx + hr * 0.95) + ' ' + (hy + hr * 0.25) + ' ' + (hx + hr * 0.85) + ' ' + (hy + hr * 0.35) + ' L ' + (hx + hr * 0.65) + ' ' + (hy + hr * 0.15) + ' Q ' + (hx + hr * 0.55) + ' ' + (hy - hr * 0.3) + ' ' + (hx + hr * 0.35) + ' ' + (hy - hr * 0.65) + ' Q ' + (hx + hr * 0.15) + ' ' + (hy - hr * 0.9) + ' ' + hx + ' ' + (hy - hr * 0.95) + ' Z" fill="' + hair + '" opacity="0.5"/>' +
+          '<path d="M ' + hx + ' ' + (hy - hr * 1.12) + ' L ' + hx + ' ' + (hy - hr * 0.9) + '" stroke="' + hairDk + '" stroke-width="' + (hr * 0.04) + '" stroke-linecap="round" opacity="0.5"/>' +
+          '<path d="M ' + (hx - hr * 0.25) + ' ' + (hy - hr * 1.0) + ' Q ' + (hx - hr * 0.5) + ' ' + (hy - hr * 0.6) + ' ' + (hx - hr * 0.7) + ' ' + (hy - hr * 0.15) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.05) + '" fill="none" stroke-linecap="round" opacity="0.3"/>' +
+          '<path d="M ' + (hx + hr * 0.25) + ' ' + (hy - hr * 1.0) + ' Q ' + (hx + hr * 0.5) + ' ' + (hy - hr * 0.6) + ' ' + (hx + hr * 0.7) + ' ' + (hy - hr * 0.15) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.05) + '" fill="none" stroke-linecap="round" opacity="0.3"/>';
       } else if (sty === 'undercut') {
-        hf = '<path d="M ' + (hx - hr * 0.88) + ' ' + (hy + hr * 0.1) + ' C ' + (hx - hr * 0.92) + ' ' + (hy - hr * 0.85) + ' ' + (hx + hr * 0.92) + ' ' + (hy - hr * 0.85) + ' ' + (hx + hr * 0.88) + ' ' + (hy + hr * 0.1) + ' L ' + (hx + hr * 0.82) + ' ' + (hy - hr * 0.2) + ' C ' + (hx + hr * 0.78) + ' ' + (hy - hr * 0.65) + ' ' + (hx - hr * 0.78) + ' ' + (hy - hr * 0.65) + ' ' + (hx - hr * 0.82) + ' ' + (hy - hr * 0.2) + ' Z" fill="' + hairDk + '"/>' +
-          '<path d="M ' + (hx - hr * 0.75) + ' ' + (hy - hr * 0.5) + ' C ' + (hx - hr * 0.85) + ' ' + (hy - hr * 1.55) + ' ' + (hx + hr * 0.85) + ' ' + (hy - hr * 1.55) + ' ' + (hx + hr * 0.75) + ' ' + (hy - hr * 0.5) + ' L ' + (hx + hr * 0.6) + ' ' + (hy - hr * 0.55) + ' C ' + (hx + hr * 0.55) + ' ' + (hy - hr * 1.15) + ' ' + (hx - hr * 0.55) + ' ' + (hy - hr * 1.15) + ' ' + (hx - hr * 0.6) + ' ' + (hy - hr * 0.55) + ' Z" fill="' + hg + '"/>';
+        // Strong contrast: dark buzzed sides/back with longer styled top swept back
+        hf = '<path d="M ' + (hx - hr * 0.9) + ' ' + (hy + hr * 0.1) + ' C ' + (hx - hr * 0.94) + ' ' + (hy - hr * 0.7) + ' ' + (hx + hr * 0.94) + ' ' + (hy - hr * 0.7) + ' ' + (hx + hr * 0.9) + ' ' + (hy + hr * 0.1) + ' L ' + (hx + hr * 0.84) + ' ' + (hy - hr * 0.12) + ' C ' + (hx + hr * 0.8) + ' ' + (hy - hr * 0.55) + ' ' + (hx - hr * 0.8) + ' ' + (hy - hr * 0.55) + ' ' + (hx - hr * 0.84) + ' ' + (hy - hr * 0.12) + ' Z" fill="' + hairDk + '"/>' +
+          '<path d="M ' + (hx - hr * 0.65) + ' ' + (hy - hr * 0.45) + ' L ' + (hx - hr * 0.6) + ' ' + (hy - hr * 0.35) + '" stroke="' + hair + '" stroke-width="' + (hr * 0.03) + '" stroke-linecap="round" opacity="0.3"/>' +
+          '<path d="M ' + (hx + hr * 0.65) + ' ' + (hy - hr * 0.45) + ' L ' + (hx + hr * 0.6) + ' ' + (hy - hr * 0.35) + '" stroke="' + hair + '" stroke-width="' + (hr * 0.03) + '" stroke-linecap="round" opacity="0.3"/>' +
+          '<path d="M ' + (hx - hr * 0.5) + ' ' + (hy - hr * 0.3) + ' L ' + (hx - hr * 0.47) + ' ' + (hy - hr * 0.2) + '" stroke="' + hair + '" stroke-width="' + (hr * 0.03) + '" stroke-linecap="round" opacity="0.3"/>' +
+          '<path d="M ' + (hx + hr * 0.5) + ' ' + (hy - hr * 0.3) + ' L ' + (hx + hr * 0.47) + ' ' + (hy - hr * 0.2) + '" stroke="' + hair + '" stroke-width="' + (hr * 0.03) + '" stroke-linecap="round" opacity="0.3"/>' +
+          '<path d="M ' + (hx - hr * 0.72) + ' ' + (hy - hr * 0.5) + ' C ' + (hx - hr * 0.82) + ' ' + (hy - hr * 1.55) + ' ' + (hx + hr * 0.82) + ' ' + (hy - hr * 1.55) + ' ' + (hx + hr * 0.85) + ' ' + (hy - hr * 0.6) + ' Q ' + (hx + hr * 0.9) + ' ' + (hy - hr * 0.5) + ' ' + (hx + hr * 0.88) + ' ' + (hy - hr * 0.35) + ' L ' + (hx + hr * 0.65) + ' ' + (hy - hr * 0.5) + ' C ' + (hx + hr * 0.6) + ' ' + (hy - hr * 1.15) + ' ' + (hx - hr * 0.55) + ' ' + (hy - hr * 1.15) + ' ' + (hx - hr * 0.58) + ' ' + (hy - hr * 0.55) + ' Z" fill="' + hg + '"/>' +
+          '<path d="M ' + (hx - hr * 0.3) + ' ' + (hy - hr * 0.9) + ' Q ' + (hx + hr * 0.1) + ' ' + (hy - hr * 1.1) + ' ' + (hx + hr * 0.5) + ' ' + (hy - hr * 0.8) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.06) + '" fill="none" stroke-linecap="round" opacity="0.3"/>' +
+          '<path d="M ' + (hx - hr * 0.15) + ' ' + (hy - hr * 0.95) + ' Q ' + (hx + hr * 0.2) + ' ' + (hy - hr * 1.05) + ' ' + (hx + hr * 0.6) + ' ' + (hy - hr * 0.7) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.04) + '" fill="none" stroke-linecap="round" opacity="0.2"/>';
       } else if (sty === 'moptop') {
-        hf = '<path d="M ' + (hx - hr * 1.0) + ' ' + (hy + hr * 0.2) + ' C ' + (hx - hr * 1.15) + ' ' + (hy - hr * 1.5) + ' ' + (hx + hr * 1.15) + ' ' + (hy - hr * 1.5) + ' ' + (hx + hr * 1.0) + ' ' + (hy + hr * 0.2) + ' L ' + (hx + hr * 0.85) + ' ' + (hy - hr * 0.1) + ' C ' + (hx + hr * 0.8) + ' ' + (hy - hr * 0.9) + ' ' + (hx - hr * 0.8) + ' ' + (hy - hr * 0.9) + ' ' + (hx - hr * 0.85) + ' ' + (hy - hr * 0.1) + ' Z" fill="' + hg + '"/>' +
-          '<circle cx="' + (hx - hr * 0.3) + '" cy="' + (hy - hr * 0.95) + '" r="' + (hr * 0.15) + '" fill="' + hairLt + '" opacity="0.2"/>' +
-          '<circle cx="' + (hx + hr * 0.2) + '" cy="' + (hy - hr * 1.05) + '" r="' + (hr * 0.1) + '" fill="' + hairLt + '" opacity="0.15"/>';
+        // Shaggy, messy floppy hair with irregular edges and fringe over forehead
+        hf = '<path d="M ' + (hx - hr * 1.0) + ' ' + (hy + hr * 0.25) + ' C ' + (hx - hr * 1.15) + ' ' + (hy - hr * 1.45) + ' ' + (hx + hr * 1.15) + ' ' + (hy - hr * 1.45) + ' ' + (hx + hr * 1.0) + ' ' + (hy + hr * 0.25) + ' Q ' + (hx + hr * 0.95) + ' ' + (hy + hr * 0.4) + ' ' + (hx + hr * 0.85) + ' ' + (hy + hr * 0.3) + ' L ' + (hx + hr * 0.8) + ' ' + (hy - hr * 0.05) + ' C ' + (hx + hr * 0.75) + ' ' + (hy - hr * 0.85) + ' ' + (hx - hr * 0.75) + ' ' + (hy - hr * 0.85) + ' ' + (hx - hr * 0.8) + ' ' + (hy - hr * 0.05) + ' L ' + (hx - hr * 0.85) + ' ' + (hy + hr * 0.3) + ' Q ' + (hx - hr * 0.95) + ' ' + (hy + hr * 0.4) + ' ' + (hx - hr * 1.0) + ' ' + (hy + hr * 0.25) + ' Z" fill="' + hg + '"/>' +
+          '<path d="M ' + (hx - hr * 0.55) + ' ' + (hy - hr * 0.5) + ' Q ' + (hx - hr * 0.5) + ' ' + (hy - hr * 0.2) + ' ' + (hx - hr * 0.6) + ' ' + (hy + hr * 0.05) + ' Q ' + (hx - hr * 0.65) + ' ' + (hy + hr * 0.2) + ' ' + (hx - hr * 0.55) + ' ' + (hy + hr * 0.3) + '" stroke="' + hair + '" stroke-width="' + (hr * 0.18) + '" fill="none" stroke-linecap="round" opacity="0.5"/>' +
+          '<path d="M ' + (hx - hr * 0.25) + ' ' + (hy - hr * 0.7) + ' Q ' + (hx - hr * 0.2) + ' ' + (hy - hr * 0.35) + ' ' + (hx - hr * 0.3) + ' ' + (hy - hr * 0.05) + ' Q ' + (hx - hr * 0.35) + ' ' + (hy + hr * 0.15) + ' ' + (hx - hr * 0.25) + ' ' + (hy + hr * 0.3) + '" stroke="' + hair + '" stroke-width="' + (hr * 0.16) + '" fill="none" stroke-linecap="round" opacity="0.45"/>' +
+          '<path d="M ' + (hx + hr * 0.05) + ' ' + (hy - hr * 0.8) + ' Q ' + (hx + hr * 0.1) + ' ' + (hy - hr * 0.4) + ' ' + hx + ' ' + (hy - hr * 0.1) + ' Q ' + (hx - hr * 0.05) + ' ' + (hy + hr * 0.1) + ' ' + (hx + hr * 0.05) + ' ' + (hy + hr * 0.25) + '" stroke="' + hair + '" stroke-width="' + (hr * 0.15) + '" fill="none" stroke-linecap="round" opacity="0.4"/>' +
+          '<path d="M ' + (hx + hr * 0.35) + ' ' + (hy - hr * 0.65) + ' Q ' + (hx + hr * 0.4) + ' ' + (hy - hr * 0.3) + ' ' + (hx + hr * 0.3) + ' ' + (hy + hr * 0.05) + '" stroke="' + hair + '" stroke-width="' + (hr * 0.14) + '" fill="none" stroke-linecap="round" opacity="0.4"/>' +
+          '<path d="M ' + (hx + hr * 0.6) + ' ' + (hy - hr * 0.45) + ' Q ' + (hx + hr * 0.65) + ' ' + (hy - hr * 0.15) + ' ' + (hx + hr * 0.55) + ' ' + (hy + hr * 0.15) + '" stroke="' + hair + '" stroke-width="' + (hr * 0.12) + '" fill="none" stroke-linecap="round" opacity="0.35"/>' +
+          '<circle cx="' + (hx - hr * 0.3) + '" cy="' + (hy - hr * 0.95) + '" r="' + (hr * 0.12) + '" fill="' + hairLt + '" opacity="0.15"/>' +
+          '<circle cx="' + (hx + hr * 0.15) + '" cy="' + (hy - hr * 1.05) + '" r="' + (hr * 0.1) + '" fill="' + hairLt + '" opacity="0.12"/>';
       } else {
         hf = '<path d="M ' + (hx - hr * 0.9) + ' ' + (hy + hr * 0.15) + ' C ' + (hx - hr * 1.05) + ' ' + (hy - hr * 1.5) + ' ' + (hx + hr * 1.05) + ' ' + (hy - hr * 1.5) + ' ' + (hx + hr * 0.9) + ' ' + (hy + hr * 0.15) + ' L ' + (hx + hr * 0.75) + ' ' + (hy - hr * 0.4) + ' C ' + (hx + hr * 0.7) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.7) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.75) + ' ' + (hy - hr * 0.4) + ' Z" fill="' + hg + '"/>';
       }
@@ -4683,13 +4731,26 @@
 
       var bgStyle = '';
       var groundStyle = '';
-      var groundColors = { beach: '#F5DEB3', city: '#555', jungle: '#2D6A4F', waterpark: '#48CAE4', space: '#1B1B3A', farm: '#7CB518', snow: '#EEF2F7', candy: '#FFC2D1' };
       if (bgObj) {
         bgStyle = 'background:linear-gradient(180deg,' + bgObj.colors[0] + ' 0%,' + bgObj.colors[1] + ' 50%,' + bgObj.colors[2] + ' 100%);';
-        groundStyle = 'background:' + (groundColors[bgObj.key] || bgObj.colors[1]) + ';';
+        groundStyle = 'background:' + (bgObj.ground || bgObj.colors[1]) + ';';
       } else {
         bgStyle = 'background:linear-gradient(180deg,#B8EED8 0%,#A8D8F0 40%,#D4AAEE 100%);';
         groundStyle = 'background:#90C695;';
+      }
+
+      var decorHtml = '';
+      if (bgObj && bgObj.decor) {
+        var decorPositions = [
+          { top: '5%', left: '3%', size: '36px', opacity: '0.7' },
+          { top: '12%', left: '72%', size: '32px', opacity: '0.6' },
+          { top: '35%', left: '85%', size: '28px', opacity: '0.5' },
+          { top: '30%', left: '2%', size: '30px', opacity: '0.55' }
+        ];
+        bgObj.decor.forEach(function(emoji, idx) {
+          var pos = decorPositions[idx];
+          decorHtml += '<div class="av-display-decor" style="top:' + pos.top + ';left:' + pos.left + ';font-size:' + pos.size + ';opacity:' + pos.opacity + ';">' + emoji + '</div>';
+        });
       }
 
       var houseEmoji = '';
@@ -4699,39 +4760,63 @@
           if (AVATAR_HOUSES[h].key === hKey) { houseEmoji = AVATAR_HOUSES[h].icon; break; }
         }
       }
-      var vehEmoji = '';
-      if (p.avatar.vehicle) {
-        var vKey = p.avatar.vehicle.replace('veh:', '');
-        for (var v = 0; v < AVATAR_VEHICLES.length; v++) {
-          if (AVATAR_VEHICLES[v].key === vKey) { vehEmoji = AVATAR_VEHICLES[v].icon; break; }
-        }
+      var vehEmojis = [];
+      if (p.avatar.vehicles && p.avatar.vehicles.length) {
+        p.avatar.vehicles.forEach(function(vk) {
+          var vKey = vk.replace('veh:', '');
+          for (var v = 0; v < AVATAR_VEHICLES.length; v++) {
+            if (AVATAR_VEHICLES[v].key === vKey) { vehEmojis.push(AVATAR_VEHICLES[v].icon); break; }
+          }
+        });
       }
-      var toyEmoji = '';
-      if (p.avatar.toy) {
-        var tKey = p.avatar.toy.replace('toy:', '');
-        for (var t = 0; t < AVATAR_TOYS.length; t++) {
-          if (AVATAR_TOYS[t].key === tKey) { toyEmoji = AVATAR_TOYS[t].icon; break; }
-        }
+      var toyEmojis = [];
+      if (p.avatar.toys && p.avatar.toys.length) {
+        p.avatar.toys.forEach(function(tk) {
+          var tKey = tk.replace('toy:', '');
+          for (var t = 0; t < AVATAR_TOYS.length; t++) {
+            if (AVATAR_TOYS[t].key === tKey) { toyEmojis.push(AVATAR_TOYS[t].icon); break; }
+          }
+        });
       }
 
       var charSvg = buildFullBodySVG(p.avatar, { platform: false });
       var petHtml = '';
       if (p.avatar.svgPet && p.avatar.svgPet !== 'none') {
-        petHtml = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-25 -30 50 35" style="position:absolute;bottom:14%;right:12%;width:22%;height:auto;">' +
+        petHtml = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-25 -30 50 35" class="av-display-pet" style="width:30%;height:auto;">' +
           drawSvgPet(p.avatar.svgPet, 0, 0) + '</svg>';
       } else if (p.avatar.pet) {
-        petHtml = '<span style="position:absolute;bottom:14%;right:10%;font-size:40px;">' + p.avatar.pet + '</span>';
+        petHtml = '<span class="av-display-pet" style="font-size:64px;">' + p.avatar.pet + '</span>';
       }
 
       var displayHtml =
         '<div class="av-display">' +
           '<div class="av-display-bg" style="' + bgStyle + '"></div>' +
           '<div class="av-display-ground" style="' + groundStyle + ';border-radius:50% 50% 0 0 / 20% 20% 0 0;"></div>' +
+          decorHtml +
           (houseEmoji ? '<div class="av-display-house">' + houseEmoji + '</div>' : '') +
           '<div class="av-display-char">' + charSvg + '</div>' +
           petHtml +
-          (vehEmoji ? '<div class="av-display-vehicle">' + vehEmoji + '</div>' : '') +
-          (toyEmoji ? '<div class="av-display-toy">' + toyEmoji + '</div>' : '') +
+          (function() {
+            var vehPos = [
+              { bottom: '6%', left: '1%', size: '72px' },
+              { bottom: '10%', left: '22%', size: '60px' }
+            ];
+            return vehEmojis.map(function(e, i) {
+              var p = vehPos[i] || vehPos[0];
+              return '<div style="position:absolute;bottom:' + p.bottom + ';left:' + p.left + ';font-size:' + p.size + ';filter:drop-shadow(0 4px 8px rgba(0,0,0,0.25));">' + e + '</div>';
+            }).join('');
+          })() +
+          (function() {
+            var toyPos = [
+              { bottom: '28%', right: '2%', size: '64px' },
+              { bottom: '22%', right: '20%', size: '56px' },
+              { bottom: '34%', right: '8%', size: '50px' }
+            ];
+            return toyEmojis.map(function(e, i) {
+              var p = toyPos[i] || toyPos[0];
+              return '<div style="position:absolute;bottom:' + p.bottom + ';right:' + p.right + ';font-size:' + p.size + ';filter:drop-shadow(0 3px 6px rgba(0,0,0,0.2));">' + e + '</div>';
+            }).join('');
+          })() +
           '<div class="av-display-name">' + escapeHtml(p.name) + '</div>' +
         '</div>';
 
@@ -4747,31 +4832,50 @@
       }).join('');
 
       var panelHtml = '';
-      var catArr, slotField, prefixStr;
+      var catArr, prefixStr, isMulti = false, multiField, multiMax, singleField;
       if (avDisplayTab === 'bg') {
-        catArr = AVATAR_BACKGROUNDS; slotField = 'background'; prefixStr = 'bg:';
+        catArr = AVATAR_BACKGROUNDS; prefixStr = 'bg:'; singleField = 'background';
       } else if (avDisplayTab === 'toy') {
-        catArr = AVATAR_TOYS; slotField = 'toy'; prefixStr = 'toy:';
+        catArr = AVATAR_TOYS; prefixStr = 'toy:'; isMulti = true; multiField = 'toys'; multiMax = 3;
       } else if (avDisplayTab === 'veh') {
-        catArr = AVATAR_VEHICLES; slotField = 'vehicle'; prefixStr = 'veh:';
+        catArr = AVATAR_VEHICLES; prefixStr = 'veh:'; isMulti = true; multiField = 'vehicles'; multiMax = 2;
       } else {
-        catArr = AVATAR_HOUSES; slotField = 'house'; prefixStr = 'house:';
+        catArr = AVATAR_HOUSES; prefixStr = 'house:'; singleField = 'house';
       }
 
-      var currentVal = p.avatar[slotField];
-      panelHtml += '<button class="item-emoji-btn' + (!currentVal ? ' selected' : '') +
-        '" data-ditem="" data-dslot="' + slotField + '" style="font-size:14px;padding:8px;">None</button>';
-      catArr.forEach(function(item) {
-        var fullKey = prefixStr + item.key;
-        var isUnlocked = p.avatar.unlocked.indexOf(fullKey) !== -1;
-        var isSel = currentVal === fullKey;
-        panelHtml += '<button class="item-emoji-btn' + (isSel ? ' selected' : '') + (isUnlocked ? '' : ' locked') +
-          '" data-ditem="' + fullKey + '" data-dslot="' + slotField +
-          '" data-unlocked="' + (isUnlocked ? '1' : '0') + '">' +
-          item.icon + '<span class="item-label">' + item.label + '</span>' +
-          (isUnlocked ? '' : '<span style="position:absolute;top:2px;right:2px;font-size:10px;">🔒</span>') +
-          '</button>';
-      });
+      if (isMulti) {
+        var arr = p.avatar[multiField] || [];
+        panelHtml += '<button class="item-emoji-btn' + (arr.length === 0 ? ' selected' : '') +
+          '" data-dclear="' + multiField + '" style="font-size:14px;padding:8px;">None</button>';
+        catArr.forEach(function(item) {
+          var fullKey = prefixStr + item.key;
+          var isUnlocked = p.avatar.unlocked.indexOf(fullKey) !== -1;
+          var isSel = arr.indexOf(fullKey) !== -1;
+          panelHtml += '<button class="item-emoji-btn' + (isSel ? ' selected' : '') + (isUnlocked ? '' : ' locked') +
+            '" data-dtoggle="' + fullKey + '" data-dfield="' + multiField +
+            '" data-dmax="' + multiMax + '" data-unlocked="' + (isUnlocked ? '1' : '0') + '">' +
+            item.icon + '<span class="item-label">' + item.label + '</span>' +
+            (isUnlocked ? '' : '<span style="position:absolute;top:2px;right:2px;font-size:10px;">🔒</span>') +
+            '</button>';
+        });
+      } else {
+        var currentVal = p.avatar[singleField];
+        panelHtml += '<button class="item-emoji-btn' + (!currentVal ? ' selected' : '') +
+          '" data-ditem="" data-dslot="' + singleField + '" style="font-size:14px;padding:8px;">None</button>';
+        catArr.forEach(function(item) {
+          var fullKey = prefixStr + item.key;
+          var isUnlocked = p.avatar.unlocked.indexOf(fullKey) !== -1;
+          var isSel = currentVal === fullKey;
+          panelHtml += '<button class="item-emoji-btn' + (isSel ? ' selected' : '') + (isUnlocked ? '' : ' locked') +
+            '" data-ditem="' + fullKey + '" data-dslot="' + singleField +
+            '" data-unlocked="' + (isUnlocked ? '1' : '0') + '">' +
+            item.icon + '<span class="item-label">' + item.label + '</span>' +
+            (isUnlocked ? '' : '<span style="position:absolute;top:2px;right:2px;font-size:10px;">🔒</span>') +
+            '</button>';
+        });
+      }
+
+      var limitHint = isMulti ? '<div style="font-size:11px;color:#999;text-align:center;margin-top:4px;">Tap to add or remove (max ' + multiMax + ')</div>' : '';
 
       var container = $('s-avdisplay');
       container.innerHTML =
@@ -4779,6 +4883,7 @@
         '<h2 style="margin-bottom:8px;">My World</h2>' +
         displayHtml +
         '<div class="ar-tabs" style="margin-top:12px;">' + tabHtml + '</div>' +
+        limitHint +
         '<div class="item-emoji-grid" style="margin-top:8px;">' + panelHtml + '</div>';
 
       container.querySelectorAll('[data-dtab]').forEach(function(btn) {
@@ -4797,6 +4902,30 @@
             return;
           }
           p.avatar[slot] = itemKey || null;
+          saveActiveProfile();
+          renderAvatarDisplay();
+        });
+      });
+
+      container.querySelectorAll('[data-dtoggle]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var itemKey = btn.getAttribute('data-dtoggle');
+          var field = btn.getAttribute('data-dfield');
+          var max = parseInt(btn.getAttribute('data-dmax'), 10);
+          if (btn.getAttribute('data-unlocked') === '0') {
+            alert('Play games to earn drops and unlock this!');
+            return;
+          }
+          toggleArraySlot(p.avatar, field, itemKey, max);
+          saveActiveProfile();
+          renderAvatarDisplay();
+        });
+      });
+
+      container.querySelectorAll('[data-dclear]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var field = btn.getAttribute('data-dclear');
+          p.avatar[field] = [];
           saveActiveProfile();
           renderAvatarDisplay();
         });
