@@ -818,7 +818,7 @@
     .ar-item-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
     .ar-item-btn { position: relative; font-size: 28px; border: 3px solid transparent; border-radius: var(--radius-md); padding: 6px 4px; min-height: 52px; background: rgba(212,170,238,0.12); cursor: pointer; transition: transform 100ms ease; display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: center; justify-content: center; }
     .ar-item-btn.selected { border-color: var(--pu3); background: var(--pu); }
-    .ar-item-btn.locked { opacity: 0.32; -webkit-filter: grayscale(1); filter: grayscale(1); }
+    .ar-item-btn.locked { opacity: 0.25; -webkit-filter: grayscale(1); filter: grayscale(1); }
     .ar-item-btn:active { transform: scale(1.1); }
     .ar-lock { position: absolute; bottom: 1px; right: 2px; font-size: 10px; line-height: 1; }
     .avatar-circle svg { display: block; width: 100%; height: 100%; }
@@ -923,15 +923,15 @@
 
     /* ---- Avatar Display Screen ---- */
     .av-display { position: relative; width: 100%; max-width: 360px; margin: 0 auto; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-pop); aspect-ratio: 3/4; }
-    .av-display-bg { position: absolute; inset: 0; }
-    .av-display-ground { position: absolute; bottom: 0; left: 0; right: 0; height: 30%; }
-    .av-display-char { position: absolute; bottom: 12%; left: 50%; transform: translateX(-50%); width: 45%; }
+    .av-display-bg { position: absolute; inset: 0; z-index: 0; }
+    .av-display-ground { position: absolute; bottom: 0; left: 0; right: 0; height: 30%; z-index: 1; }
+    .av-display-char { position: absolute; bottom: 12%; left: 50%; transform: translateX(-50%); width: 45%; z-index: 3; }
     .av-display-house { position: absolute; top: 2%; right: 2%; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25)); }
     .av-display-vehicle { position: absolute; bottom: 8%; left: 2%; font-size: 72px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25)); }
     .av-display-toy { position: absolute; bottom: 28%; right: 2%; font-size: 64px; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.2)); }
-    .av-display-decor { position: absolute; pointer-events: none; }
-    .av-display-pet { position: absolute; bottom: 14%; right: 12%; }
-    .av-display-name { position: absolute; bottom: 4%; left: 50%; transform: translateX(-50%); font-family: 'Fredoka One', sans-serif; font-size: 18px; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.4); }
+    .av-display-decor { position: absolute; pointer-events: none; z-index: 1; }
+    .av-display-pet { position: absolute; bottom: 14%; right: 12%; z-index: 4; }
+    .av-display-name { position: absolute; bottom: 4%; left: 50%; transform: translateX(-50%); font-family: 'Fredoka One', sans-serif; font-size: 18px; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.4); z-index: 5; }
     .av-display-clouds { position: absolute; top: 10%; left: 10%; font-size: 24px; opacity: 0.5; }
     .av-room-display-btn { display: block; width: 100%; padding: 14px; margin-top: 12px; border-radius: var(--radius-lg); border: 2px solid var(--pu); background: linear-gradient(135deg, #F0E6FF, #E6F0FF); font-family: 'Fredoka One', sans-serif; font-size: 15px; color: var(--pu3); cursor: pointer; text-align: center; }
     .av-room-display-btn:active { transform: scale(0.97); }
@@ -940,7 +940,7 @@
     .item-emoji-btn:active { transform: scale(0.93); }
     .item-emoji-btn.selected { border-color: var(--pu2); background: rgba(212,170,238,0.12); }
     .item-emoji-btn .item-label { display: block; font-size: 9px; color: #888; margin-top: 2px; font-family: -apple-system, sans-serif; }
-    .item-emoji-btn.locked { opacity: 0.45; position: relative; }
+    .item-emoji-btn.locked { opacity: 0.3; position: relative; -webkit-filter: grayscale(1); filter: grayscale(1); }
   </style>
 </head>
 <body>
@@ -1524,9 +1524,9 @@
       } else if (AVATAR_PETS.indexOf(itemKey) !== -1) {
         p.avatar.pet = itemKey;
       } else if (itemKey.indexOf('toy:') === 0) {
-        toggleArraySlot(p.avatar, 'toys', itemKey, 3);
+        toggleArraySlot(p.avatar, 'toys', itemKey, 99);
       } else if (itemKey.indexOf('veh:') === 0) {
-        toggleArraySlot(p.avatar, 'vehicles', itemKey, 2);
+        toggleArraySlot(p.avatar, 'vehicles', itemKey, 99);
       } else if (itemKey.indexOf('house:') === 0) {
         p.avatar.house = itemKey;
       } else if (itemKey.indexOf('bg:') === 0) {
@@ -4582,6 +4582,12 @@
         p.economy.dailyDate  = today;
         p.economy.dailyCoins = 0;
       }
+
+      if (gameSession.soundId && alreadyPlayedToday(p, gameSession.soundId)) {
+        coinsEarned = 0;
+        gameSession.repeatBlocked = true;
+      }
+
       var cap      = getDailyCap(p);
       var awarded  = Math.min(coinsEarned, Math.max(0, cap - (p.economy.dailyCoins || 0)));
       p.economy.coins      = (p.economy.coins      || 0) + awarded;
@@ -4658,10 +4664,15 @@
       var dropChoices = p ? checkAndTriggerDrop(p) : null;
       if (p) saveActiveProfile();
 
-      var coinsMsg = gameSession.sessionCoins > 0
-        ? '🪙 You earned <strong>' + gameSession.sessionCoins + ' coin' +
-          (gameSession.sessionCoins !== 1 ? 's' : '') + '</strong> this session!'
-        : 'You played for less than a minute — come back for coins!';
+      var coinsMsg = '';
+      if (gameSession.repeatBlocked) {
+        coinsMsg = 'You already earned coins for this sound today — try a different week!';
+      } else if (gameSession.sessionCoins > 0) {
+        coinsMsg = '🪙 You earned <strong>' + gameSession.sessionCoins + ' coin' +
+          (gameSession.sessionCoins !== 1 ? 's' : '') + '</strong> this session!';
+      } else {
+        coinsMsg = 'You played for less than a minute — come back for coins!';
+      }
 
       var econ   = p ? (p.economy || {}) : {};
       var capMsg = econ.dailyCoins >= getDailyCap(p)
@@ -4685,6 +4696,16 @@
         SOUNDS[gameSession.soundId].sentenceStarters &&
         SOUNDS[gameSession.soundId].sentenceStarters.length);
 
+      var nextWeekBtn = '';
+      if (gameSession.repeatBlocked) {
+        var nextSoundId = findUnplayedSound(p);
+        if (nextSoundId) {
+          var nextSound = SOUNDS[nextSoundId];
+          var nextLabel = nextSound ? nextSound.label : nextSoundId;
+          nextWeekBtn = '<button class="btn" id="done-next-week" style="background:var(--gn3);">Try ' + escapeHtml(nextLabel) + ' →</button>';
+        }
+      }
+
       var content = $('game-content');
       content.innerHTML =
         '<div class="done-screen">' +
@@ -4693,6 +4714,7 @@
         '<p class="done-score">' + correct + ' of ' + total + ' correct on the first try</p>' +
         '<p class="done-coins">' + coinsMsg + '</p>' +
         capMsg + dropHtml +
+        nextWeekBtn +
         (hasSentences
           ? '<button class="btn" id="done-sentences">✍️ Write sentences →</button>'
           : '') +
@@ -4711,6 +4733,12 @@
         if (gameSession.mode === 'boss') startBossGame();
         else startGame(gameSession.soundId, 'surprise');
       });
+      if (gameSession.repeatBlocked && $('done-next-week')) {
+        var nxtId = findUnplayedSound(p);
+        $('done-next-week').addEventListener('click', function() {
+          startGame(nxtId, 'surprise');
+        });
+      }
 
       if (dropChoices) {
         content.querySelectorAll('.drop-emoji-btn').forEach(function(btn) {
@@ -5122,6 +5150,9 @@
       if (p && coinsToAward > 0) {
         var today = todayKey();
         if (p.economy.dailyDate !== today) { p.economy.dailyDate = today; p.economy.dailyCoins = 0; }
+        if (sentenceSession.soundId && alreadyPlayedToday(p, sentenceSession.soundId)) {
+          coinsToAward = 0;
+        }
         var awarded = Math.min(coinsToAward, Math.max(0, getDailyCap(p) - (p.economy.dailyCoins || 0)));
         p.economy.coins       = (p.economy.coins       || 0) + awarded;
         p.economy.dailyCoins  = (p.economy.dailyCoins  || 0) + awarded;
@@ -6109,6 +6140,577 @@
       $('dw-home').addEventListener('click', function() { showScreen('s-home'); });
     }
 
+
+    // -----------------------------------
+    // Rich SVG Scene Backgrounds
+    // -----------------------------------
+
+    function drawSceneBg(bgKey, w, h) {
+      var svg = '';
+      var i;
+
+      switch (bgKey) {
+
+        // =========================================================================
+        // BEACH
+        // =========================================================================
+        case 'beach':
+          svg += '<defs>';
+          svg += '<linearGradient id="beachSky" x1="0" y1="0" x2="0" y2="1">';
+          svg += '<stop offset="0%" stop-color="#87CEEB"/>';
+          svg += '<stop offset="55%" stop-color="#B0E0F6"/>';
+          svg += '<stop offset="100%" stop-color="#E0F4FF"/>';
+          svg += '</linearGradient>';
+          svg += '</defs>';
+          svg += '<rect x="0" y="0" width="' + w + '" height="' + h + '" fill="url(#beachSky)"/>';
+          for (i = 0; i < 12; i++) {
+            var rayAngle = i * 30;
+            var rInner = w * 0.045;
+            var rOuter = w * 0.1;
+            var rx1 = w * 0.82 + Math.cos(rayAngle * Math.PI / 180) * rInner;
+            var ry1 = h * 0.12 + Math.sin(rayAngle * Math.PI / 180) * rInner;
+            var rx2 = w * 0.82 + Math.cos(rayAngle * Math.PI / 180) * rOuter;
+            var ry2 = h * 0.12 + Math.sin(rayAngle * Math.PI / 180) * rOuter;
+            svg += '<line x1="' + rx1 + '" y1="' + ry1 + '" x2="' + rx2 + '" y2="' + ry2 + '" stroke="#FFE066" stroke-width="' + (w * 0.006) + '" stroke-linecap="round" opacity="0.7"/>';
+          }
+          svg += '<circle cx="' + (w * 0.82) + '" cy="' + (h * 0.12) + '" r="' + (w * 0.055) + '" fill="#FFD93D"/>';
+          svg += '<circle cx="' + (w * 0.82) + '" cy="' + (h * 0.12) + '" r="' + (w * 0.04) + '" fill="#FFEC80"/>';
+          svg += '<polygon points="' + (w * 0.25) + ',' + (h * 0.38) + ' ' + (w * 0.27) + ',' + (h * 0.26) + ' ' + (w * 0.29) + ',' + (h * 0.38) + '" fill="white" opacity="0.9"/>';
+          svg += '<rect x="' + (w * 0.22) + '" y="' + (h * 0.38) + '" width="' + (w * 0.1) + '" height="' + (h * 0.015) + '" rx="' + (h * 0.005) + '" fill="#8B5E3C" opacity="0.6"/>';
+          svg += '<path d="M 0 ' + (h * 0.42) + ' Q ' + (w * 0.15) + ' ' + (h * 0.39) + ' ' + (w * 0.3) + ' ' + (h * 0.42) + ' T ' + (w * 0.6) + ' ' + (h * 0.42) + ' T ' + w + ' ' + (h * 0.41) + ' L ' + w + ' ' + (h * 0.55) + ' L 0 ' + (h * 0.55) + ' Z" fill="#1A6FA0" opacity="0.7"/>';
+          svg += '<path d="M 0 ' + (h * 0.46) + ' Q ' + (w * 0.12) + ' ' + (h * 0.43) + ' ' + (w * 0.25) + ' ' + (h * 0.46) + ' T ' + (w * 0.5) + ' ' + (h * 0.45) + ' T ' + (w * 0.75) + ' ' + (h * 0.46) + ' T ' + w + ' ' + (h * 0.45) + ' L ' + w + ' ' + (h * 0.58) + ' L 0 ' + (h * 0.58) + ' Z" fill="#2E8BC0" opacity="0.8"/>';
+          svg += '<path d="M 0 ' + (h * 0.50) + ' Q ' + (w * 0.1) + ' ' + (h * 0.47) + ' ' + (w * 0.2) + ' ' + (h * 0.50) + ' T ' + (w * 0.4) + ' ' + (h * 0.49) + ' T ' + (w * 0.6) + ' ' + (h * 0.50) + ' T ' + (w * 0.8) + ' ' + (h * 0.49) + ' T ' + w + ' ' + (h * 0.50) + ' L ' + w + ' ' + (h * 0.62) + ' L 0 ' + (h * 0.62) + ' Z" fill="#56B4D3"/>';
+          svg += '<path d="M 0 ' + (h * 0.55) + ' Q ' + (w * 0.08) + ' ' + (h * 0.53) + ' ' + (w * 0.18) + ' ' + (h * 0.56) + ' T ' + (w * 0.35) + ' ' + (h * 0.55) + ' T ' + (w * 0.55) + ' ' + (h * 0.56) + ' T ' + (w * 0.75) + ' ' + (h * 0.55) + ' T ' + w + ' ' + (h * 0.56) + ' L ' + w + ' ' + (h * 0.68) + ' L 0 ' + (h * 0.68) + ' Z" fill="#7EC8E3"/>';
+          svg += '<path d="M 0 ' + (h * 0.64) + ' Q ' + (w * 0.06) + ' ' + (h * 0.62) + ' ' + (w * 0.12) + ' ' + (h * 0.64) + ' T ' + (w * 0.24) + ' ' + (h * 0.63) + ' T ' + (w * 0.36) + ' ' + (h * 0.64) + ' T ' + (w * 0.48) + ' ' + (h * 0.63) + ' T ' + (w * 0.60) + ' ' + (h * 0.64) + ' T ' + (w * 0.72) + ' ' + (h * 0.63) + ' T ' + (w * 0.84) + ' ' + (h * 0.64) + ' T ' + w + ' ' + (h * 0.63) + ' L ' + w + ' ' + (h * 0.66) + ' L 0 ' + (h * 0.66) + ' Z" fill="white" opacity="0.6"/>';
+          svg += '<path d="M 0 ' + (h * 0.65) + ' Q ' + (w * 0.2) + ' ' + (h * 0.62) + ' ' + (w * 0.5) + ' ' + (h * 0.65) + ' T ' + w + ' ' + (h * 0.63) + ' L ' + w + ' ' + h + ' L 0 ' + h + ' Z" fill="#F4D68C"/>';
+          svg += '<path d="M 0 ' + (h * 0.65) + ' Q ' + (w * 0.2) + ' ' + (h * 0.62) + ' ' + (w * 0.5) + ' ' + (h * 0.65) + ' T ' + w + ' ' + (h * 0.63) + ' L ' + w + ' ' + (h * 0.70) + ' L 0 ' + (h * 0.70) + ' Z" fill="#D4B87A"/>';
+          svg += '<rect x="' + (w * 0.58) + '" y="' + (h * 0.58) + '" width="' + (w * 0.012) + '" height="' + (h * 0.16) + '" fill="#8B5E3C"/>';
+          svg += '<path d="M ' + (w * 0.48) + ' ' + (h * 0.58) + ' Q ' + (w * 0.586) + ' ' + (h * 0.48) + ' ' + (w * 0.69) + ' ' + (h * 0.58) + ' Z" fill="#FF6B6B"/>';
+          svg += '<path d="M ' + (w * 0.52) + ' ' + (h * 0.58) + ' Q ' + (w * 0.555) + ' ' + (h * 0.51) + ' ' + (w * 0.586) + ' ' + (h * 0.58) + ' Z" fill="#FFE066" opacity="0.6"/>';
+          svg += '<path d="M ' + (w * 0.586) + ' ' + (h * 0.58) + ' Q ' + (w * 0.62) + ' ' + (h * 0.51) + ' ' + (w * 0.65) + ' ' + (h * 0.58) + ' Z" fill="white" opacity="0.5"/>';
+          svg += '<rect x="' + (w * 0.08) + '" y="' + (h * 0.35) + '" width="' + (w * 0.025) + '" height="' + (h * 0.35) + '" fill="#6B3E26" rx="' + (w * 0.01) + '"/>';
+          for (i = 0; i < 5; i++) {
+            svg += '<line x1="' + (w * 0.08) + '" y1="' + (h * (0.40 + i * 0.05)) + '" x2="' + (w * 0.105) + '" y2="' + (h * (0.40 + i * 0.05)) + '" stroke="#5A3420" stroke-width="1" opacity="0.4"/>';
+          }
+          svg += '<path d="M ' + (w * 0.093) + ' ' + (h * 0.36) + ' Q ' + (w * 0.02) + ' ' + (h * 0.28) + ' ' + (w * -0.02) + ' ' + (h * 0.38) + '" fill="none" stroke="#2D8B46" stroke-width="' + (w * 0.018) + '" stroke-linecap="round"/>';
+          svg += '<path d="M ' + (w * 0.093) + ' ' + (h * 0.36) + ' Q ' + (w * 0.05) + ' ' + (h * 0.24) + ' ' + (w * 0.04) + ' ' + (h * 0.32) + '" fill="none" stroke="#3DA55D" stroke-width="' + (w * 0.015) + '" stroke-linecap="round"/>';
+          svg += '<path d="M ' + (w * 0.093) + ' ' + (h * 0.36) + ' Q ' + (w * 0.14) + ' ' + (h * 0.24) + ' ' + (w * 0.20) + ' ' + (h * 0.34) + '" fill="none" stroke="#2D8B46" stroke-width="' + (w * 0.018) + '" stroke-linecap="round"/>';
+          svg += '<path d="M ' + (w * 0.093) + ' ' + (h * 0.36) + ' Q ' + (w * 0.16) + ' ' + (h * 0.28) + ' ' + (w * 0.22) + ' ' + (h * 0.38) + '" fill="none" stroke="#3DA55D" stroke-width="' + (w * 0.014) + '" stroke-linecap="round"/>';
+          svg += '<path d="M ' + (w * 0.093) + ' ' + (h * 0.36) + ' Q ' + (w * 0.10) + ' ' + (h * 0.22) + ' ' + (w * 0.12) + ' ' + (h * 0.30) + '" fill="none" stroke="#48C774" stroke-width="' + (w * 0.012) + '" stroke-linecap="round"/>';
+          svg += '<circle cx="' + (w * 0.085) + '" cy="' + (h * 0.365) + '" r="' + (w * 0.012) + '" fill="#6B3E26"/>';
+          svg += '<circle cx="' + (w * 0.10) + '" cy="' + (h * 0.37) + '" r="' + (w * 0.011) + '" fill="#5A3420"/>';
+          svg += '<ellipse cx="' + (w * 0.35) + '" cy="' + (h * 0.78) + '" rx="' + (w * 0.015) + '" ry="' + (w * 0.01) + '" fill="#FFEEDD" stroke="#D4A574" stroke-width="0.5"/>';
+          svg += '<path d="M ' + (w * 0.345) + ' ' + (h * 0.78) + ' Q ' + (w * 0.35) + ' ' + (h * 0.77) + ' ' + (w * 0.355) + ' ' + (h * 0.78) + '" fill="none" stroke="#D4A574" stroke-width="0.5"/>';
+          svg += '<ellipse cx="' + (w * 0.72) + '" cy="' + (h * 0.82) + '" rx="' + (w * 0.012) + '" ry="' + (w * 0.008) + '" fill="#FFD4B8" stroke="#C49A6C" stroke-width="0.5" transform="rotate(30,' + (w * 0.72) + ',' + (h * 0.82) + ')"/>';
+          svg += '<path d="M ' + (w * 0.50) + ' ' + (h * 0.85) + ' Q ' + (w * 0.51) + ' ' + (h * 0.84) + ' ' + (w * 0.515) + ' ' + (h * 0.85) + ' Q ' + (w * 0.52) + ' ' + (h * 0.86) + ' ' + (w * 0.505) + ' ' + (h * 0.862) + ' Q ' + (w * 0.49) + ' ' + (h * 0.86) + ' ' + (w * 0.495) + ' ' + (h * 0.845) + '" fill="none" stroke="#C49A6C" stroke-width="1"/>';
+          svg += '<polygon points="' + (w * 0.42) + ',' + (h * 0.75) + ' ' + (w * 0.425) + ',' + (h * 0.74) + ' ' + (w * 0.43) + ',' + (h * 0.735) + ' ' + (w * 0.435) + ',' + (h * 0.74) + ' ' + (w * 0.44) + ',' + (h * 0.735) + ' ' + (w * 0.44) + ',' + (h * 0.745) + ' ' + (w * 0.45) + ',' + (h * 0.75) + ' ' + (w * 0.44) + ',' + (h * 0.755) + ' ' + (w * 0.44) + ',' + (h * 0.765) + ' ' + (w * 0.435) + ',' + (h * 0.76) + ' ' + (w * 0.43) + ',' + (h * 0.77) + ' ' + (w * 0.425) + ',' + (h * 0.76) + ' ' + (w * 0.42) + ',' + (h * 0.765) + ' ' + (w * 0.42) + ',' + (h * 0.755) + ' ' + (w * 0.41) + ',' + (h * 0.75) + ' ' + (w * 0.42) + ',' + (h * 0.745) + '" fill="#FF8C69" opacity="0.8"/>';
+          break;
+
+        // =========================================================================
+        // JUNGLE
+        // =========================================================================
+        case 'jungle':
+          svg += '<defs>';
+          svg += '<linearGradient id="jungleSky" x1="0" y1="0" x2="0" y2="1">';
+          svg += '<stop offset="0%" stop-color="#4A8B3F"/>';
+          svg += '<stop offset="30%" stop-color="#2E6B30"/>';
+          svg += '<stop offset="100%" stop-color="#1A4D1A"/>';
+          svg += '</linearGradient>';
+          svg += '</defs>';
+          svg += '<rect x="0" y="0" width="' + w + '" height="' + h + '" fill="url(#jungleSky)"/>';
+          svg += '<circle cx="' + (w * 0.15) + '" cy="' + (h * 0.10) + '" r="' + (w * 0.06) + '" fill="#7EC850" opacity="0.15"/>';
+          svg += '<circle cx="' + (w * 0.50) + '" cy="' + (h * 0.06) + '" r="' + (w * 0.08) + '" fill="#A5D86F" opacity="0.12"/>';
+          svg += '<circle cx="' + (w * 0.80) + '" cy="' + (h * 0.14) + '" r="' + (w * 0.05) + '" fill="#C8E890" opacity="0.15"/>';
+          svg += '<circle cx="' + (w * 0.35) + '" cy="' + (h * 0.20) + '" r="' + (w * 0.04) + '" fill="#FFFDE0" opacity="0.08"/>';
+          svg += '<circle cx="' + (w * 0.65) + '" cy="' + (h * 0.25) + '" r="' + (w * 0.035) + '" fill="#FFFDE0" opacity="0.10"/>';
+          svg += '<path d="M 0 0 Q ' + (w * 0.1) + ' ' + (h * 0.15) + ' ' + (w * 0.2) + ' ' + (h * 0.05) + ' T ' + (w * 0.35) + ' ' + (h * 0.12) + ' T ' + (w * 0.5) + ' ' + (h * 0.04) + ' T ' + (w * 0.7) + ' ' + (h * 0.14) + ' T ' + (w * 0.85) + ' ' + (h * 0.06) + ' T ' + w + ' ' + (h * 0.10) + ' L ' + w + ' 0 Z" fill="#1B3D1B" opacity="0.8"/>';
+          svg += '<path d="M 0 ' + (h * 0.08) + ' Q ' + (w * 0.08) + ' ' + (h * 0.20) + ' ' + (w * 0.18) + ' ' + (h * 0.12) + ' T ' + (w * 0.32) + ' ' + (h * 0.22) + ' T ' + (w * 0.48) + ' ' + (h * 0.14) + ' T ' + (w * 0.62) + ' ' + (h * 0.24) + ' T ' + (w * 0.78) + ' ' + (h * 0.15) + ' T ' + w + ' ' + (h * 0.20) + ' L ' + w + ' 0 L 0 0 Z" fill="#2A5C2A" opacity="0.7"/>';
+          svg += '<path d="M 0 ' + (h * 0.15) + ' Q ' + (w * 0.12) + ' ' + (h * 0.28) + ' ' + (w * 0.22) + ' ' + (h * 0.18) + ' T ' + (w * 0.40) + ' ' + (h * 0.30) + ' T ' + (w * 0.55) + ' ' + (h * 0.20) + ' T ' + (w * 0.72) + ' ' + (h * 0.32) + ' T ' + (w * 0.88) + ' ' + (h * 0.22) + ' T ' + w + ' ' + (h * 0.28) + ' L ' + w + ' 0 L 0 0 Z" fill="#3A7A3A" opacity="0.6"/>';
+          svg += '<rect x="' + (w * 0.04) + '" y="' + (h * 0.15) + '" width="' + (w * 0.055) + '" height="' + (h * 0.85) + '" fill="#4A3728" rx="' + (w * 0.015) + '"/>';
+          svg += '<rect x="' + (w * 0.05) + '" y="' + (h * 0.15) + '" width="' + (w * 0.02) + '" height="' + (h * 0.85) + '" fill="#5E4936" opacity="0.5"/>';
+          svg += '<rect x="' + (w * 0.88) + '" y="' + (h * 0.10) + '" width="' + (w * 0.06) + '" height="' + (h * 0.90) + '" fill="#3D2E1F" rx="' + (w * 0.015) + '"/>';
+          svg += '<rect x="' + (w * 0.895) + '" y="' + (h * 0.10) + '" width="' + (w * 0.02) + '" height="' + (h * 0.90) + '" fill="#5E4936" opacity="0.4"/>';
+          svg += '<rect x="' + (w * 0.48) + '" y="' + (h * 0.25) + '" width="' + (w * 0.045) + '" height="' + (h * 0.75) + '" fill="#4A3728" rx="' + (w * 0.012) + '"/>';
+          svg += '<path d="M ' + (w * 0.20) + ' ' + (h * 0.05) + ' Q ' + (w * 0.18) + ' ' + (h * 0.25) + ' ' + (w * 0.22) + ' ' + (h * 0.45) + '" fill="none" stroke="#3DA55D" stroke-width="' + (w * 0.006) + '"/>';
+          svg += '<path d="M ' + (w * 0.38) + ' ' + (h * 0.10) + ' Q ' + (w * 0.35) + ' ' + (h * 0.30) + ' ' + (w * 0.37) + ' ' + (h * 0.52) + '" fill="none" stroke="#2D8B46" stroke-width="' + (w * 0.005) + '"/>';
+          svg += '<path d="M ' + (w * 0.70) + ' ' + (h * 0.08) + ' Q ' + (w * 0.72) + ' ' + (h * 0.28) + ' ' + (w * 0.68) + ' ' + (h * 0.48) + '" fill="none" stroke="#48C774" stroke-width="' + (w * 0.005) + '"/>';
+          svg += '<path d="M ' + (w * 0.56) + ' ' + (h * 0.12) + ' Q ' + (w * 0.54) + ' ' + (h * 0.32) + ' ' + (w * 0.58) + ' ' + (h * 0.40) + '" fill="none" stroke="#3DA55D" stroke-width="' + (w * 0.004) + '"/>';
+          svg += '<path d="M ' + (w * 0.82) + ' ' + (h * 0.06) + ' Q ' + (w * 0.84) + ' ' + (h * 0.20) + ' ' + (w * 0.80) + ' ' + (h * 0.38) + ' Q ' + (w * 0.78) + ' ' + (h * 0.50) + ' ' + (w * 0.81) + ' ' + (h * 0.58) + '" fill="none" stroke="#2D8B46" stroke-width="' + (w * 0.005) + '"/>';
+          svg += '<rect x="0" y="' + (h * 0.70) + '" width="' + w + '" height="' + (h * 0.30) + '" fill="#2A4A1A"/>';
+          svg += '<path d="M 0 ' + (h * 0.70) + ' Q ' + (w * 0.1) + ' ' + (h * 0.68) + ' ' + (w * 0.2) + ' ' + (h * 0.71) + ' T ' + (w * 0.4) + ' ' + (h * 0.69) + ' T ' + (w * 0.6) + ' ' + (h * 0.71) + ' T ' + (w * 0.8) + ' ' + (h * 0.69) + ' T ' + w + ' ' + (h * 0.70) + ' L ' + w + ' ' + (h * 0.74) + ' L 0 ' + (h * 0.74) + ' Z" fill="#3A5C28" opacity="0.7"/>';
+          svg += '<ellipse cx="' + (w * 0.30) + '" cy="' + (h * 0.38) + '" rx="' + (w * 0.025) + '" ry="' + (w * 0.035) + '" fill="#E63946"/>';
+          svg += '<circle cx="' + (w * 0.30) + '" cy="' + (h * 0.35) + '" r="' + (w * 0.018) + '" fill="#FF6B6B"/>';
+          svg += '<polygon points="' + (w * 0.285) + ',' + (h * 0.35) + ' ' + (w * 0.275) + ',' + (h * 0.345) + ' ' + (w * 0.285) + ',' + (h * 0.355) + '" fill="#FFD93D"/>';
+          svg += '<circle cx="' + (w * 0.295) + '" cy="' + (h * 0.345) + '" r="' + (w * 0.004) + '" fill="#1a1a1a"/>';
+          svg += '<path d="M ' + (w * 0.31) + ' ' + (h * 0.40) + ' Q ' + (w * 0.33) + ' ' + (h * 0.46) + ' ' + (w * 0.32) + ' ' + (h * 0.50) + '" fill="none" stroke="#E63946" stroke-width="' + (w * 0.008) + '" stroke-linecap="round"/>';
+          svg += '<path d="M ' + (w * 0.30) + ' ' + (h * 0.41) + ' Q ' + (w * 0.31) + ' ' + (h * 0.47) + ' ' + (w * 0.29) + ' ' + (h * 0.51) + '" fill="none" stroke="#3DA55D" stroke-width="' + (w * 0.006) + '" stroke-linecap="round"/>';
+          svg += '<path d="M ' + (w * 0.305) + ' ' + (h * 0.41) + ' Q ' + (w * 0.32) + ' ' + (h * 0.48) + ' ' + (w * 0.305) + ' ' + (h * 0.52) + '" fill="none" stroke="#56B4D3" stroke-width="' + (w * 0.005) + '" stroke-linecap="round"/>';
+          svg += '<circle cx="' + (w * 0.15) + '" cy="' + (h * 0.65) + '" r="' + (w * 0.015) + '" fill="#FF6B9D"/>';
+          svg += '<circle cx="' + (w * 0.15) + '" cy="' + (h * 0.65) + '" r="' + (w * 0.006) + '" fill="#FFD93D"/>';
+          svg += '<circle cx="' + (w * 0.75) + '" cy="' + (h * 0.62) + '" r="' + (w * 0.012) + '" fill="#C084FC"/>';
+          svg += '<circle cx="' + (w * 0.75) + '" cy="' + (h * 0.62) + '" r="' + (w * 0.005) + '" fill="#FFE066"/>';
+          svg += '<circle cx="' + (w * 0.60) + '" cy="' + (h * 0.68) + '" r="' + (w * 0.013) + '" fill="#FF8C69"/>';
+          svg += '<circle cx="' + (w * 0.60) + '" cy="' + (h * 0.68) + '" r="' + (w * 0.005) + '" fill="#FFEC80"/>';
+          svg += '<rect x="' + (w * 0.22 - w * 0.004) + '" y="' + (h * 0.74) + '" width="' + (w * 0.008) + '" height="' + (h * 0.04) + '" fill="#F0E6D2"/>';
+          svg += '<ellipse cx="' + (w * 0.22) + '" cy="' + (h * 0.74) + '" rx="' + (w * 0.02) + '" ry="' + (h * 0.015) + '" fill="#E63946"/>';
+          svg += '<circle cx="' + (w * 0.215) + '" cy="' + (h * 0.735) + '" r="' + (w * 0.004) + '" fill="white" opacity="0.8"/>';
+          svg += '<circle cx="' + (w * 0.228) + '" cy="' + (h * 0.738) + '" r="' + (w * 0.003) + '" fill="white" opacity="0.8"/>';
+          svg += '<rect x="' + (w * 0.68 - w * 0.003) + '" y="' + (h * 0.76) + '" width="' + (w * 0.006) + '" height="' + (h * 0.03) + '" fill="#F0E6D2"/>';
+          svg += '<ellipse cx="' + (w * 0.68) + '" cy="' + (h * 0.76) + '" rx="' + (w * 0.015) + '" ry="' + (h * 0.012) + '" fill="#FF8C69"/>';
+          svg += '<circle cx="' + (w * 0.676) + '" cy="' + (h * 0.756) + '" r="' + (w * 0.003) + '" fill="white" opacity="0.7"/>';
+          svg += '<ellipse cx="' + (w * 0.35) + '" cy="' + (h * 0.78) + '" rx="' + (w * 0.05) + '" ry="' + (h * 0.02) + '" fill="#7EC850" opacity="0.12"/>';
+          svg += '<ellipse cx="' + (w * 0.55) + '" cy="' + (h * 0.82) + '" rx="' + (w * 0.04) + '" ry="' + (h * 0.015) + '" fill="#A5D86F" opacity="0.10"/>';
+          svg += '<ellipse cx="' + (w * 0.80) + '" cy="' + (h * 0.85) + '" rx="' + (w * 0.035) + '" ry="' + (h * 0.012) + '" fill="#C8E890" opacity="0.08"/>';
+          break;
+
+        // =========================================================================
+        // CANDY
+        // =========================================================================
+        case 'candy':
+          svg += '<defs>';
+          svg += '<linearGradient id="candySky" x1="0" y1="0" x2="0" y2="1">';
+          svg += '<stop offset="0%" stop-color="#FFB3D9"/>';
+          svg += '<stop offset="50%" stop-color="#FFCCE5"/>';
+          svg += '<stop offset="100%" stop-color="#FFE6F0"/>';
+          svg += '</linearGradient>';
+          svg += '</defs>';
+          svg += '<rect x="0" y="0" width="' + w + '" height="' + h + '" fill="url(#candySky)"/>';
+          var rainbowColors = ['#FF6B6B', '#FF9F43', '#FECA57', '#48C774', '#56B4D3', '#A084DC', '#FF6B9D'];
+          var rainbowBase = w * 0.08;
+          for (i = 0; i < 7; i++) {
+            var rr = w * 0.38 - i * rainbowBase * 0.08;
+            svg += '<path d="M ' + (w * 0.12) + ' ' + (h * 0.50) + ' A ' + rr + ' ' + rr + ' 0 0 1 ' + (w * 0.88) + ' ' + (h * 0.50) + '" fill="none" stroke="' + rainbowColors[i] + '" stroke-width="' + (w * 0.018) + '" opacity="0.7"/>';
+          }
+          svg += '<circle cx="' + (w * 0.18) + '" cy="' + (h * 0.14) + '" r="' + (w * 0.06) + '" fill="white" opacity="0.85"/>';
+          svg += '<circle cx="' + (w * 0.24) + '" cy="' + (h * 0.12) + '" r="' + (w * 0.07) + '" fill="white" opacity="0.8"/>';
+          svg += '<circle cx="' + (w * 0.30) + '" cy="' + (h * 0.15) + '" r="' + (w * 0.055) + '" fill="#FFE6F0" opacity="0.85"/>';
+          svg += '<circle cx="' + (w * 0.12) + '" cy="' + (h * 0.16) + '" r="' + (w * 0.05) + '" fill="#FFE6F0" opacity="0.7"/>';
+          svg += '<circle cx="' + (w * 0.72) + '" cy="' + (h * 0.10) + '" r="' + (w * 0.055) + '" fill="white" opacity="0.8"/>';
+          svg += '<circle cx="' + (w * 0.78) + '" cy="' + (h * 0.08) + '" r="' + (w * 0.065) + '" fill="#E8D5F5" opacity="0.75"/>';
+          svg += '<circle cx="' + (w * 0.84) + '" cy="' + (h * 0.11) + '" r="' + (w * 0.05) + '" fill="white" opacity="0.85"/>';
+          svg += '<rect x="0" y="' + (h * 0.70) + '" width="' + w + '" height="' + (h * 0.30) + '" fill="#E8C87A"/>';
+          svg += '<path d="M 0 ' + (h * 0.70) + ' Q ' + (w * 0.15) + ' ' + (h * 0.68) + ' ' + (w * 0.3) + ' ' + (h * 0.71) + ' T ' + (w * 0.6) + ' ' + (h * 0.69) + ' T ' + w + ' ' + (h * 0.71) + ' L ' + w + ' ' + (h * 0.73) + ' L 0 ' + (h * 0.73) + ' Z" fill="#D4A850"/>';
+          svg += '<ellipse cx="' + (w * 0.12) + '" cy="' + (h * 0.78) + '" rx="' + (w * 0.012) + '" ry="' + (w * 0.009) + '" fill="#5C3317" transform="rotate(-20,' + (w * 0.12) + ',' + (h * 0.78) + ')"/>';
+          svg += '<ellipse cx="' + (w * 0.30) + '" cy="' + (h * 0.82) + '" rx="' + (w * 0.01) + '" ry="' + (w * 0.007) + '" fill="#6B3E26" transform="rotate(15,' + (w * 0.30) + ',' + (h * 0.82) + ')"/>';
+          svg += '<ellipse cx="' + (w * 0.55) + '" cy="' + (h * 0.76) + '" rx="' + (w * 0.011) + '" ry="' + (w * 0.008) + '" fill="#5C3317" transform="rotate(-10,' + (w * 0.55) + ',' + (h * 0.76) + ')"/>';
+          svg += '<ellipse cx="' + (w * 0.78) + '" cy="' + (h * 0.84) + '" rx="' + (w * 0.013) + '" ry="' + (w * 0.009) + '" fill="#6B3E26" transform="rotate(25,' + (w * 0.78) + ',' + (h * 0.84) + ')"/>';
+          svg += '<ellipse cx="' + (w * 0.92) + '" cy="' + (h * 0.79) + '" rx="' + (w * 0.01) + '" ry="' + (w * 0.007) + '" fill="#5C3317"/>';
+          svg += '<ellipse cx="' + (w * 0.42) + '" cy="' + (h * 0.90) + '" rx="' + (w * 0.012) + '" ry="' + (w * 0.008) + '" fill="#6B3E26" transform="rotate(-30,' + (w * 0.42) + ',' + (h * 0.90) + ')"/>';
+          svg += '<polygon points="' + (w * 0.10) + ',' + (h * 0.70) + ' ' + (w * 0.05) + ',' + (h * 0.55) + ' ' + (w * 0.0) + ',' + (h * 0.70) + '" fill="#FF85A1"/>';
+          svg += '<path d="M ' + (w * 0.0) + ' ' + (h * 0.70) + ' L ' + (w * 0.02) + ' ' + (h * 0.58) + ' Q ' + (w * 0.05) + ' ' + (h * 0.50) + ' ' + (w * 0.08) + ' ' + (h * 0.58) + ' L ' + (w * 0.10) + ' ' + (h * 0.70) + ' Z" fill="#FFB3C6"/>';
+          svg += '<path d="M ' + (w * 0.02) + ' ' + (h * 0.56) + ' Q ' + (w * 0.04) + ' ' + (h * 0.53) + ' ' + (w * 0.05) + ' ' + (h * 0.50) + ' Q ' + (w * 0.06) + ' ' + (h * 0.53) + ' ' + (w * 0.08) + ' ' + (h * 0.56) + '" fill="none" stroke="white" stroke-width="' + (w * 0.008) + '" stroke-linecap="round" opacity="0.6"/>';
+          svg += '<circle cx="' + (w * 0.05) + '" cy="' + (h * 0.49) + '" r="' + (w * 0.012) + '" fill="#E63946"/>';
+          svg += '<circle cx="' + (w * 0.047) + '" cy="' + (h * 0.486) + '" r="' + (w * 0.004) + '" fill="white" opacity="0.4"/>';
+          svg += '<polygon points="' + (w * 0.72) + ',' + (h * 0.70) + ' ' + (w * 0.65) + ',' + (h * 0.48) + ' ' + (w * 0.58) + ',' + (h * 0.70) + '" fill="#C084FC"/>';
+          svg += '<path d="M ' + (w * 0.58) + ' ' + (h * 0.70) + ' L ' + (w * 0.60) + ' ' + (h * 0.53) + ' Q ' + (w * 0.65) + ' ' + (h * 0.44) + ' ' + (w * 0.70) + ' ' + (h * 0.53) + ' L ' + (w * 0.72) + ' ' + (h * 0.70) + ' Z" fill="#D4AAEE"/>';
+          svg += '<circle cx="' + (w * 0.65) + '" cy="' + (h * 0.43) + '" r="' + (w * 0.012) + '" fill="#E63946"/>';
+          for (i = 0; i < 2; i++) {
+            var ccx = w * (0.28 + i * 0.50);
+            var ccTop = h * 0.40;
+            var ccBot = h * 0.70;
+            var ccw = w * 0.015;
+            svg += '<rect x="' + (ccx - ccw / 2) + '" y="' + ccTop + '" width="' + ccw + '" height="' + (ccBot - ccTop) + '" fill="white"/>';
+            for (var s = 0; s < 6; s++) {
+              var sy = ccTop + s * (ccBot - ccTop) / 6;
+              svg += '<rect x="' + (ccx - ccw / 2) + '" y="' + sy + '" width="' + ccw + '" height="' + ((ccBot - ccTop) / 12) + '" fill="#E63946"/>';
+            }
+            svg += '<path d="M ' + ccx + ' ' + ccTop + ' Q ' + (ccx + w * 0.02) + ' ' + (ccTop - h * 0.04) + ' ' + (ccx + w * 0.03) + ' ' + ccTop + '" fill="none" stroke="white" stroke-width="' + ccw + '" stroke-linecap="round"/>';
+            svg += '<path d="M ' + ccx + ' ' + ccTop + ' Q ' + (ccx + w * 0.02) + ' ' + (ccTop - h * 0.04) + ' ' + (ccx + w * 0.03) + ' ' + ccTop + '" fill="none" stroke="#E63946" stroke-width="' + (ccw * 0.5) + '" stroke-linecap="round" stroke-dasharray="' + (w * 0.012) + '"/>';
+          }
+          svg += '<rect x="' + (w * 0.18 - w * 0.005) + '" y="' + (h * 0.50) + '" width="' + (w * 0.01) + '" height="' + (h * 0.20) + '" fill="white"/>';
+          svg += '<circle cx="' + (w * 0.18) + '" cy="' + (h * 0.47) + '" r="' + (w * 0.04) + '" fill="#FF6B9D"/>';
+          svg += '<path d="M ' + (w * 0.18) + ' ' + (h * 0.43) + ' A ' + (w * 0.02) + ' ' + (w * 0.02) + ' 0 0 1 ' + (w * 0.18) + ' ' + (h * 0.47) + '" fill="#FF85A1" opacity="0.6"/>';
+          svg += '<circle cx="' + (w * 0.18) + '" cy="' + (h * 0.47) + '" r="' + (w * 0.015) + '" fill="white" opacity="0.2"/>';
+          svg += '<rect x="' + (w * 0.45 - w * 0.005) + '" y="' + (h * 0.45) + '" width="' + (w * 0.01) + '" height="' + (h * 0.25) + '" fill="white"/>';
+          svg += '<circle cx="' + (w * 0.45) + '" cy="' + (h * 0.42) + '" r="' + (w * 0.045) + '" fill="#56B4D3"/>';
+          svg += '<path d="M ' + (w * 0.45) + ' ' + (h * 0.375) + ' A ' + (w * 0.025) + ' ' + (w * 0.025) + ' 0 0 1 ' + (w * 0.45) + ' ' + (h * 0.42) + '" fill="#7EC8E3" opacity="0.5"/>';
+          svg += '<rect x="' + (w * 0.85 - w * 0.005) + '" y="' + (h * 0.52) + '" width="' + (w * 0.01) + '" height="' + (h * 0.18) + '" fill="white"/>';
+          svg += '<circle cx="' + (w * 0.85) + '" cy="' + (h * 0.49) + '" r="' + (w * 0.035) + '" fill="#48C774"/>';
+          svg += '<circle cx="' + (w * 0.85) + '" cy="' + (h * 0.49) + '" r="' + (w * 0.013) + '" fill="white" opacity="0.2"/>';
+          svg += '<ellipse cx="' + (w * 0.38) + '" cy="' + (h * 0.75) + '" rx="' + (w * 0.02) + '" ry="' + (w * 0.025) + '" fill="#FF6B6B" opacity="0.85"/>';
+          svg += '<circle cx="' + (w * 0.38) + '" cy="' + (h * 0.72) + '" r="' + (w * 0.014) + '" fill="#FF6B6B" opacity="0.85"/>';
+          svg += '<circle cx="' + (w * 0.372) + '" cy="' + (h * 0.715) + '" r="' + (w * 0.006) + '" fill="#FF6B6B"/>';
+          svg += '<circle cx="' + (w * 0.388) + '" cy="' + (h * 0.715) + '" r="' + (w * 0.006) + '" fill="#FF6B6B"/>';
+          svg += '<circle cx="' + (w * 0.376) + '" cy="' + (h * 0.718) + '" r="' + (w * 0.002) + '" fill="#1a1a1a"/>';
+          svg += '<circle cx="' + (w * 0.384) + '" cy="' + (h * 0.718) + '" r="' + (w * 0.002) + '" fill="#1a1a1a"/>';
+          svg += '<ellipse cx="' + (w * 0.88) + '" cy="' + (h * 0.73) + '" rx="' + (w * 0.018) + '" ry="' + (w * 0.022) + '" fill="#48C774" opacity="0.85"/>';
+          svg += '<circle cx="' + (w * 0.88) + '" cy="' + (h * 0.705) + '" r="' + (w * 0.012) + '" fill="#48C774" opacity="0.85"/>';
+          svg += '<circle cx="' + (w * 0.874) + '" cy="' + (h * 0.70) + '" r="' + (w * 0.005) + '" fill="#48C774"/>';
+          svg += '<circle cx="' + (w * 0.886) + '" cy="' + (h * 0.70) + '" r="' + (w * 0.005) + '" fill="#48C774"/>';
+          var sprinkleColors = ['#FF6B6B', '#FFD93D', '#48C774', '#56B4D3', '#C084FC', '#FF8C69', '#FF6B9D'];
+          var sprinklePositions = [
+            [0.08, 0.30], [0.15, 0.25], [0.42, 0.18], [0.55, 0.32],
+            [0.70, 0.22], [0.92, 0.28], [0.25, 0.35], [0.62, 0.15],
+            [0.82, 0.38], [0.10, 0.42], [0.50, 0.08], [0.35, 0.12],
+            [0.95, 0.18], [0.05, 0.22], [0.75, 0.34]
+          ];
+          for (i = 0; i < sprinklePositions.length; i++) {
+            var spAngle = (i * 37) % 180;
+            svg += '<rect x="' + (w * sprinklePositions[i][0]) + '" y="' + (h * sprinklePositions[i][1]) + '" width="' + (w * 0.012) + '" height="' + (w * 0.004) + '" rx="' + (w * 0.002) + '" fill="' + sprinkleColors[i % sprinkleColors.length] + '" transform="rotate(' + spAngle + ',' + (w * sprinklePositions[i][0]) + ',' + (h * sprinklePositions[i][1]) + ')" opacity="0.7"/>';
+          }
+          break;
+
+        // =========================================================================
+        // FARM
+        // =========================================================================
+        case 'farm':
+          svg += '<defs>';
+          svg += '<linearGradient id="farmSky" x1="0" y1="0" x2="0" y2="1">';
+          svg += '<stop offset="0%" stop-color="#5DADE2"/>';
+          svg += '<stop offset="60%" stop-color="#85C1E9"/>';
+          svg += '<stop offset="100%" stop-color="#D4EFFF"/>';
+          svg += '</linearGradient>';
+          svg += '</defs>';
+          svg += '<rect x="0" y="0" width="' + w + '" height="' + h + '" fill="url(#farmSky)"/>';
+          svg += '<circle cx="' + (w * 0.85) + '" cy="' + (h * 0.10) + '" r="' + (w * 0.045) + '" fill="#FFD93D"/>';
+          svg += '<circle cx="' + (w * 0.85) + '" cy="' + (h * 0.10) + '" r="' + (w * 0.06) + '" fill="#FFD93D" opacity="0.3"/>';
+          svg += '<circle cx="' + (w * 0.20) + '" cy="' + (h * 0.15) + '" r="' + (w * 0.045) + '" fill="white" opacity="0.9"/>';
+          svg += '<circle cx="' + (w * 0.25) + '" cy="' + (h * 0.13) + '" r="' + (w * 0.055) + '" fill="white" opacity="0.9"/>';
+          svg += '<circle cx="' + (w * 0.30) + '" cy="' + (h * 0.15) + '" r="' + (w * 0.04) + '" fill="white" opacity="0.85"/>';
+          svg += '<circle cx="' + (w * 0.15) + '" cy="' + (h * 0.16) + '" r="' + (w * 0.035) + '" fill="white" opacity="0.8"/>';
+          svg += '<circle cx="' + (w * 0.60) + '" cy="' + (h * 0.09) + '" r="' + (w * 0.04) + '" fill="white" opacity="0.85"/>';
+          svg += '<circle cx="' + (w * 0.65) + '" cy="' + (h * 0.07) + '" r="' + (w * 0.05) + '" fill="white" opacity="0.9"/>';
+          svg += '<circle cx="' + (w * 0.70) + '" cy="' + (h * 0.09) + '" r="' + (w * 0.038) + '" fill="white" opacity="0.85"/>';
+          svg += '<path d="M -' + (w * 0.05) + ' ' + (h * 0.55) + ' Q ' + (w * 0.15) + ' ' + (h * 0.38) + ' ' + (w * 0.40) + ' ' + (h * 0.50) + ' Q ' + (w * 0.60) + ' ' + (h * 0.58) + ' ' + (w * 0.80) + ' ' + (h * 0.44) + ' Q ' + (w * 0.95) + ' ' + (h * 0.36) + ' ' + (w * 1.05) + ' ' + (h * 0.48) + ' L ' + (w * 1.05) + ' ' + h + ' L -' + (w * 0.05) + ' ' + h + ' Z" fill="#7BC67E" opacity="0.6"/>';
+          svg += '<path d="M -' + (w * 0.05) + ' ' + (h * 0.62) + ' Q ' + (w * 0.10) + ' ' + (h * 0.52) + ' ' + (w * 0.30) + ' ' + (h * 0.58) + ' Q ' + (w * 0.50) + ' ' + (h * 0.64) + ' ' + (w * 0.70) + ' ' + (h * 0.54) + ' Q ' + (w * 0.90) + ' ' + (h * 0.46) + ' ' + (w * 1.05) + ' ' + (h * 0.56) + ' L ' + (w * 1.05) + ' ' + h + ' L -' + (w * 0.05) + ' ' + h + ' Z" fill="#5EAE60"/>';
+          svg += '<path d="M -' + (w * 0.05) + ' ' + (h * 0.70) + ' Q ' + (w * 0.20) + ' ' + (h * 0.64) + ' ' + (w * 0.45) + ' ' + (h * 0.70) + ' Q ' + (w * 0.70) + ' ' + (h * 0.76) + ' ' + (w * 1.05) + ' ' + (h * 0.68) + ' L ' + (w * 1.05) + ' ' + h + ' L -' + (w * 0.05) + ' ' + h + ' Z" fill="#4A9E4C"/>';
+          svg += '<path d="M ' + (w * 0.42) + ' ' + h + ' Q ' + (w * 0.44) + ' ' + (h * 0.85) + ' ' + (w * 0.46) + ' ' + (h * 0.78) + ' Q ' + (w * 0.48) + ' ' + (h * 0.74) + ' ' + (w * 0.52) + ' ' + (h * 0.70) + ' Q ' + (w * 0.52) + ' ' + (h * 0.74) + ' ' + (w * 0.54) + ' ' + (h * 0.78) + ' Q ' + (w * 0.56) + ' ' + (h * 0.85) + ' ' + (w * 0.58) + ' ' + h + ' Z" fill="#C4A36E"/>';
+          svg += '<path d="M ' + (w * 0.45) + ' ' + h + ' Q ' + (w * 0.47) + ' ' + (h * 0.85) + ' ' + (w * 0.485) + ' ' + (h * 0.78) + ' Q ' + (w * 0.50) + ' ' + (h * 0.74) + ' ' + (w * 0.50) + ' ' + (h * 0.72) + ' Q ' + (w * 0.50) + ' ' + (h * 0.74) + ' ' + (w * 0.515) + ' ' + (h * 0.78) + ' Q ' + (w * 0.53) + ' ' + (h * 0.85) + ' ' + (w * 0.55) + ' ' + h + ' Z" fill="#D4B87A" opacity="0.5"/>';
+          var barnX = w * 0.12;
+          var barnY = h * 0.42;
+          var barnW = w * 0.18;
+          var barnH = h * 0.20;
+          svg += '<rect x="' + barnX + '" y="' + barnY + '" width="' + barnW + '" height="' + barnH + '" fill="#C0392B"/>';
+          svg += '<polygon points="' + (barnX - w * 0.02) + ',' + barnY + ' ' + (barnX + barnW / 2) + ',' + (barnY - h * 0.10) + ' ' + (barnX + barnW + w * 0.02) + ',' + barnY + '" fill="#922B21"/>';
+          var doorX = barnX + barnW * 0.30;
+          var doorY = barnY + barnH * 0.35;
+          var doorW = barnW * 0.40;
+          var doorH = barnH * 0.65;
+          svg += '<rect x="' + doorX + '" y="' + doorY + '" width="' + doorW + '" height="' + doorH + '" fill="#A93226"/>';
+          svg += '<line x1="' + doorX + '" y1="' + doorY + '" x2="' + (doorX + doorW) + '" y2="' + (doorY + doorH) + '" stroke="white" stroke-width="' + (w * 0.005) + '"/>';
+          svg += '<line x1="' + (doorX + doorW) + '" y1="' + doorY + '" x2="' + doorX + '" y2="' + (doorY + doorH) + '" stroke="white" stroke-width="' + (w * 0.005) + '"/>';
+          svg += '<rect x="' + (barnX + barnW * 0.08) + '" y="' + (barnY + barnH * 0.15) + '" width="' + (barnW * 0.18) + '" height="' + (barnH * 0.20) + '" fill="#FFD93D" rx="1"/>';
+          svg += '<rect x="' + (barnX + barnW * 0.74) + '" y="' + (barnY + barnH * 0.15) + '" width="' + (barnW * 0.18) + '" height="' + (barnH * 0.20) + '" fill="#FFD93D" rx="1"/>';
+          svg += '<circle cx="' + (barnX + barnW / 2) + '" cy="' + (barnY - h * 0.03) + '" r="' + (barnW * 0.08) + '" fill="#FFD93D"/>';
+          var wmX = w * 0.78;
+          var wmY = h * 0.30;
+          svg += '<polygon points="' + (wmX - w * 0.015) + ',' + (h * 0.56) + ' ' + (wmX - w * 0.008) + ',' + wmY + ' ' + (wmX + w * 0.008) + ',' + wmY + ' ' + (wmX + w * 0.015) + ',' + (h * 0.56) + '" fill="#E8D5C4"/>';
+          svg += '<line x1="' + wmX + '" y1="' + wmY + '" x2="' + (wmX - w * 0.08) + '" y2="' + (wmY - h * 0.08) + '" stroke="#8B7D6B" stroke-width="' + (w * 0.006) + '"/>';
+          svg += '<line x1="' + wmX + '" y1="' + wmY + '" x2="' + (wmX + w * 0.08) + '" y2="' + (wmY - h * 0.06) + '" stroke="#8B7D6B" stroke-width="' + (w * 0.006) + '"/>';
+          svg += '<line x1="' + wmX + '" y1="' + wmY + '" x2="' + (wmX + w * 0.06) + '" y2="' + (wmY + h * 0.08) + '" stroke="#8B7D6B" stroke-width="' + (w * 0.006) + '"/>';
+          svg += '<line x1="' + wmX + '" y1="' + wmY + '" x2="' + (wmX - w * 0.07) + '" y2="' + (wmY + h * 0.07) + '" stroke="#8B7D6B" stroke-width="' + (w * 0.006) + '"/>';
+          svg += '<polygon points="' + wmX + ',' + wmY + ' ' + (wmX - w * 0.03) + ',' + (wmY - h * 0.02) + ' ' + (wmX - w * 0.08) + ',' + (wmY - h * 0.08) + '" fill="#D4C4B0" opacity="0.8"/>';
+          svg += '<polygon points="' + wmX + ',' + wmY + ' ' + (wmX + w * 0.03) + ',' + (wmY - h * 0.015) + ' ' + (wmX + w * 0.08) + ',' + (wmY - h * 0.06) + '" fill="#D4C4B0" opacity="0.8"/>';
+          svg += '<polygon points="' + wmX + ',' + wmY + ' ' + (wmX + w * 0.025) + ',' + (wmY + h * 0.025) + ' ' + (wmX + w * 0.06) + ',' + (wmY + h * 0.08) + '" fill="#D4C4B0" opacity="0.8"/>';
+          svg += '<polygon points="' + wmX + ',' + wmY + ' ' + (wmX - w * 0.025) + ',' + (wmY + h * 0.02) + ' ' + (wmX - w * 0.07) + ',' + (wmY + h * 0.07) + '" fill="#D4C4B0" opacity="0.8"/>';
+          svg += '<circle cx="' + wmX + '" cy="' + wmY + '" r="' + (w * 0.008) + '" fill="#6B5B4A"/>';
+          for (i = 0; i < 7; i++) {
+            var fenceX = w * (0.35 + i * 0.04);
+            svg += '<rect x="' + (fenceX - w * 0.004) + '" y="' + (h * 0.60) + '" width="' + (w * 0.008) + '" height="' + (h * 0.08) + '" fill="#B8956A"/>';
+            svg += '<polygon points="' + (fenceX - w * 0.004) + ',' + (h * 0.60) + ' ' + fenceX + ',' + (h * 0.585) + ' ' + (fenceX + w * 0.004) + ',' + (h * 0.60) + '" fill="#B8956A"/>';
+          }
+          svg += '<rect x="' + (w * 0.346) + '" y="' + (h * 0.62) + '" width="' + (w * 0.248) + '" height="' + (h * 0.008) + '" fill="#A0825A"/>';
+          svg += '<rect x="' + (w * 0.346) + '" y="' + (h * 0.65) + '" width="' + (w * 0.248) + '" height="' + (h * 0.008) + '" fill="#A0825A"/>';
+          svg += '<rect x="' + (w * 0.60) + '" y="' + (h * 0.60) + '" width="' + (w * 0.07) + '" height="' + (h * 0.05) + '" fill="#DAA520" rx="' + (w * 0.005) + '"/>';
+          svg += '<line x1="' + (w * 0.615) + '" y1="' + (h * 0.60) + '" x2="' + (w * 0.615) + '" y2="' + (h * 0.65) + '" stroke="#C49A15" stroke-width="0.5" opacity="0.5"/>';
+          svg += '<line x1="' + (w * 0.635) + '" y1="' + (h * 0.60) + '" x2="' + (w * 0.635) + '" y2="' + (h * 0.65) + '" stroke="#C49A15" stroke-width="0.5" opacity="0.5"/>';
+          svg += '<line x1="' + (w * 0.655) + '" y1="' + (h * 0.60) + '" x2="' + (w * 0.655) + '" y2="' + (h * 0.65) + '" stroke="#C49A15" stroke-width="0.5" opacity="0.5"/>';
+          svg += '<rect x="' + (w * 0.61) + '" y="' + (h * 0.55) + '" width="' + (w * 0.05) + '" height="' + (h * 0.05) + '" fill="#E8B830" rx="' + (w * 0.004) + '"/>';
+          svg += '<line x1="' + (w * 0.625) + '" y1="' + (h * 0.55) + '" x2="' + (w * 0.625) + '" y2="' + (h * 0.60) + '" stroke="#C49A15" stroke-width="0.5" opacity="0.5"/>';
+          svg += '<line x1="' + (w * 0.645) + '" y1="' + (h * 0.55) + '" x2="' + (w * 0.645) + '" y2="' + (h * 0.60) + '" stroke="#C49A15" stroke-width="0.5" opacity="0.5"/>';
+          var sfx1 = w * 0.32;
+          var sfy1 = h * 0.52;
+          svg += '<rect x="' + (sfx1 - w * 0.004) + '" y="' + sfy1 + '" width="' + (w * 0.008) + '" height="' + (h * 0.12) + '" fill="#4A9E4C"/>';
+          svg += '<ellipse cx="' + (sfx1 - w * 0.015) + '" cy="' + (sfy1 + h * 0.06) + '" rx="' + (w * 0.015) + '" ry="' + (w * 0.007) + '" fill="#5EAE60" transform="rotate(-30,' + (sfx1 - w * 0.015) + ',' + (sfy1 + h * 0.06) + ')"/>';
+          for (i = 0; i < 8; i++) {
+            var pAngle = i * 45;
+            var px = sfx1 + Math.cos(pAngle * Math.PI / 180) * w * 0.018;
+            var py = sfy1 + Math.sin(pAngle * Math.PI / 180) * w * 0.018;
+            svg += '<ellipse cx="' + px + '" cy="' + py + '" rx="' + (w * 0.012) + '" ry="' + (w * 0.006) + '" fill="#FFD93D" transform="rotate(' + pAngle + ',' + px + ',' + py + ')"/>';
+          }
+          svg += '<circle cx="' + sfx1 + '" cy="' + sfy1 + '" r="' + (w * 0.012) + '" fill="#6B3E26"/>';
+          var sfx2 = w * 0.28;
+          var sfy2 = h * 0.55;
+          svg += '<rect x="' + (sfx2 - w * 0.003) + '" y="' + sfy2 + '" width="' + (w * 0.006) + '" height="' + (h * 0.10) + '" fill="#4A9E4C"/>';
+          for (i = 0; i < 8; i++) {
+            var pAngle2 = i * 45 + 22;
+            var px2 = sfx2 + Math.cos(pAngle2 * Math.PI / 180) * w * 0.014;
+            var py2 = sfy2 + Math.sin(pAngle2 * Math.PI / 180) * w * 0.014;
+            svg += '<ellipse cx="' + px2 + '" cy="' + py2 + '" rx="' + (w * 0.01) + '" ry="' + (w * 0.005) + '" fill="#FECA57" transform="rotate(' + pAngle2 + ',' + px2 + ',' + py2 + ')"/>';
+          }
+          svg += '<circle cx="' + sfx2 + '" cy="' + sfy2 + '" r="' + (w * 0.009) + '" fill="#5C3317"/>';
+          var trX = w * 0.72;
+          var trY = h * 0.62;
+          svg += '<rect x="' + trX + '" y="' + (trY - h * 0.04) + '" width="' + (w * 0.08) + '" height="' + (h * 0.05) + '" fill="#E63946" rx="' + (w * 0.005) + '"/>';
+          svg += '<rect x="' + (trX + w * 0.04) + '" y="' + (trY - h * 0.09) + '" width="' + (w * 0.04) + '" height="' + (h * 0.05) + '" fill="#C0392B" rx="' + (w * 0.004) + '"/>';
+          svg += '<rect x="' + (trX + w * 0.045) + '" y="' + (trY - h * 0.085) + '" width="' + (w * 0.028) + '" height="' + (h * 0.03) + '" fill="#87CEEB" rx="' + (w * 0.003) + '"/>';
+          svg += '<circle cx="' + (trX + w * 0.015) + '" cy="' + (trY + h * 0.02) + '" r="' + (w * 0.025) + '" fill="#333"/>';
+          svg += '<circle cx="' + (trX + w * 0.015) + '" cy="' + (trY + h * 0.02) + '" r="' + (w * 0.012) + '" fill="#555"/>';
+          svg += '<circle cx="' + (trX + w * 0.07) + '" cy="' + (trY + h * 0.02) + '" r="' + (w * 0.015) + '" fill="#333"/>';
+          svg += '<circle cx="' + (trX + w * 0.07) + '" cy="' + (trY + h * 0.02) + '" r="' + (w * 0.007) + '" fill="#555"/>';
+          svg += '<rect x="' + (trX + w * 0.005) + '" y="' + (trY - h * 0.08) + '" width="' + (w * 0.006) + '" height="' + (h * 0.04) + '" fill="#666"/>';
+          svg += '<circle cx="' + (trX + w * 0.008) + '" cy="' + (trY - h * 0.09) + '" r="' + (w * 0.008) + '" fill="#ccc" opacity="0.4"/>';
+          svg += '<circle cx="' + (trX + w * 0.004) + '" cy="' + (trY - h * 0.10) + '" r="' + (w * 0.006) + '" fill="#ddd" opacity="0.3"/>';
+          break;
+
+        // =========================================================================
+        // CITY
+        // =========================================================================
+        case 'city':
+          svg += '<defs>';
+          svg += '<linearGradient id="citySky" x1="0" y1="0" x2="0" y2="1">';
+          svg += '<stop offset="0%" stop-color="#0d1b4b"/>';
+          svg += '<stop offset="60%" stop-color="#1a3a6b"/>';
+          svg += '<stop offset="85%" stop-color="#c0501a"/>';
+          svg += '<stop offset="100%" stop-color="#e8720c"/>';
+          svg += '</linearGradient>';
+          svg += '<radialGradient id="cityGlow" cx="50%" cy="100%" r="30%">';
+          svg += '<stop offset="0%" stop-color="#ffcc44" stop-opacity="0.6"/>';
+          svg += '<stop offset="100%" stop-color="#ffcc44" stop-opacity="0"/>';
+          svg += '</radialGradient>';
+          svg += '</defs>';
+          svg += '<rect x="0" y="0" width="' + w + '" height="' + h + '" fill="url(#citySky)"/>';
+          svg += '<ellipse cx="' + (w * 0.62) + '" cy="' + (h * 0.70) + '" rx="' + (w * 0.18) + '" ry="' + (h * 0.09) + '" fill="url(#cityGlow)"/>';
+          svg += '<path d="M ' + (w * 0.44) + ' ' + (h * 0.70) + ' A ' + (w * 0.06) + ' ' + (w * 0.06) + ' 0 0 1 ' + (w * 0.80) + ' ' + (h * 0.70) + '" fill="#e8720c"/>';
+          svg += '<circle cx="' + (w * 0.12) + '" cy="' + (h * 0.08) + '" r="' + (w * 0.005) + '" fill="white" opacity="0.9"/>';
+          svg += '<circle cx="' + (w * 0.25) + '" cy="' + (h * 0.05) + '" r="' + (w * 0.004) + '" fill="white" opacity="0.8"/>';
+          svg += '<circle cx="' + (w * 0.38) + '" cy="' + (h * 0.10) + '" r="' + (w * 0.005) + '" fill="white" opacity="0.7"/>';
+          svg += '<circle cx="' + (w * 0.52) + '" cy="' + (h * 0.04) + '" r="' + (w * 0.003) + '" fill="white" opacity="0.9"/>';
+          svg += '<circle cx="' + (w * 0.65) + '" cy="' + (h * 0.09) + '" r="' + (w * 0.005) + '" fill="white" opacity="0.6"/>';
+          svg += '<circle cx="' + (w * 0.74) + '" cy="' + (h * 0.06) + '" r="' + (w * 0.004) + '" fill="white" opacity="0.8"/>';
+          svg += '<circle cx="' + (w * 0.83) + '" cy="' + (h * 0.11) + '" r="' + (w * 0.003) + '" fill="white" opacity="0.9"/>';
+          svg += '<circle cx="' + (w * 0.91) + '" cy="' + (h * 0.07) + '" r="' + (w * 0.005) + '" fill="white" opacity="0.7"/>';
+          svg += '<rect x="' + (w * 0.03) + '" y="' + (h * 0.38) + '" width="' + (w * 0.10) + '" height="' + (h * 0.32) + '" fill="#111827"/>';
+          svg += '<rect x="' + (w * 0.16) + '" y="' + (h * 0.28) + '" width="' + (w * 0.09) + '" height="' + (h * 0.42) + '" fill="#0f1720"/>';
+          svg += '<line x1="' + (w * 0.205) + '" y1="' + (h * 0.28) + '" x2="' + (w * 0.205) + '" y2="' + (h * 0.22) + '" stroke="#0f1720" stroke-width="' + (w * 0.006) + '"/>';
+          svg += '<rect x="' + (w * 0.50) + '" y="' + (h * 0.32) + '" width="' + (w * 0.12) + '" height="' + (h * 0.38) + '" fill="#111827"/>';
+          svg += '<rect x="' + (w * 0.72) + '" y="' + (h * 0.25) + '" width="' + (w * 0.10) + '" height="' + (h * 0.45) + '" fill="#0f1720"/>';
+          svg += '<line x1="' + (w * 0.77) + '" y1="' + (h * 0.25) + '" x2="' + (w * 0.77) + '" y2="' + (h * 0.18) + '" stroke="#0f1720" stroke-width="' + (w * 0.006) + '"/>';
+          svg += '<rect x="' + (w * 0.86) + '" y="' + (h * 0.42) + '" width="' + (w * 0.11) + '" height="' + (h * 0.28) + '" fill="#111827"/>';
+          svg += '<rect x="' + (w * 0.22) + '" y="' + (h * 0.45) + '" width="' + (w * 0.14) + '" height="' + (h * 0.25) + '" fill="#1e2d45"/>';
+          svg += '<rect x="' + (w * 0.57) + '" y="' + (h * 0.48) + '" width="' + (w * 0.13) + '" height="' + (h * 0.22) + '" fill="#1a2840"/>';
+          svg += '<rect x="' + (w * 0.38) + '" y="' + (h * 0.50) + '" width="' + (w * 0.11) + '" height="' + (h * 0.20) + '" fill="#1e2d45"/>';
+          svg += '<rect x="' + (w * 0.05) + '" y="' + (h * 0.44) + '" width="' + (w * 0.025) + '" height="' + (h * 0.018) + '" fill="#ffee88" opacity="0.85"/>';
+          svg += '<rect x="' + (w * 0.07) + '" y="' + (h * 0.48) + '" width="' + (w * 0.025) + '" height="' + (h * 0.018) + '" fill="#ffee88" opacity="0.85"/>';
+          svg += '<rect x="' + (w * 0.05) + '" y="' + (h * 0.52) + '" width="' + (w * 0.025) + '" height="' + (h * 0.018) + '" fill="#ffcc55" opacity="0.75"/>';
+          svg += '<rect x="' + (w * 0.18) + '" y="' + (h * 0.32) + '" width="' + (w * 0.025) + '" height="' + (h * 0.018) + '" fill="#ffee88" opacity="0.85"/>';
+          svg += '<rect x="' + (w * 0.20) + '" y="' + (h * 0.38) + '" width="' + (w * 0.025) + '" height="' + (h * 0.018) + '" fill="#ffcc55" opacity="0.75"/>';
+          svg += '<rect x="' + (w * 0.52) + '" y="' + (h * 0.36) + '" width="' + (w * 0.025) + '" height="' + (h * 0.018) + '" fill="#ffee88" opacity="0.85"/>';
+          svg += '<rect x="' + (w * 0.55) + '" y="' + (h * 0.42) + '" width="' + (w * 0.025) + '" height="' + (h * 0.018) + '" fill="#ffcc55" opacity="0.75"/>';
+          svg += '<rect x="' + (w * 0.74) + '" y="' + (h * 0.30) + '" width="' + (w * 0.025) + '" height="' + (h * 0.018) + '" fill="#ffee88" opacity="0.85"/>';
+          svg += '<rect x="' + (w * 0.76) + '" y="' + (h * 0.37) + '" width="' + (w * 0.025) + '" height="' + (h * 0.018) + '" fill="#ffcc55" opacity="0.75"/>';
+          svg += '<rect x="' + (w * 0.25) + '" y="' + (h * 0.50) + '" width="' + (w * 0.025) + '" height="' + (h * 0.018) + '" fill="#ffee88" opacity="0.85"/>';
+          svg += '<rect x="' + (w * 0.59) + '" y="' + (h * 0.53) + '" width="' + (w * 0.025) + '" height="' + (h * 0.018) + '" fill="#ffee88" opacity="0.85"/>';
+          svg += '<rect x="' + (w * 0.40) + '" y="' + (h * 0.55) + '" width="' + (w * 0.025) + '" height="' + (h * 0.018) + '" fill="#ffcc55" opacity="0.75"/>';
+          svg += '<rect x="0" y="' + (h * 0.68) + '" width="' + w + '" height="' + (h * 0.05) + '" fill="#c8c8c8"/>';
+          svg += '<rect x="0" y="' + (h * 0.73) + '" width="' + w + '" height="' + (h * 0.27) + '" fill="#333d4a"/>';
+          svg += '<rect x="' + (w * 0.12) + '" y="' + (h * 0.75) + '" width="' + (w * 0.08) + '" height="' + (h * 0.025) + '" fill="white" opacity="0.7"/>';
+          svg += '<rect x="' + (w * 0.35) + '" y="' + (h * 0.75) + '" width="' + (w * 0.08) + '" height="' + (h * 0.025) + '" fill="white" opacity="0.7"/>';
+          svg += '<rect x="' + (w * 0.58) + '" y="' + (h * 0.75) + '" width="' + (w * 0.08) + '" height="' + (h * 0.025) + '" fill="white" opacity="0.7"/>';
+          svg += '<rect x="' + (w * 0.80) + '" y="' + (h * 0.75) + '" width="' + (w * 0.08) + '" height="' + (h * 0.025) + '" fill="white" opacity="0.7"/>';
+          svg += '<line x1="' + (w * 0.20) + '" y1="' + (h * 0.68) + '" x2="' + (w * 0.20) + '" y2="' + (h * 0.56) + '" stroke="#888" stroke-width="' + (w * 0.004) + '"/>';
+          svg += '<circle cx="' + (w * 0.20) + '" cy="' + (h * 0.56) + '" r="' + (w * 0.018) + '" fill="#ffdd88" opacity="0.7"/>';
+          svg += '<line x1="' + (w * 0.75) + '" y1="' + (h * 0.68) + '" x2="' + (w * 0.75) + '" y2="' + (h * 0.54) + '" stroke="#888" stroke-width="' + (w * 0.004) + '"/>';
+          svg += '<circle cx="' + (w * 0.75) + '" cy="' + (h * 0.54) + '" r="' + (w * 0.018) + '" fill="#ffdd88" opacity="0.7"/>';
+          break;
+
+        // =========================================================================
+        // WATERPARK
+        // =========================================================================
+        case 'waterpark':
+          svg += '<defs>';
+          svg += '<linearGradient id="waterparkSky" x1="0" y1="0" x2="0" y2="1">';
+          svg += '<stop offset="0%" stop-color="#29b6f6"/>';
+          svg += '<stop offset="100%" stop-color="#81d4fa"/>';
+          svg += '</linearGradient>';
+          svg += '</defs>';
+          svg += '<rect x="0" y="0" width="' + w + '" height="' + h + '" fill="url(#waterparkSky)"/>';
+          svg += '<circle cx="' + (w * 0.82) + '" cy="' + (h * 0.14) + '" r="' + (w * 0.07) + '" fill="#ffd600"/>';
+          for (i = 0; i < 8; i++) {
+            var wpAngle = i * 45;
+            var wpRad = wpAngle * Math.PI / 180;
+            var wpRx1 = (w * 0.82) + Math.cos(wpRad) * (w * 0.09);
+            var wpRy1 = (h * 0.14) + Math.sin(wpRad) * (w * 0.09);
+            var wpRx2 = (w * 0.82) + Math.cos(wpRad) * (w * 0.13);
+            var wpRy2 = (h * 0.14) + Math.sin(wpRad) * (w * 0.13);
+            svg += '<line x1="' + wpRx1 + '" y1="' + wpRy1 + '" x2="' + wpRx2 + '" y2="' + wpRy2 + '" stroke="#ffd600" stroke-width="' + (w * 0.007) + '" stroke-linecap="round"/>';
+          }
+          svg += '<ellipse cx="' + (w * 0.18) + '" cy="' + (h * 0.16) + '" rx="' + (w * 0.10) + '" ry="' + (h * 0.05) + '" fill="white" opacity="0.92"/>';
+          svg += '<ellipse cx="' + (w * 0.13) + '" cy="' + (h * 0.18) + '" rx="' + (w * 0.07) + '" ry="' + (h * 0.04) + '" fill="white" opacity="0.85"/>';
+          svg += '<ellipse cx="' + (w * 0.23) + '" cy="' + (h * 0.18) + '" rx="' + (w * 0.07) + '" ry="' + (h * 0.04) + '" fill="white" opacity="0.85"/>';
+          svg += '<ellipse cx="' + (w * 0.50) + '" cy="' + (h * 0.12) + '" rx="' + (w * 0.09) + '" ry="' + (h * 0.045) + '" fill="white" opacity="0.88"/>';
+          var wpFlagColors = ['#e53935','#fb8c00','#fdd835','#43a047','#1e88e5','#8e24aa','#e53935','#fb8c00','#fdd835','#43a047'];
+          for (i = 0; i < 10; i++) {
+            var fx = (w * 0.05) + i * (w * 0.09);
+            var fy = h * 0.04;
+            svg += '<polygon points="' + fx + ',' + fy + ' ' + (fx + w * 0.04) + ',' + fy + ' ' + (fx + w * 0.02) + ',' + (fy + h * 0.05) + '" fill="' + wpFlagColors[i] + '"/>';
+          }
+          svg += '<path d="M ' + (w * 0.08) + ' ' + (h * 0.18) + ' Q ' + (w * 0.18) + ' ' + (h * 0.30) + ' ' + (w * 0.28) + ' ' + (h * 0.45) + ' Q ' + (w * 0.34) + ' ' + (h * 0.58) + ' ' + (w * 0.38) + ' ' + (h * 0.72) + '" fill="none" stroke="#e53935" stroke-width="' + (w * 0.045) + '" stroke-linecap="round" opacity="0.85"/>';
+          svg += '<path d="M ' + (w * 0.15) + ' ' + (h * 0.22) + ' Q ' + (w * 0.22) + ' ' + (h * 0.36) + ' ' + (w * 0.32) + ' ' + (h * 0.50) + ' Q ' + (w * 0.38) + ' ' + (h * 0.62) + ' ' + (w * 0.42) + ' ' + (h * 0.74) + '" fill="none" stroke="#fb8c00" stroke-width="' + (w * 0.045) + '" stroke-linecap="round" opacity="0.85"/>';
+          svg += '<path d="M ' + (w * 0.22) + ' ' + (h * 0.26) + ' Q ' + (w * 0.28) + ' ' + (h * 0.40) + ' ' + (w * 0.36) + ' ' + (h * 0.55) + ' Q ' + (w * 0.40) + ' ' + (h * 0.65) + ' ' + (w * 0.46) + ' ' + (h * 0.76) + '" fill="none" stroke="#fdd835" stroke-width="' + (w * 0.040) + '" stroke-linecap="round" opacity="0.85"/>';
+          svg += '<ellipse cx="' + (w * 0.42) + '" cy="' + (h * 0.78) + '" rx="' + (w * 0.12) + '" ry="' + (h * 0.06) + '" fill="#1e88e5" opacity="0.9"/>';
+          svg += '<circle cx="' + (w * 0.35) + '" cy="' + (h * 0.75) + '" r="' + (w * 0.022) + '" fill="white" opacity="0.7"/>';
+          svg += '<circle cx="' + (w * 0.42) + '" cy="' + (h * 0.73) + '" r="' + (w * 0.018) + '" fill="white" opacity="0.6"/>';
+          svg += '<circle cx="' + (w * 0.49) + '" cy="' + (h * 0.76) + '" r="' + (w * 0.020) + '" fill="white" opacity="0.65"/>';
+          svg += '<path d="M 0 ' + (h * 0.72) + ' Q ' + (w * 0.12) + ' ' + (h * 0.68) + ' ' + (w * 0.25) + ' ' + (h * 0.72) + ' Q ' + (w * 0.38) + ' ' + (h * 0.76) + ' ' + (w * 0.50) + ' ' + (h * 0.72) + ' Q ' + (w * 0.62) + ' ' + (h * 0.68) + ' ' + (w * 0.75) + ' ' + (h * 0.72) + ' Q ' + (w * 0.88) + ' ' + (h * 0.76) + ' ' + w + ' ' + (h * 0.72) + ' L ' + w + ' ' + h + ' L 0 ' + h + '" fill="#29b6f6" opacity="0.85"/>';
+          svg += '<path d="M 0 ' + (h * 0.75) + ' Q ' + (w * 0.12) + ' ' + (h * 0.71) + ' ' + (w * 0.25) + ' ' + (h * 0.75) + ' Q ' + (w * 0.38) + ' ' + (h * 0.79) + ' ' + (w * 0.50) + ' ' + (h * 0.75) + ' Q ' + (w * 0.62) + ' ' + (h * 0.71) + ' ' + (w * 0.75) + ' ' + (h * 0.75) + ' Q ' + (w * 0.88) + ' ' + (h * 0.79) + ' ' + w + ' ' + (h * 0.75) + ' L ' + w + ' ' + h + ' L 0 ' + h + '" fill="#039be5" opacity="0.70"/>';
+          svg += '<rect x="' + (w * 0.04) + '" y="' + (h * 0.55) + '" width="' + (w * 0.018) + '" height="' + (h * 0.17) + '" fill="#5d4037"/>';
+          svg += '<polygon points="' + (w * 0.05) + ',' + (h * 0.55) + ' ' + (w * 0.015) + ',' + (h * 0.45) + ' ' + (w * 0.085) + ',' + (h * 0.45) + '" fill="#2e7d32"/>';
+          svg += '<polygon points="' + (w * 0.05) + ',' + (h * 0.47) + ' ' + (w * 0.022) + ',' + (h * 0.38) + ' ' + (w * 0.078) + ',' + (h * 0.38) + '" fill="#388e3c"/>';
+          svg += '<polygon points="' + (w * 0.05) + ',' + (h * 0.39) + ' ' + (w * 0.030) + ',' + (h * 0.32) + ' ' + (w * 0.070) + ',' + (h * 0.32) + '" fill="#43a047"/>';
+          svg += '<rect x="' + (w * 0.924) + '" y="' + (h * 0.55) + '" width="' + (w * 0.018) + '" height="' + (h * 0.17) + '" fill="#5d4037"/>';
+          svg += '<polygon points="' + (w * 0.933) + ',' + (h * 0.55) + ' ' + (w * 0.908) + ',' + (h * 0.45) + ' ' + (w * 0.958) + ',' + (h * 0.45) + '" fill="#2e7d32"/>';
+          svg += '<polygon points="' + (w * 0.933) + ',' + (h * 0.47) + ' ' + (w * 0.910) + ',' + (h * 0.38) + ' ' + (w * 0.956) + ',' + (h * 0.38) + '" fill="#388e3c"/>';
+          svg += '<circle cx="' + (w * 0.62) + '" cy="' + (h * 0.80) + '" r="' + (w * 0.038) + '" fill="none" stroke="#e53935" stroke-width="' + (w * 0.014) + '" opacity="0.85"/>';
+          svg += '<circle cx="' + (w * 0.72) + '" cy="' + (h * 0.82) + '" r="' + (w * 0.034) + '" fill="none" stroke="#fdd835" stroke-width="' + (w * 0.014) + '" opacity="0.85"/>';
+          svg += '<circle cx="' + (w * 0.84) + '" cy="' + (h * 0.79) + '" r="' + (w * 0.038) + '" fill="none" stroke="#29b6f6" stroke-width="' + (w * 0.014) + '" opacity="0.85"/>';
+          svg += '<ellipse cx="' + (w * 0.30) + '" cy="' + (h * 0.53) + '" rx="' + (w * 0.008) + '" ry="' + (h * 0.013) + '" fill="#29b6f6" opacity="0.7"/>';
+          svg += '<ellipse cx="' + (w * 0.55) + '" cy="' + (h * 0.48) + '" rx="' + (w * 0.006) + '" ry="' + (h * 0.010) + '" fill="#81d4fa" opacity="0.8"/>';
+          svg += '<ellipse cx="' + (w * 0.68) + '" cy="' + (h * 0.55) + '" rx="' + (w * 0.007) + '" ry="' + (h * 0.012) + '" fill="#29b6f6" opacity="0.7"/>';
+          svg += '<ellipse cx="' + (w * 0.78) + '" cy="' + (h * 0.45) + '" rx="' + (w * 0.005) + '" ry="' + (h * 0.009) + '" fill="#81d4fa" opacity="0.8"/>';
+          break;
+
+        // =========================================================================
+        // SPACE
+        // =========================================================================
+        case 'space':
+          svg += '<defs>';
+          svg += '<linearGradient id="spaceSky" x1="0" y1="0" x2="0" y2="1">';
+          svg += '<stop offset="0%" stop-color="#080010"/>';
+          svg += '<stop offset="50%" stop-color="#1a0035"/>';
+          svg += '<stop offset="100%" stop-color="#0d001a"/>';
+          svg += '</linearGradient>';
+          svg += '<radialGradient id="earthGrad" cx="60%" cy="40%" r="60%">';
+          svg += '<stop offset="0%" stop-color="#64b5f6"/>';
+          svg += '<stop offset="60%" stop-color="#1565c0"/>';
+          svg += '<stop offset="100%" stop-color="#0d3a6e"/>';
+          svg += '</radialGradient>';
+          svg += '<radialGradient id="saturnGrad" cx="40%" cy="35%" r="55%">';
+          svg += '<stop offset="0%" stop-color="#ffe082"/>';
+          svg += '<stop offset="55%" stop-color="#e6a817"/>';
+          svg += '<stop offset="100%" stop-color="#b37a00"/>';
+          svg += '</radialGradient>';
+          svg += '<radialGradient id="flameGrad" cx="50%" cy="0%" r="100%">';
+          svg += '<stop offset="0%" stop-color="#ffeb3b"/>';
+          svg += '<stop offset="60%" stop-color="#ff6f00"/>';
+          svg += '<stop offset="100%" stop-color="#ff1744" stop-opacity="0"/>';
+          svg += '</radialGradient>';
+          svg += '</defs>';
+          svg += '<rect x="0" y="0" width="' + w + '" height="' + h + '" fill="url(#spaceSky)"/>';
+          svg += '<ellipse cx="' + (w * 0.30) + '" cy="' + (h * 0.28) + '" rx="' + (w * 0.28) + '" ry="' + (h * 0.18) + '" fill="#4a148c" opacity="0.22"/>';
+          svg += '<ellipse cx="' + (w * 0.65) + '" cy="' + (h * 0.18) + '" rx="' + (w * 0.22) + '" ry="' + (h * 0.14) + '" fill="#1a237e" opacity="0.25"/>';
+          svg += '<ellipse cx="' + (w * 0.75) + '" cy="' + (h * 0.55) + '" rx="' + (w * 0.20) + '" ry="' + (h * 0.16) + '" fill="#6a1b9a" opacity="0.20"/>';
+          svg += '<ellipse cx="' + (w * 0.15) + '" cy="' + (h * 0.60) + '" rx="' + (w * 0.18) + '" ry="' + (h * 0.12) + '" fill="#283593" opacity="0.18"/>';
+          var starData = [
+            [0.08,0.06,0.005,0.9],[0.17,0.12,0.004,0.7],[0.29,0.04,0.006,0.95],[0.42,0.09,0.004,0.8],
+            [0.55,0.03,0.005,0.9],[0.68,0.11,0.003,0.7],[0.78,0.05,0.006,0.85],[0.91,0.08,0.004,0.75],
+            [0.05,0.22,0.003,0.65],[0.14,0.35,0.005,0.8],[0.33,0.19,0.004,0.9],[0.47,0.28,0.003,0.7],
+            [0.60,0.22,0.005,0.85],[0.72,0.30,0.004,0.75],[0.85,0.18,0.003,0.9],[0.94,0.25,0.005,0.8],
+            [0.22,0.45,0.004,0.6],[0.88,0.42,0.006,0.7],[0.50,0.50,0.003,0.75],[0.11,0.55,0.005,0.65]
+          ];
+          for (i = 0; i < starData.length; i++) {
+            svg += '<circle cx="' + (w * starData[i][0]) + '" cy="' + (h * starData[i][1]) + '" r="' + (w * starData[i][2]) + '" fill="white" opacity="' + starData[i][3] + '"/>';
+          }
+          svg += '<line x1="' + (w * 0.65) + '" y1="' + (h * 0.36) + '" x2="' + (w * 0.82) + '" y2="' + (h * 0.28) + '" stroke="white" stroke-width="' + (w * 0.003) + '" opacity="0.8"/>';
+          svg += '<circle cx="' + (w * 0.82) + '" cy="' + (h * 0.28) + '" r="' + (w * 0.007) + '" fill="white" opacity="0.9"/>';
+          svg += '<circle cx="' + (w * 0.10) + '" cy="' + (h * 0.35) + '" r="' + (w * 0.10) + '" fill="url(#earthGrad)"/>';
+          svg += '<ellipse cx="' + (w * 0.07) + '" cy="' + (h * 0.30) + '" rx="' + (w * 0.04) + '" ry="' + (h * 0.025) + '" fill="#66bb6a" opacity="0.7"/>';
+          svg += '<ellipse cx="' + (w * 0.13) + '" cy="' + (h * 0.38) + '" rx="' + (w * 0.03) + '" ry="' + (h * 0.020) + '" fill="#66bb6a" opacity="0.6"/>';
+          svg += '<circle cx="' + (w * 0.72) + '" cy="' + (h * 0.38) + '" r="' + (w * 0.11) + '" fill="url(#saturnGrad)"/>';
+          svg += '<ellipse cx="' + (w * 0.72) + '" cy="' + (h * 0.38) + '" rx="' + (w * 0.155) + '" ry="' + (h * 0.040) + '" fill="none" stroke="#d4a800" stroke-width="' + (w * 0.012) + '" opacity="0.55"/>';
+          svg += '<ellipse cx="' + (w * 0.50) + '" cy="' + (h * 0.50) + '" rx="' + (w * 0.040) + '" ry="' + (h * 0.080) + '" fill="#bdbdbd"/>';
+          svg += '<polygon points="' + (w * 0.46) + ',' + (h * 0.58) + ' ' + (w * 0.50) + ',' + (h * 0.70) + ' ' + (w * 0.48) + ',' + (h * 0.58) + '" fill="#9e9e9e"/>';
+          svg += '<polygon points="' + (w * 0.54) + ',' + (h * 0.58) + ' ' + (w * 0.50) + ',' + (h * 0.70) + ' ' + (w * 0.52) + ',' + (h * 0.58) + '" fill="#9e9e9e"/>';
+          svg += '<ellipse cx="' + (w * 0.50) + '" cy="' + (h * 0.49) + '" rx="' + (w * 0.035) + '" ry="' + (h * 0.048) + '" fill="#e0e0e0"/>';
+          svg += '<circle cx="' + (w * 0.50) + '" cy="' + (h * 0.47) + '" r="' + (w * 0.016) + '" fill="#90caf9" opacity="0.8"/>';
+          svg += '<ellipse cx="' + (w * 0.50) + '" cy="' + (h * 0.72) + '" rx="' + (w * 0.018) + '" ry="' + (h * 0.040) + '" fill="url(#flameGrad)" opacity="0.9"/>';
+          svg += '<path d="M 0 ' + (h * 0.82) + ' Q ' + (w * 0.06) + ' ' + (h * 0.78) + ' ' + (w * 0.12) + ' ' + (h * 0.83) + ' Q ' + (w * 0.20) + ' ' + (h * 0.87) + ' ' + (w * 0.30) + ' ' + (h * 0.82) + ' Q ' + (w * 0.40) + ' ' + (h * 0.77) + ' ' + (w * 0.50) + ' ' + (h * 0.82) + ' Q ' + (w * 0.60) + ' ' + (h * 0.87) + ' ' + (w * 0.70) + ' ' + (h * 0.82) + ' Q ' + (w * 0.80) + ' ' + (h * 0.77) + ' ' + (w * 0.90) + ' ' + (h * 0.82) + ' Q ' + (w * 0.96) + ' ' + (h * 0.85) + ' ' + w + ' ' + (h * 0.82) + ' L ' + w + ' ' + h + ' L 0 ' + h + '" fill="#616161"/>';
+          svg += '<circle cx="' + (w * 0.20) + '" cy="' + (h * 0.87) + '" r="' + (w * 0.035) + '" fill="none" stroke="#424242" stroke-width="' + (w * 0.008) + '"/>';
+          svg += '<circle cx="' + (w * 0.55) + '" cy="' + (h * 0.88) + '" r="' + (w * 0.028) + '" fill="none" stroke="#424242" stroke-width="' + (w * 0.007) + '"/>';
+          svg += '<circle cx="' + (w * 0.80) + '" cy="' + (h * 0.86) + '" r="' + (w * 0.022) + '" fill="none" stroke="#424242" stroke-width="' + (w * 0.006) + '"/>';
+          break;
+
+        // =========================================================================
+        // SNOW
+        // =========================================================================
+        case 'snow':
+          svg += '<defs>';
+          svg += '<linearGradient id="snowSky" x1="0" y1="0" x2="0" y2="1">';
+          svg += '<stop offset="0%" stop-color="#b3d9f5"/>';
+          svg += '<stop offset="60%" stop-color="#d6eeff"/>';
+          svg += '<stop offset="100%" stop-color="#eaf6ff"/>';
+          svg += '</linearGradient>';
+          svg += '</defs>';
+          svg += '<rect x="0" y="0" width="' + w + '" height="' + h + '" fill="url(#snowSky)"/>';
+          svg += '<path d="M 0 ' + (h * 0.35) + ' Q ' + (w * 0.12) + ' ' + (h * 0.22) + ' ' + (w * 0.22) + ' ' + (h * 0.30) + ' Q ' + (w * 0.30) + ' ' + (h * 0.37) + ' ' + (w * 0.38) + ' ' + (h * 0.28) + '" fill="none" stroke="#a8e6cf" stroke-width="' + (w * 0.022) + '" stroke-linecap="round" opacity="0.45"/>';
+          svg += '<path d="M ' + (w * 0.15) + ' ' + (h * 0.28) + ' Q ' + (w * 0.30) + ' ' + (h * 0.15) + ' ' + (w * 0.52) + ' ' + (h * 0.22) + ' Q ' + (w * 0.65) + ' ' + (h * 0.27) + ' ' + (w * 0.78) + ' ' + (h * 0.18) + '" fill="none" stroke="#80cbc4" stroke-width="' + (w * 0.020) + '" stroke-linecap="round" opacity="0.38"/>';
+          svg += '<path d="M ' + (w * 0.40) + ' ' + (h * 0.18) + ' Q ' + (w * 0.55) + ' ' + (h * 0.08) + ' ' + (w * 0.72) + ' ' + (h * 0.14) + ' Q ' + (w * 0.85) + ' ' + (h * 0.19) + ' ' + w + ' ' + (h * 0.12) + '" fill="none" stroke="#ce93d8" stroke-width="' + (w * 0.018) + '" stroke-linecap="round" opacity="0.32"/>';
+          svg += '<polygon points="0,' + (h * 0.65) + ' ' + (w * 0.14) + ',' + (h * 0.30) + ' ' + (w * 0.28) + ',' + (h * 0.65) + '" fill="#9eb8cc"/>';
+          svg += '<polygon points="' + (w * 0.08) + ',' + (h * 0.65) + ' ' + (w * 0.14) + ',' + (h * 0.36) + ' ' + (w * 0.20) + ',' + (h * 0.65) + '" fill="white" opacity="0.7"/>';
+          svg += '<polygon points="' + (w * 0.15) + ',' + (h * 0.65) + ' ' + (w * 0.30) + ',' + (h * 0.28) + ' ' + (w * 0.45) + ',' + (h * 0.65) + '" fill="#8aacbf"/>';
+          svg += '<polygon points="' + (w * 0.23) + ',' + (h * 0.65) + ' ' + (w * 0.30) + ',' + (h * 0.34) + ' ' + (w * 0.37) + ',' + (h * 0.65) + '" fill="white" opacity="0.7"/>';
+          svg += '<polygon points="' + (w * 0.32) + ',' + (h * 0.65) + ' ' + (w * 0.46) + ',' + (h * 0.24) + ' ' + (w * 0.60) + ',' + (h * 0.65) + '" fill="#9eb8cc"/>';
+          svg += '<polygon points="' + (w * 0.40) + ',' + (h * 0.65) + ' ' + (w * 0.46) + ',' + (h * 0.30) + ' ' + (w * 0.52) + ',' + (h * 0.65) + '" fill="white" opacity="0.7"/>';
+          svg += '<polygon points="' + (w * 0.56) + ',' + (h * 0.65) + ' ' + (w * 0.68) + ',' + (h * 0.32) + ' ' + (w * 0.80) + ',' + (h * 0.65) + '" fill="#8aacbf"/>';
+          svg += '<polygon points="' + (w * 0.63) + ',' + (h * 0.65) + ' ' + (w * 0.68) + ',' + (h * 0.38) + ' ' + (w * 0.73) + ',' + (h * 0.65) + '" fill="white" opacity="0.7"/>';
+          svg += '<polygon points="' + (w * 0.74) + ',' + (h * 0.65) + ' ' + (w * 0.88) + ',' + (h * 0.27) + ' ' + w + ',' + (h * 0.65) + '" fill="#9eb8cc"/>';
+          svg += '<polygon points="' + (w * 0.83) + ',' + (h * 0.65) + ' ' + (w * 0.88) + ',' + (h * 0.33) + ' ' + (w * 0.93) + ',' + (h * 0.65) + '" fill="white" opacity="0.7"/>';
+          svg += '<rect x="' + (w * 0.08) + '" y="' + (h * 0.50) + '" width="' + (w * 0.014) + '" height="' + (h * 0.16) + '" fill="#6d4c41"/>';
+          svg += '<polygon points="' + (w * 0.087) + ',' + (h * 0.50) + ' ' + (w * 0.058) + ',' + (h * 0.41) + ' ' + (w * 0.116) + ',' + (h * 0.41) + '" fill="#2e7d32"/>';
+          svg += '<polygon points="' + (w * 0.087) + ',' + (h * 0.43) + ' ' + (w * 0.062) + ',' + (h * 0.35) + ' ' + (w * 0.112) + ',' + (h * 0.35) + '" fill="#388e3c"/>';
+          svg += '<polygon points="' + (w * 0.087) + ',' + (h * 0.36) + ' ' + (w * 0.068) + ',' + (h * 0.30) + ' ' + (w * 0.106) + ',' + (h * 0.30) + '" fill="#43a047"/>';
+          svg += '<polygon points="' + (w * 0.087) + ',' + (h * 0.41) + ' ' + (w * 0.062) + ',' + (h * 0.415) + ' ' + (w * 0.072) + ',' + (h * 0.40) + '" fill="white" opacity="0.8"/>';
+          svg += '<rect x="' + (w * 0.34) + '" y="' + (h * 0.52) + '" width="' + (w * 0.014) + '" height="' + (h * 0.14) + '" fill="#6d4c41"/>';
+          svg += '<polygon points="' + (w * 0.347) + ',' + (h * 0.52) + ' ' + (w * 0.318) + ',' + (h * 0.43) + ' ' + (w * 0.376) + ',' + (h * 0.43) + '" fill="#1b5e20"/>';
+          svg += '<polygon points="' + (w * 0.347) + ',' + (h * 0.45) + ' ' + (w * 0.322) + ',' + (h * 0.37) + ' ' + (w * 0.372) + ',' + (h * 0.37) + '" fill="#2e7d32"/>';
+          svg += '<polygon points="' + (w * 0.347) + ',' + (h * 0.38) + ' ' + (w * 0.328) + ',' + (h * 0.32) + ' ' + (w * 0.366) + ',' + (h * 0.32) + '" fill="#388e3c"/>';
+          svg += '<rect x="' + (w * 0.60) + '" y="' + (h * 0.50) + '" width="' + (w * 0.014) + '" height="' + (h * 0.16) + '" fill="#6d4c41"/>';
+          svg += '<polygon points="' + (w * 0.607) + ',' + (h * 0.50) + ' ' + (w * 0.578) + ',' + (h * 0.41) + ' ' + (w * 0.636) + ',' + (h * 0.41) + '" fill="#2e7d32"/>';
+          svg += '<polygon points="' + (w * 0.607) + ',' + (h * 0.43) + ' ' + (w * 0.582) + ',' + (h * 0.35) + ' ' + (w * 0.632) + ',' + (h * 0.35) + '" fill="#388e3c"/>';
+          svg += '<polygon points="' + (w * 0.607) + ',' + (h * 0.36) + ' ' + (w * 0.588) + ',' + (h * 0.30) + ' ' + (w * 0.626) + ',' + (h * 0.30) + '" fill="#43a047"/>';
+          svg += '<polygon points="' + (w * 0.607) + ',' + (h * 0.41) + ' ' + (w * 0.578) + ',' + (h * 0.415) + ' ' + (w * 0.590) + ',' + (h * 0.40) + '" fill="white" opacity="0.8"/>';
+          svg += '<rect x="' + (w * 0.80) + '" y="' + (h * 0.53) + '" width="' + (w * 0.014) + '" height="' + (h * 0.13) + '" fill="#6d4c41"/>';
+          svg += '<polygon points="' + (w * 0.807) + ',' + (h * 0.53) + ' ' + (w * 0.778) + ',' + (h * 0.44) + ' ' + (w * 0.836) + ',' + (h * 0.44) + '" fill="#1b5e20"/>';
+          svg += '<polygon points="' + (w * 0.807) + ',' + (h * 0.46) + ' ' + (w * 0.782) + ',' + (h * 0.38) + ' ' + (w * 0.832) + ',' + (h * 0.38) + '" fill="#2e7d32"/>';
+          svg += '<polygon points="' + (w * 0.807) + ',' + (h * 0.39) + ' ' + (w * 0.788) + ',' + (h * 0.33) + ' ' + (w * 0.826) + ',' + (h * 0.33) + '" fill="#388e3c"/>';
+          svg += '<rect x="' + (w * 0.92) + '" y="' + (h * 0.54) + '" width="' + (w * 0.012) + '" height="' + (h * 0.12) + '" fill="#6d4c41"/>';
+          svg += '<polygon points="' + (w * 0.926) + ',' + (h * 0.54) + ' ' + (w * 0.900) + ',' + (h * 0.46) + ' ' + (w * 0.952) + ',' + (h * 0.46) + '" fill="#2e7d32"/>';
+          svg += '<polygon points="' + (w * 0.926) + ',' + (h * 0.48) + ' ' + (w * 0.904) + ',' + (h * 0.40) + ' ' + (w * 0.948) + ',' + (h * 0.40) + '" fill="#388e3c"/>';
+          svg += '<polygon points="' + (w * 0.926) + ',' + (h * 0.41) + ' ' + (w * 0.908) + ',' + (h * 0.35) + ' ' + (w * 0.944) + ',' + (h * 0.35) + '" fill="#43a047"/>';
+          svg += '<path d="M 0 ' + (h * 0.72) + ' Q ' + (w * 0.10) + ' ' + (h * 0.68) + ' ' + (w * 0.22) + ' ' + (h * 0.72) + ' Q ' + (w * 0.35) + ' ' + (h * 0.76) + ' ' + (w * 0.50) + ' ' + (h * 0.72) + ' Q ' + (w * 0.65) + ' ' + (h * 0.68) + ' ' + (w * 0.78) + ' ' + (h * 0.72) + ' Q ' + (w * 0.90) + ' ' + (h * 0.76) + ' ' + w + ' ' + (h * 0.72) + ' L ' + w + ' ' + h + ' L 0 ' + h + '" fill="#e8f4fd"/>';
+          svg += '<path d="M 0 ' + (h * 0.76) + ' Q ' + (w * 0.15) + ' ' + (h * 0.73) + ' ' + (w * 0.30) + ' ' + (h * 0.76) + ' Q ' + (w * 0.45) + ' ' + (h * 0.79) + ' ' + (w * 0.60) + ' ' + (h * 0.76) + ' Q ' + (w * 0.75) + ' ' + (h * 0.73) + ' ' + (w * 0.90) + ' ' + (h * 0.76) + ' Q ' + (w * 0.96) + ' ' + (h * 0.77) + ' ' + w + ' ' + (h * 0.76) + ' L ' + w + ' ' + h + ' L 0 ' + h + '" fill="white"/>';
+          svg += '<ellipse cx="' + (w * 0.50) + '" cy="' + (h * 0.82) + '" rx="' + (w * 0.10) + '" ry="' + (h * 0.04) + '" fill="#b3d9f0" opacity="0.75"/>';
+          svg += '<line x1="' + (w * 0.44) + '" y1="' + (h * 0.82) + '" x2="' + (w * 0.48) + '" y2="' + (h * 0.82) + '" stroke="white" stroke-width="' + (w * 0.006) + '" stroke-linecap="round" opacity="0.8"/>';
+          svg += '<ellipse cx="' + (w * 0.72) + '" cy="' + (h * 0.80) + '" rx="' + (w * 0.065) + '" ry="' + (h * 0.06) + '" fill="#ddeef8"/>';
+          svg += '<line x1="' + (w * 0.685) + '" y1="' + (h * 0.755) + '" x2="' + (w * 0.755) + '" y2="' + (h * 0.755) + '" stroke="#b3ccd6" stroke-width="' + (w * 0.003) + '"/>';
+          svg += '<line x1="' + (w * 0.68) + '" y1="' + (h * 0.775) + '" x2="' + (w * 0.760) + '" y2="' + (h * 0.775) + '" stroke="#b3ccd6" stroke-width="' + (w * 0.003) + '"/>';
+          svg += '<line x1="' + (w * 0.678) + '" y1="' + (h * 0.798) + '" x2="' + (w * 0.762) + '" y2="' + (h * 0.798) + '" stroke="#b3ccd6" stroke-width="' + (w * 0.003) + '"/>';
+          svg += '<ellipse cx="' + (w * 0.72) + '" cy="' + (h * 0.745) + '" rx="' + (w * 0.030) + '" ry="' + (h * 0.030) + '" fill="#ddeef8"/>';
+          svg += '<path d="M ' + (w * 0.686) + ' ' + (h * 0.845) + ' A ' + (w * 0.034) + ' ' + (h * 0.065) + ' 0 0 1 ' + (w * 0.754) + ' ' + (h * 0.845) + ' Z" fill="#c8e0ee"/>';
+          svg += '<circle cx="' + (w * 0.22) + '" cy="' + (h * 0.78) + '" r="' + (w * 0.025) + '" fill="white"/>';
+          svg += '<circle cx="' + (w * 0.22) + '" cy="' + (h * 0.73) + '" r="' + (w * 0.033) + '" fill="white"/>';
+          svg += '<circle cx="' + (w * 0.22) + '" cy="' + (h * 0.67) + '" r="' + (w * 0.042) + '" fill="white"/>';
+          svg += '<circle cx="' + (w * 0.208) + '" cy="' + (h * 0.725) + '" r="' + (w * 0.005) + '" fill="#333"/>';
+          svg += '<circle cx="' + (w * 0.232) + '" cy="' + (h * 0.725) + '" r="' + (w * 0.005) + '" fill="#333"/>';
+          svg += '<polygon points="' + (w * 0.218) + ',' + (h * 0.735) + ' ' + (w * 0.222) + ',' + (h * 0.742) + ' ' + (w * 0.226) + ',' + (h * 0.735) + '" fill="#e64a19"/>';
+          svg += '<line x1="' + (w * 0.183) + '" y1="' + (h * 0.680) + '" x2="' + (w * 0.155) + '" y2="' + (h * 0.665) + '" stroke="#795548" stroke-width="' + (w * 0.006) + '" stroke-linecap="round"/>';
+          svg += '<line x1="' + (w * 0.257) + '" y1="' + (h * 0.680) + '" x2="' + (w * 0.285) + '" y2="' + (h * 0.660) + '" stroke="#795548" stroke-width="' + (w * 0.006) + '" stroke-linecap="round"/>';
+          svg += '<rect x="' + (w * 0.207) + '" y="' + (h * 0.644) + '" width="' + (w * 0.026) + '" height="' + (h * 0.018) + '" fill="#333"/>';
+          svg += '<rect x="' + (w * 0.200) + '" y="' + (h * 0.630) + '" width="' + (w * 0.040) + '" height="' + (h * 0.016) + '" fill="#212121"/>';
+          var flakeData = [
+            [0.04,0.10,0.008],[0.14,0.06,0.006],[0.26,0.14,0.009],[0.38,0.08,0.007],[0.50,0.05,0.010],
+            [0.62,0.12,0.006],[0.74,0.07,0.008],[0.86,0.04,0.007],[0.95,0.15,0.009],[0.10,0.24,0.006],
+            [0.20,0.32,0.008],[0.44,0.27,0.007],[0.58,0.33,0.009],[0.70,0.20,0.006],[0.82,0.28,0.008],
+            [0.92,0.35,0.007],[0.30,0.60,0.007],[0.88,0.62,0.008]
+          ];
+          for (i = 0; i < flakeData.length; i++) {
+            svg += '<circle cx="' + (w * flakeData[i][0]) + '" cy="' + (h * flakeData[i][1]) + '" r="' + (w * flakeData[i][2]) + '" fill="white" opacity="0.85"/>';
+          }
+          break;
+      }
+
+      return svg;
+    }
     // -----------------------------------
     // Avatar Display — full-screen showcase
     // -----------------------------------
@@ -6128,6 +6730,7 @@
         }
       }
 
+      var svgBgContent = bgKey ? drawSceneBg(bgKey, 400, 300) : '';
       var bgStyle = '';
       var groundStyle = '';
       if (bgObj) {
@@ -6159,41 +6762,76 @@
       var charSvg = buildFullBodySVG(p.avatar, { platform: false });
       var petHtml = '';
       if (p.avatar.svgPet && p.avatar.svgPet !== 'none') {
-        petHtml = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-25 -30 50 35" class="av-display-pet" style="width:30%;height:auto;">' +
+        petHtml = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-25 -30 50 35" class="av-display-pet" style="position:absolute;bottom:18%;right:14%;width:22%;height:auto;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.2));">' +
           drawSvgPet(p.avatar.svgPet, 0, 0) + '</svg>';
       } else if (p.avatar.pet) {
-        petHtml = '<span class="av-display-pet" style="font-size:64px;">' + p.avatar.pet + '</span>';
+        petHtml = '<span style="position:absolute;bottom:18%;right:14%;font-size:52px;">' + p.avatar.pet + '</span>';
       }
+
+      var vehSizes = {
+        'veh:racecar': 30, 'veh:monstertruck': 34, 'veh:bicycle': 26, 'veh:aeroplane': 30,
+        'veh:speedboat': 28, 'veh:helicopter': 28, 'veh:train': 34, 'veh:ufo': 26,
+        'veh:fireengine': 34, 'veh:digger': 32, 'veh:jetski': 26, 'veh:motorbike': 28,
+        'veh:scooter': 24, 'veh:rollerblades': 20
+      };
+      var toySizes = {
+        'toy:teddy': 16, 'toy:soccer': 12, 'toy:basketball': 12, 'toy:skateboard': 18,
+        'toy:surfboard': 20, 'toy:guitar': 16, 'toy:trophy': 14, 'toy:rocket': 16,
+        'toy:sword': 16, 'toy:wand': 14, 'toy:kite': 16, 'toy:balloon': 14
+      };
+
+      var vehHtml = (function() {
+        var slots = [];
+        var leftPct = 1;
+        var row = 0;
+        for (var vi = 0; vi < vehKeys.length; vi++) {
+          var vk = vehKeys[vi];
+          var vpct = vehSizes[vk] || 26;
+          if (leftPct + vpct > 95) { row++; leftPct = 4; }
+          var btm = 4 + row * 12;
+          slots.push('<svg xmlns="http://www.w3.org/2000/svg" viewBox="-30 -20 60 40" style="position:absolute;bottom:' + btm + '%;left:' + leftPct + '%;width:' + vpct + '%;height:auto;z-index:4;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.25));">' + drawSceneItem(vk, 0, 0, 1) + '</svg>');
+          leftPct += vpct + 1;
+        }
+        return slots.join('');
+      })();
+
+      var toyHtml = (function() {
+        var slots = [];
+        var groundToys = [];
+        var handToys = [];
+        for (var ti = 0; ti < toyKeys.length; ti++) {
+          var tk = toyKeys[ti];
+          if (ti === 0) { handToys.push(tk); }
+          else { groundToys.push(tk); }
+        }
+        if (handToys.length > 0) {
+          var hk = handToys[0];
+          var hpct = toySizes[hk] || 14;
+          slots.push('<svg xmlns="http://www.w3.org/2000/svg" viewBox="-25 -25 50 50" style="position:absolute;bottom:30%;left:60%;width:' + hpct + '%;height:auto;z-index:4;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.15));">' + drawSceneItem(hk, 0, 0, 1) + '</svg>');
+        }
+        var rightPct = 1;
+        for (var gi = 0; gi < groundToys.length; gi++) {
+          var gk = groundToys[gi];
+          var gpct = toySizes[gk] || 14;
+          slots.push('<svg xmlns="http://www.w3.org/2000/svg" viewBox="-25 -25 50 50" style="position:absolute;bottom:14%;right:' + rightPct + '%;width:' + gpct + '%;height:auto;z-index:4;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.2));">' + drawSceneItem(gk, 0, 0, 1) + '</svg>');
+          rightPct += gpct + 2;
+          if (rightPct > 50) rightPct = 3;
+        }
+        return slots.join('');
+      })();
 
       var displayHtml =
         '<div class="av-display">' +
-          '<div class="av-display-bg" style="' + bgStyle + '"></div>' +
-          '<div class="av-display-ground" style="' + groundStyle + ';border-radius:50% 50% 0 0 / 20% 20% 0 0;"></div>' +
-          decorHtml +
-          (houseKey ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-30 -30 60 60" class="av-display-house" style="width:90px;height:90px;font-size:0;">' + drawSceneItem(houseKey, 0, 0, 1) + '</svg>' : '') +
+          (svgBgContent
+            ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%;z-index:0;">' + svgBgContent + '</svg>'
+            : '<div class="av-display-bg" style="' + bgStyle + '"></div>' +
+              '<div class="av-display-ground" style="' + groundStyle + ';border-radius:50% 50% 0 0 / 20% 20% 0 0;"></div>' +
+              decorHtml) +
+          (houseKey ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-30 -30 60 60" style="position:absolute;bottom:32%;right:3%;width:35%;height:auto;opacity:0.85;z-index:2;filter:drop-shadow(0 6px 16px rgba(0,0,0,0.25));font-size:0;">' + drawSceneItem(houseKey, 0, 0, 1) + '</svg>' : '') +
           '<div class="av-display-char">' + charSvg + '</div>' +
           petHtml +
-          (function() {
-            var vehPos = [
-              { bottom: '4%', left: '1%', size: '80' },
-              { bottom: '8%', left: '24%', size: '65' }
-            ];
-            return vehKeys.map(function(k, i) {
-              var vp = vehPos[i] || vehPos[0];
-              return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-30 -20 60 40" style="position:absolute;bottom:' + vp.bottom + ';left:' + vp.left + ';width:' + vp.size + 'px;height:auto;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.25));">' + drawSceneItem(k, 0, 0, 1) + '</svg>';
-            }).join('');
-          })() +
-          (function() {
-            var toyPos = [
-              { bottom: '28%', right: '2%', size: '60' },
-              { bottom: '20%', right: '22%', size: '52' },
-              { bottom: '36%', right: '10%', size: '46' }
-            ];
-            return toyKeys.map(function(k, i) {
-              var tp = toyPos[i] || toyPos[0];
-              return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-25 -25 50 50" style="position:absolute;bottom:' + tp.bottom + ';right:' + tp.right + ';width:' + tp.size + 'px;height:auto;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.2));">' + drawSceneItem(k, 0, 0, 1) + '</svg>';
-            }).join('');
-          })() +
+          vehHtml +
+          toyHtml +
           '<div class="av-display-name">' + escapeHtml(p.name) + '</div>' +
         '</div>';
 
@@ -6213,9 +6851,9 @@
       if (avDisplayTab === 'bg') {
         catArr = AVATAR_BACKGROUNDS; prefixStr = 'bg:'; singleField = 'background';
       } else if (avDisplayTab === 'toy') {
-        catArr = AVATAR_TOYS; prefixStr = 'toy:'; isMulti = true; multiField = 'toys'; multiMax = 3;
+        catArr = AVATAR_TOYS; prefixStr = 'toy:'; isMulti = true; multiField = 'toys'; multiMax = 99;
       } else if (avDisplayTab === 'veh') {
-        catArr = AVATAR_VEHICLES; prefixStr = 'veh:'; isMulti = true; multiField = 'vehicles'; multiMax = 2;
+        catArr = AVATAR_VEHICLES; prefixStr = 'veh:'; isMulti = true; multiField = 'vehicles'; multiMax = 99;
       } else {
         catArr = AVATAR_HOUSES; prefixStr = 'house:'; singleField = 'house';
       }
@@ -6252,7 +6890,7 @@
         });
       }
 
-      var limitHint = isMulti ? '<div style="font-size:11px;color:#999;text-align:center;margin-top:4px;">Tap to add or remove (max ' + multiMax + ')</div>' : '';
+      var limitHint = isMulti ? '<div style="font-size:11px;color:#999;text-align:center;margin-top:4px;">Tap to add or remove</div>' : '';
 
       var container = $('s-avdisplay');
       container.innerHTML =
@@ -6516,7 +7154,7 @@
         });
         panelHtml += '</div>';
 
-        panelHtml += '<div class="ar-section-title">Toys <span style="font-size:10px;color:#999;">(pick up to 3)</span></div>' +
+        panelHtml += '<div class="ar-section-title">Toys</div>' +
           '<div class="ar-item-grid" style="margin-top:4px;">';
         AVATAR_TOYS.forEach(function(t) {
           var fullKey = 'toy:' + t.key;
@@ -6524,14 +7162,14 @@
           var isSelected = (p.avatar.toys || []).indexOf(fullKey) !== -1;
           var btnCls = 'ar-item-btn' + (isSelected ? ' selected' : '') + (isUnlocked ? '' : ' locked');
           panelHtml += '<button class="' + btnCls + '" data-mtoggle="' + fullKey +
-            '" data-mfield="toys" data-mmax="3" data-unlocked="' + (isUnlocked ? '1' : '0') +
+            '" data-mfield="toys" data-mmax="99" data-unlocked="' + (isUnlocked ? '1' : '0') +
             '" style="flex-direction:column;font-size:22px;">' +
             t.icon + '<div style="font-size:9px;line-height:1;">' + t.label + '</div>' +
             (isUnlocked ? '' : '<span class="ar-lock">🔒</span>') + '</button>';
         });
         panelHtml += '</div>';
 
-        panelHtml += '<div class="ar-section-title">Vehicles <span style="font-size:10px;color:#999;">(pick up to 2)</span></div>' +
+        panelHtml += '<div class="ar-section-title">Vehicles</div>' +
           '<div class="ar-item-grid" style="margin-top:4px;">';
         AVATAR_VEHICLES.forEach(function(v) {
           var fullKey = 'veh:' + v.key;
@@ -6539,7 +7177,7 @@
           var isSelected = (p.avatar.vehicles || []).indexOf(fullKey) !== -1;
           var btnCls = 'ar-item-btn' + (isSelected ? ' selected' : '') + (isUnlocked ? '' : ' locked');
           panelHtml += '<button class="' + btnCls + '" data-mtoggle="' + fullKey +
-            '" data-mfield="vehicles" data-mmax="2" data-unlocked="' + (isUnlocked ? '1' : '0') +
+            '" data-mfield="vehicles" data-mmax="99" data-unlocked="' + (isUnlocked ? '1' : '0') +
             '" style="flex-direction:column;font-size:22px;">' +
             v.icon + '<div style="font-size:9px;line-height:1;">' + v.label + '</div>' +
             (isUnlocked ? '' : '<span class="ar-lock">🔒</span>') + '</button>';
@@ -7154,6 +7792,44 @@
 
     // ---- Prep done screen ----
 
+    function isSchoolAge(p) {
+      return p && p.name && p.name.toLowerCase() === 'emelia';
+    }
+
+    function alreadyPlayedToday(p, source) {
+      var today = todayKey();
+      var history = p.coinHistory || [];
+      for (var i = 0; i < history.length; i++) {
+        if (history[i].date === today && history[i].amount > 0) {
+          if (source.indexOf('prep-') === 0 && history[i].source === source) return true;
+          if (source.indexOf('prep-') !== 0 && history[i].soundId === source) return true;
+        }
+      }
+      return false;
+    }
+
+    function findUnplayedSound(p) {
+      var today = todayKey();
+      var played = {};
+      var history = p.coinHistory || [];
+      for (var i = 0; i < history.length; i++) {
+        if (history[i].date === today && history[i].soundId) played[history[i].soundId] = true;
+      }
+      var currentIdx = -1;
+      for (var i = 0; i < WEEKS.length; i++) {
+        if (WEEKS[i].soundId === (gameSession && gameSession.soundId)) { currentIdx = i; break; }
+      }
+      for (var offset = 1; offset < WEEKS.length; offset++) {
+        var nextIdx = (currentIdx + offset) % WEEKS.length;
+        if (!WEEKS[nextIdx].comingSoon && !played[WEEKS[nextIdx].soundId]) return WEEKS[nextIdx].soundId;
+      }
+      for (var offset = 1; offset < WEEKS.length; offset++) {
+        var prevIdx = (currentIdx - offset + WEEKS.length) % WEEKS.length;
+        if (!WEEKS[prevIdx].comingSoon && !played[WEEKS[prevIdx].soundId]) return WEEKS[prevIdx].soundId;
+      }
+      return null;
+    }
+
     function renderPrepDone() {
       var p = activeProfile();
       if (!p) return;
@@ -7173,6 +7849,17 @@
         p.economy.dailyDate = today;
         p.economy.dailyCoins = 0;
       }
+
+      var blockedReason = '';
+      var prepSource = 'prep-' + prepSession.mode;
+      if (isSchoolAge(p)) {
+        coins = 0;
+        blockedReason = 'Prep games are for younger players — try spelling games for coins!';
+      } else if (alreadyPlayedToday(p, prepSource)) {
+        coins = 0;
+        blockedReason = 'You already earned coins for this game today — try a different game!';
+      }
+
       var cap = getDailyCap(p);
       var awarded = Math.min(coins, Math.max(0, cap - (p.economy.dailyCoins || 0)));
       p.economy.coins = (p.economy.coins || 0) + awarded;
@@ -7180,7 +7867,7 @@
       p.economy.totalEarned = (p.economy.totalEarned || 0) + awarded;
       p.economy.gems = Math.max(p.economy.gems || 0, Math.floor((p.economy.totalEarned || 0) / 40));
       if (awarded > 0) {
-        p.coinHistory.push({ date: today, amount: awarded, source: 'prep-' + prepSession.mode });
+        p.coinHistory.push({ date: today, amount: awarded, source: prepSource });
       }
       updateStreak(p);
       saveActiveProfile();
@@ -7194,7 +7881,8 @@
           '<div style="font-size:15px;color:var(--pu);margin:4px 0;">' + modeName + '</div>' +
           '<div class="prep-done-detail">' + prepSession.correct + ' out of ' + prepSession.totalRounds + ' correct</div>' +
           (awarded > 0 ? '<div class="prep-coins-msg">🪙 +' + awarded + ' coins!</div>' : '') +
-          (awarded < coins ? '<div class="prep-done-detail" style="color:#aaa;">Daily coin cap reached</div>' : '') +
+          (blockedReason ? '<div class="prep-done-detail" style="color:#E67E22;font-weight:600;">' + blockedReason + '</div>' : '') +
+          (awarded < coins && !blockedReason ? '<div class="prep-done-detail" style="color:#aaa;">Daily coin cap reached</div>' : '') +
           '<div style="margin-top:20px;display:flex;gap:10px;justify-content:center;">' +
             '<button class="btn" id="prep-again">Play Again</button>' +
             '<button class="btn" id="prep-back" style="background:var(--pu);">Back</button>' +
