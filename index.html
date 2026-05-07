@@ -1490,10 +1490,6 @@
       delete a.toy; delete a.vehicle;
       if (a.house        === undefined) a.house        = null;
       delete a.colour; delete a.character; delete a.emoji;
-      // TEMP: unlock all items for testing
-      ALL_DROPPABLE.forEach(function(item) {
-        if (a.unlocked.indexOf(item) === -1) a.unlocked.push(item);
-      });
     }
 
     function itemIcon(itemKey) {
