@@ -1380,7 +1380,13 @@
       { key: 'boat',      label: 'Speed Boat',   icon: '🚤' },
       { key: 'helicopter',label: 'Helicopter',   icon: '🚁' },
       { key: 'train',     label: 'Train',        icon: '🚂' },
-      { key: 'ufo',       label: 'UFO',          icon: '🛸' }
+      { key: 'ufo',       label: 'UFO',          icon: '🛸' },
+      { key: 'fireengine',label: 'Fire Engine',  icon: '🚒' },
+      { key: 'digger',    label: 'Digger',       icon: '🚜' },
+      { key: 'jetski',    label: 'Jet Ski',      icon: '🚤' },
+      { key: 'motorbike', label: 'Motorbike',    icon: '🏍️' },
+      { key: 'scooter',   label: 'Scooter',      icon: '🛴' },
+      { key: 'rollerblades',label:'Rollerblades',icon: '⛸️' }
     ];
     var AVATAR_HOUSES = [
       { key: 'castle',    label: 'Castle',       icon: '🏰' },
@@ -1388,7 +1394,9 @@
       { key: 'cottage',   label: 'Cottage',      icon: '🏡' },
       { key: 'igloo',     label: 'Igloo',        icon: '🏠' },
       { key: 'pirate',    label: 'Pirate Ship',  icon: '🏴‍☠️' },
-      { key: 'spaceship', label: 'Space Station', icon: '🛸' }
+      { key: 'spaceship', label: 'Space Station', icon: '🛸' },
+      { key: 'firestation',label:'Fire Station', icon: '🚒' },
+      { key: 'construction',label:'Construction Site',icon: '🏗️' }
     ];
     // Wearable items — SVG-drawn on the character
     var AVATAR_WEARABLES = [
@@ -1479,6 +1487,10 @@
       if (a.vehicle      === undefined) a.vehicle      = null;
       if (a.house        === undefined) a.house        = null;
       delete a.colour; delete a.character; delete a.emoji;
+      // TEMP: unlock all items for testing
+      ALL_DROPPABLE.forEach(function(item) {
+        if (a.unlocked.indexOf(item) === -1) a.unlocked.push(item);
+      });
     }
 
     function itemIcon(itemKey) {
