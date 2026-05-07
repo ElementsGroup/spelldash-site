@@ -926,7 +926,7 @@
     .av-display-bg { position: absolute; inset: 0; }
     .av-display-ground { position: absolute; bottom: 0; left: 0; right: 0; height: 30%; }
     .av-display-char { position: absolute; bottom: 12%; left: 50%; transform: translateX(-50%); width: 45%; }
-    .av-display-house { position: absolute; top: 2%; right: 2%; font-size: 80px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25)); }
+    .av-display-house { position: absolute; top: 2%; right: 2%; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25)); }
     .av-display-vehicle { position: absolute; bottom: 8%; left: 2%; font-size: 72px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25)); }
     .av-display-toy { position: absolute; bottom: 28%; right: 2%; font-size: 64px; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.2)); }
     .av-display-decor { position: absolute; pointer-events: none; }
@@ -1662,138 +1662,1541 @@
       var mt = '<path d="M ' + (hx - hr * 0.22) + ' ' + my + ' Q ' + hx + ' ' + (my + hr * 0.16) + ' ' + (hx + hr * 0.22) + ' ' + my + '" stroke="#D94466" stroke-width="' + (s * 1.3) + '" fill="none" stroke-linecap="round"/>';
       var hb = '', hf = '';
       if (sty === 'long') {
-        var hw = hr * 1.15;
-        hb = '<path d="M ' + (hx - hw) + ' ' + (hy - hr * 0.1) + ' Q ' + (hx - hw - hr * 0.4) + ' ' + (hy + hr * 0.8) + ' ' + (hx - hw + hr * 0.15) + ' ' + (hy + hr * 2.2) + ' L ' + (hx - hr * 0.6) + ' ' + (hy + hr * 2) + ' Q ' + (hx - hr * 0.7) + ' ' + (hy + hr * 0.5) + ' ' + (hx - hr * 0.85) + ' ' + (hy + hr * 0.1) + ' Z" fill="' + hg + '"/>' +
-          '<path d="M ' + (hx + hw) + ' ' + (hy - hr * 0.1) + ' Q ' + (hx + hw + hr * 0.4) + ' ' + (hy + hr * 0.8) + ' ' + (hx + hw - hr * 0.15) + ' ' + (hy + hr * 2.2) + ' L ' + (hx + hr * 0.6) + ' ' + (hy + hr * 2) + ' Q ' + (hx + hr * 0.7) + ' ' + (hy + hr * 0.5) + ' ' + (hx + hr * 0.85) + ' ' + (hy + hr * 0.1) + ' Z" fill="' + hg + '"/>' +
-          '<path d="M ' + (hx - hw - hr * 0.2) + ' ' + (hy + hr * 1.4) + ' Q ' + (hx - hw) + ' ' + (hy + hr * 0.9) + ' ' + (hx - hr * 0.8) + ' ' + (hy + hr * 0.5) + '" stroke="' + hairLt + '" stroke-width="' + (s * 1.2) + '" fill="none" opacity="0.3"/>';
-        hf = '<path d="M ' + (hx - hr * 0.9) + ' ' + (hy + hr * 0.15) + ' C ' + (hx - hr * 1.05) + ' ' + (hy - hr * 1.5) + ' ' + (hx + hr * 1.05) + ' ' + (hy - hr * 1.5) + ' ' + (hx + hr * 0.9) + ' ' + (hy + hr * 0.15) + ' L ' + (hx + hr * 0.75) + ' ' + (hy - hr * 0.4) + ' C ' + (hx + hr * 0.7) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.7) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.75) + ' ' + (hy - hr * 0.4) + ' Z" fill="' + hg + '"/>' +
-          '<path d="M ' + (hx - hr * 0.7) + ' ' + (hy - hr * 0.4) + ' Q ' + (hx - hr * 0.9) + ' ' + (hy - hr * 0.15) + ' ' + (hx - hr * 0.85) + ' ' + (hy + hr * 0.15) + ' L ' + (hx - hr * 0.6) + ' ' + (hy - hr * 0.1) + ' Q ' + (hx - hr * 0.6) + ' ' + (hy - hr * 0.45) + ' ' + (hx - hr * 0.4) + ' ' + (hy - hr * 0.8) + '" fill="' + hair + '" opacity="0.4"/>' +
-          '<path d="M ' + (hx - hr * 0.2) + ' ' + (hy - hr * 1.35) + ' Q ' + (hx + hr * 0.1) + ' ' + (hy - hr * 1.4) + ' ' + (hx + hr * 0.3) + ' ' + (hy - hr * 1.2) + ' Q ' + (hx + hr * 0.05) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.15) + ' ' + (hy - hr * 0.8) + ' Z" fill="white" opacity="0.08"/>';
+        // Long straight hair past shoulders
+        hb = '<path d="M ' + (hx - hr * 1.05) + ' ' + (hy - hr * 0.3) +
+          ' Q ' + (hx - hr * 1.2) + ' ' + (hy + hr * 0.5) + ' ' + (hx - hr * 1.0) + ' ' + (hy + hr * 1.8) +
+          ' Q ' + (hx - hr * 0.9) + ' ' + (hy + hr * 2.2) + ' ' + (hx - hr * 0.6) + ' ' + (hy + hr * 2.2) +
+          ' L ' + (hx - hr * 0.3) + ' ' + (hy + hr * 1.6) +
+          ' L ' + (hx + hr * 0.3) + ' ' + (hy + hr * 1.6) +
+          ' Q ' + (hx + hr * 0.6) + ' ' + (hy + hr * 2.2) + ' ' + (hx + hr * 0.9) + ' ' + (hy + hr * 2.2) +
+          ' Q ' + (hx + hr * 1.2) + ' ' + (hy + hr * 0.5) + ' ' + (hx + hr * 1.05) + ' ' + (hy - hr * 0.3) +
+          ' Z" fill="' + hg + '"/>' +
+          '<path d="M ' + (hx - hr * 1.0) + ' ' + (hy + hr * 0.4) +
+          ' Q ' + (hx - hr * 1.1) + ' ' + (hy + hr * 1.2) + ' ' + (hx - hr * 0.85) + ' ' + (hy + hr * 2.0) +
+          ' Q ' + (hx - hr * 0.7) + ' ' + (hy + hr * 1.5) + ' ' + (hx - hr * 0.8) + ' ' + (hy + hr * 0.8) +
+          ' Z" fill="' + hairDk + '" opacity="0.4"/>' +
+          '<path d="M ' + (hx + hr * 1.0) + ' ' + (hy + hr * 0.4) +
+          ' Q ' + (hx + hr * 1.1) + ' ' + (hy + hr * 1.2) + ' ' + (hx + hr * 0.85) + ' ' + (hy + hr * 2.0) +
+          ' Q ' + (hx + hr * 0.7) + ' ' + (hy + hr * 1.5) + ' ' + (hx + hr * 0.8) + ' ' + (hy + hr * 0.8) +
+          ' Z" fill="' + hairDk + '" opacity="0.4"/>';
+        hf = '<path d="M ' + (hx - hr * 1.05) + ' ' + (hy - hr * 0.15) +
+          ' Q ' + (hx - hr * 0.9) + ' ' + (hy - hr * 1.35) + ' ' + (hx) + ' ' + (hy - hr * 1.4) +
+          ' Q ' + (hx + hr * 0.9) + ' ' + (hy - hr * 1.35) + ' ' + (hx + hr * 1.05) + ' ' + (hy - hr * 0.15) +
+          ' L ' + (hx + hr * 1.05) + ' ' + (hy + hr * 0.1) +
+          ' Q ' + (hx + hr * 0.95) + ' ' + (hy - hr * 0.9) + ' ' + (hx) + ' ' + (hy - hr * 1.0) +
+          ' Q ' + (hx - hr * 0.95) + ' ' + (hy - hr * 0.9) + ' ' + (hx - hr * 1.05) + ' ' + (hy + hr * 0.1) +
+          ' Z" fill="' + hg + '"/>' +
+          '<path d="M ' + (hx - hr * 0.85) + ' ' + (hy - hr * 0.6) +
+          ' Q ' + (hx - hr * 0.5) + ' ' + (hy - hr * 0.3) + ' ' + (hx - hr * 0.15) + ' ' + (hy - hr * 0.45) +
+          ' Q ' + (hx + hr * 0.2) + ' ' + (hy - hr * 0.6) + ' ' + (hx + hr * 0.5) + ' ' + (hy - hr * 0.5) +
+          ' Q ' + (hx + hr * 0.3) + ' ' + (hy - hr * 0.85) + ' ' + (hx) + ' ' + (hy - hr * 1.0) +
+          ' Q ' + (hx - hr * 0.5) + ' ' + (hy - hr * 0.95) + ' ' + (hx - hr * 0.85) + ' ' + (hy - hr * 0.6) +
+          ' Z" fill="' + hairLt + '" opacity="0.3"/>' +
+          '<path d="M ' + (hx - hr * 1.0) + ' ' + (hy - hr * 0.1) +
+          ' Q ' + (hx - hr * 1.15) + ' ' + (hy + hr * 0.5) + ' ' + (hx - hr * 1.0) + ' ' + (hy + hr * 0.9) +
+          ' L ' + (hx - hr * 0.85) + ' ' + (hy + hr * 0.6) +
+          ' Q ' + (hx - hr * 0.9) + ' ' + (hy + hr * 0.2) + ' ' + (hx - hr * 0.85) + ' ' + (hy - hr * 0.1) +
+          ' Z" fill="' + hg + '"/>' +
+          '<path d="M ' + (hx + hr * 1.0) + ' ' + (hy - hr * 0.1) +
+          ' Q ' + (hx + hr * 1.15) + ' ' + (hy + hr * 0.5) + ' ' + (hx + hr * 1.0) + ' ' + (hy + hr * 0.9) +
+          ' L ' + (hx + hr * 0.85) + ' ' + (hy + hr * 0.6) +
+          ' Q ' + (hx + hr * 0.9) + ' ' + (hy + hr * 0.2) + ' ' + (hx + hr * 0.85) + ' ' + (hy - hr * 0.1) +
+          ' Z" fill="' + hg + '"/>';
+
       } else if (sty === 'short') {
-        hf = '<path d="M ' + (hx - hr * 0.95) + ' ' + (hy + hr * 0.2) + ' C ' + (hx - hr * 1.1) + ' ' + (hy - hr * 1.55) + ' ' + (hx + hr * 1.1) + ' ' + (hy - hr * 1.55) + ' ' + (hx + hr * 0.95) + ' ' + (hy + hr * 0.2) + ' Q ' + (hx + hr * 0.9) + ' ' + (hy + hr * 0.5) + ' ' + (hx + hr * 0.75) + ' ' + (hy + hr * 0.35) + ' L ' + (hx + hr * 0.7) + ' ' + (hy - hr * 0.35) + ' C ' + (hx + hr * 0.65) + ' ' + (hy - hr * 1.05) + ' ' + (hx - hr * 0.65) + ' ' + (hy - hr * 1.05) + ' ' + (hx - hr * 0.7) + ' ' + (hy - hr * 0.35) + ' L ' + (hx - hr * 0.75) + ' ' + (hy + hr * 0.35) + ' Q ' + (hx - hr * 0.9) + ' ' + (hy + hr * 0.5) + ' ' + (hx - hr * 0.95) + ' ' + (hy + hr * 0.2) + ' Z" fill="' + hg + '"/>' +
-          '<path d="M ' + (hx - hr * 0.2) + ' ' + (hy - hr * 1.4) + ' Q ' + (hx + hr * 0.1) + ' ' + (hy - hr * 1.45) + ' ' + (hx + hr * 0.3) + ' ' + (hy - hr * 1.2) + '" stroke="white" stroke-width="' + (s * 1.5) + '" fill="none" opacity="0.08" stroke-linecap="round"/>';
+        // Bob cut at chin level
+        hb = '<path d="M ' + (hx - hr * 1.1) + ' ' + (hy - hr * 0.2) +
+          ' Q ' + (hx - hr * 1.2) + ' ' + (hy + hr * 0.5) + ' ' + (hx - hr * 1.05) + ' ' + (hy + hr * 0.9) +
+          ' Q ' + (hx - hr * 0.9) + ' ' + (hy + hr * 1.15) + ' ' + (hx - hr * 0.7) + ' ' + (hy + hr * 1.1) +
+          ' L ' + (hx + hr * 0.7) + ' ' + (hy + hr * 1.1) +
+          ' Q ' + (hx + hr * 0.9) + ' ' + (hy + hr * 1.15) + ' ' + (hx + hr * 1.05) + ' ' + (hy + hr * 0.9) +
+          ' Q ' + (hx + hr * 1.2) + ' ' + (hy + hr * 0.5) + ' ' + (hx + hr * 1.1) + ' ' + (hy - hr * 0.2) +
+          ' Z" fill="' + hg + '"/>' +
+          '<path d="M ' + (hx - hr * 1.05) + ' ' + (hy + hr * 0.5) +
+          ' Q ' + (hx - hr * 0.95) + ' ' + (hy + hr * 0.8) + ' ' + (hx - hr * 0.75) + ' ' + (hy + hr * 1.05) +
+          ' Q ' + (hx - hr * 0.85) + ' ' + (hy + hr * 0.7) + ' ' + (hx - hr * 0.9) + ' ' + (hy + hr * 0.4) +
+          ' Z" fill="' + hairDk + '" opacity="0.35"/>' +
+          '<path d="M ' + (hx + hr * 1.05) + ' ' + (hy + hr * 0.5) +
+          ' Q ' + (hx + hr * 0.95) + ' ' + (hy + hr * 0.8) + ' ' + (hx + hr * 0.75) + ' ' + (hy + hr * 1.05) +
+          ' Q ' + (hx + hr * 0.85) + ' ' + (hy + hr * 0.7) + ' ' + (hx + hr * 0.9) + ' ' + (hy + hr * 0.4) +
+          ' Z" fill="' + hairDk + '" opacity="0.35"/>';
+        hf = '<path d="M ' + (hx - hr * 1.1) + ' ' + (hy - hr * 0.1) +
+          ' Q ' + (hx - hr * 0.95) + ' ' + (hy - hr * 1.3) + ' ' + (hx) + ' ' + (hy - hr * 1.35) +
+          ' Q ' + (hx + hr * 0.95) + ' ' + (hy - hr * 1.3) + ' ' + (hx + hr * 1.1) + ' ' + (hy - hr * 0.1) +
+          ' Q ' + (hx + hr * 0.9) + ' ' + (hy - hr * 0.85) + ' ' + (hx) + ' ' + (hy - hr * 0.9) +
+          ' Q ' + (hx - hr * 0.9) + ' ' + (hy - hr * 0.85) + ' ' + (hx - hr * 1.1) + ' ' + (hy - hr * 0.1) +
+          ' Z" fill="' + hg + '"/>' +
+          '<path d="M ' + (hx - hr * 0.8) + ' ' + (hy - hr * 0.7) +
+          ' Q ' + (hx - hr * 0.4) + ' ' + (hy - hr * 0.4) + ' ' + (hx) + ' ' + (hy - hr * 0.5) +
+          ' Q ' + (hx + hr * 0.3) + ' ' + (hy - hr * 0.65) + ' ' + (hx + hr * 0.6) + ' ' + (hy - hr * 0.6) +
+          ' Q ' + (hx + hr * 0.3) + ' ' + (hy - hr * 0.95) + ' ' + (hx - hr * 0.2) + ' ' + (hy - hr * 1.0) +
+          ' Q ' + (hx - hr * 0.6) + ' ' + (hy - hr * 0.95) + ' ' + (hx - hr * 0.8) + ' ' + (hy - hr * 0.7) +
+          ' Z" fill="' + hairLt + '" opacity="0.3"/>';
+
       } else if (sty === 'curly') {
-        var cr = hr * 0.38;
-        hb = '<circle cx="' + (hx - hr * 0.95) + '" cy="' + (hy + hr * 0.15) + '" r="' + cr + '" fill="' + hg + '"/>' +
-          '<circle cx="' + (hx - hr * 1.05) + '" cy="' + (hy + hr * 0.6) + '" r="' + (cr * 0.75) + '" fill="' + hair + '"/>' +
-          '<circle cx="' + (hx + hr * 0.95) + '" cy="' + (hy + hr * 0.15) + '" r="' + cr + '" fill="' + hg + '"/>' +
-          '<circle cx="' + (hx + hr * 1.05) + '" cy="' + (hy + hr * 0.6) + '" r="' + (cr * 0.75) + '" fill="' + hair + '"/>';
-        hf = '<circle cx="' + (hx - hr * 0.45) + '" cy="' + (hy - hr * 0.85) + '" r="' + (cr * 1.1) + '" fill="' + hg + '"/>' +
-          '<circle cx="' + hx + '" cy="' + (hy - hr * 1.05) + '" r="' + (cr * 1.15) + '" fill="' + hg + '"/>' +
-          '<circle cx="' + (hx + hr * 0.45) + '" cy="' + (hy - hr * 0.85) + '" r="' + (cr * 1.1) + '" fill="' + hg + '"/>' +
-          '<circle cx="' + (hx - hr * 0.85) + '" cy="' + (hy - hr * 0.35) + '" r="' + (cr * 0.8) + '" fill="' + hair + '"/>' +
-          '<circle cx="' + (hx + hr * 0.85) + '" cy="' + (hy - hr * 0.35) + '" r="' + (cr * 0.8) + '" fill="' + hair + '"/>' +
-          '<circle cx="' + (hx - hr * 0.1) + '" cy="' + (hy - hr * 1.05) + '" r="' + (cr * 0.4) + '" fill="' + hairLt + '" opacity="0.2"/>';
+        // Voluminous curly afro
+        hb = '<path d="M ' + (hx - hr * 1.4) + ' ' + (hy) +
+          ' Q ' + (hx - hr * 1.5) + ' ' + (hy - hr * 0.8) + ' ' + (hx - hr * 1.1) + ' ' + (hy - hr * 1.3) +
+          ' Q ' + (hx - hr * 0.5) + ' ' + (hy - hr * 1.7) + ' ' + (hx) + ' ' + (hy - hr * 1.65) +
+          ' Q ' + (hx + hr * 0.5) + ' ' + (hy - hr * 1.7) + ' ' + (hx + hr * 1.1) + ' ' + (hy - hr * 1.3) +
+          ' Q ' + (hx + hr * 1.5) + ' ' + (hy - hr * 0.8) + ' ' + (hx + hr * 1.4) + ' ' + (hy) +
+          ' Q ' + (hx + hr * 1.5) + ' ' + (hy + hr * 0.8) + ' ' + (hx + hr * 1.2) + ' ' + (hy + hr * 1.3) +
+          ' Q ' + (hx + hr * 0.8) + ' ' + (hy + hr * 1.5) + ' ' + (hx) + ' ' + (hy + hr * 1.4) +
+          ' Q ' + (hx - hr * 0.8) + ' ' + (hy + hr * 1.5) + ' ' + (hx - hr * 1.2) + ' ' + (hy + hr * 1.3) +
+          ' Q ' + (hx - hr * 1.5) + ' ' + (hy + hr * 0.8) + ' ' + (hx - hr * 1.4) + ' ' + (hy) +
+          ' Z" fill="' + hg + '"/>' +
+          '<circle cx="' + (hx - hr * 1.1) + '" cy="' + (hy - hr * 0.6) + '" r="' + (hr * 0.35) + '" fill="' + hairDk + '" opacity="0.3"/>' +
+          '<circle cx="' + (hx + hr * 0.9) + '" cy="' + (hy - hr * 0.9) + '" r="' + (hr * 0.3) + '" fill="' + hairDk + '" opacity="0.25"/>' +
+          '<circle cx="' + (hx - hr * 0.7) + '" cy="' + (hy + hr * 1.0) + '" r="' + (hr * 0.35) + '" fill="' + hairDk + '" opacity="0.3"/>' +
+          '<circle cx="' + (hx + hr * 1.1) + '" cy="' + (hy + hr * 0.4) + '" r="' + (hr * 0.3) + '" fill="' + hairDk + '" opacity="0.25"/>' +
+          '<circle cx="' + (hx + hr * 0.5) + '" cy="' + (hy + hr * 1.2) + '" r="' + (hr * 0.3) + '" fill="' + hairDk + '" opacity="0.3"/>' +
+          '<circle cx="' + (hx - hr * 1.2) + '" cy="' + (hy + hr * 0.5) + '" r="' + (hr * 0.3) + '" fill="' + hairDk + '" opacity="0.2"/>' +
+          '<circle cx="' + (hx + hr * 0.2) + '" cy="' + (hy - hr * 1.4) + '" r="' + (hr * 0.28) + '" fill="' + hairLt + '" opacity="0.25"/>' +
+          '<circle cx="' + (hx - hr * 0.4) + '" cy="' + (hy - hr * 1.2) + '" r="' + (hr * 0.3) + '" fill="' + hairLt + '" opacity="0.25"/>';
+        hf = '<path d="M ' + (hx - hr * 1.15) + ' ' + (hy - hr * 0.3) +
+          ' Q ' + (hx - hr * 1.0) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.5) + ' ' + (hy - hr * 1.3) +
+          ' Q ' + (hx) + ' ' + (hy - hr * 1.45) + ' ' + (hx + hr * 0.5) + ' ' + (hy - hr * 1.3) +
+          ' Q ' + (hx + hr * 1.0) + ' ' + (hy - hr * 1.1) + ' ' + (hx + hr * 1.15) + ' ' + (hy - hr * 0.3) +
+          ' Q ' + (hx + hr * 0.85) + ' ' + (hy - hr * 0.7) + ' ' + (hx + hr * 0.4) + ' ' + (hy - hr * 0.75) +
+          ' Q ' + (hx) + ' ' + (hy - hr * 0.85) + ' ' + (hx - hr * 0.4) + ' ' + (hy - hr * 0.75) +
+          ' Q ' + (hx - hr * 0.85) + ' ' + (hy - hr * 0.7) + ' ' + (hx - hr * 1.15) + ' ' + (hy - hr * 0.3) +
+          ' Z" fill="' + hg + '"/>' +
+          '<circle cx="' + (hx - hr * 0.6) + '" cy="' + (hy - hr * 0.85) + '" r="' + (hr * 0.2) + '" fill="' + hairLt + '" opacity="0.35"/>' +
+          '<circle cx="' + (hx + hr * 0.3) + '" cy="' + (hy - hr * 1.0) + '" r="' + (hr * 0.22) + '" fill="' + hairLt + '" opacity="0.3"/>' +
+          '<circle cx="' + (hx - hr * 0.1) + '" cy="' + (hy - hr * 0.6) + '" r="' + (hr * 0.18) + '" fill="' + hairDk + '" opacity="0.2"/>';
+
       } else if (sty === 'bun') {
-        var bunR = hr * 0.4;
-        hf = '<path d="M ' + (hx - hr * 0.9) + ' ' + (hy + hr * 0.15) + ' C ' + (hx - hr * 1.05) + ' ' + (hy - hr * 1.5) + ' ' + (hx + hr * 1.05) + ' ' + (hy - hr * 1.5) + ' ' + (hx + hr * 0.9) + ' ' + (hy + hr * 0.15) + ' L ' + (hx + hr * 0.75) + ' ' + (hy - hr * 0.4) + ' C ' + (hx + hr * 0.7) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.7) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.75) + ' ' + (hy - hr * 0.4) + ' Z" fill="' + hg + '"/>' +
-          '<circle cx="' + hx + '" cy="' + (hy - hr * 1.25) + '" r="' + bunR + '" fill="' + hg + '"/>' +
-          '<ellipse cx="' + hx + '" cy="' + (hy - hr * 0.9) + '" rx="' + (bunR * 0.45) + '" ry="' + (bunR * 0.3) + '" fill="' + hair + '"/>' +
-          '<circle cx="' + (hx - bunR * 0.3) + '" cy="' + (hy - hr * 1.4) + '" r="' + (bunR * 0.25) + '" fill="' + hairLt + '" opacity="0.2"/>';
+        // Messy top bun
+        hb = '<path d="M ' + (hx - hr * 0.95) + ' ' + (hy - hr * 0.2) +
+          ' Q ' + (hx - hr * 1.0) + ' ' + (hy + hr * 0.3) + ' ' + (hx - hr * 0.85) + ' ' + (hy + hr * 0.6) +
+          ' L ' + (hx + hr * 0.85) + ' ' + (hy + hr * 0.6) +
+          ' Q ' + (hx + hr * 1.0) + ' ' + (hy + hr * 0.3) + ' ' + (hx + hr * 0.95) + ' ' + (hy - hr * 0.2) +
+          ' Z" fill="' + hg + '"/>' +
+          '<path d="M ' + (hx - hr * 0.85) + ' ' + (hy + hr * 0.3) +
+          ' Q ' + (hx - hr * 0.7) + ' ' + (hy + hr * 0.5) + ' ' + (hx - hr * 0.5) + ' ' + (hy + hr * 0.55) +
+          ' L ' + (hx - hr * 0.6) + ' ' + (hy + hr * 0.3) +
+          ' Z" fill="' + hairDk + '" opacity="0.3"/>';
+        hf = '<path d="M ' + (hx - hr * 0.95) + ' ' + (hy - hr * 0.15) +
+          ' Q ' + (hx - hr * 0.8) + ' ' + (hy - hr * 1.1) + ' ' + (hx) + ' ' + (hy - hr * 1.15) +
+          ' Q ' + (hx + hr * 0.8) + ' ' + (hy - hr * 1.1) + ' ' + (hx + hr * 0.95) + ' ' + (hy - hr * 0.15) +
+          ' Q ' + (hx + hr * 0.7) + ' ' + (hy - hr * 0.7) + ' ' + (hx) + ' ' + (hy - hr * 0.75) +
+          ' Q ' + (hx - hr * 0.7) + ' ' + (hy - hr * 0.7) + ' ' + (hx - hr * 0.95) + ' ' + (hy - hr * 0.15) +
+          ' Z" fill="' + hg + '"/>' +
+          '<ellipse cx="' + (hx) + '" cy="' + (hy - hr * 1.55) + '" rx="' + (hr * 0.55) + '" ry="' + (hr * 0.5) + '" fill="' + hg + '"/>' +
+          '<ellipse cx="' + (hx + hr * 0.1) + '" cy="' + (hy - hr * 1.6) + '" rx="' + (hr * 0.35) + '" ry="' + (hr * 0.3) + '" fill="' + hairLt + '" opacity="0.3"/>' +
+          '<path d="M ' + (hx - hr * 0.2) + ' ' + (hy - hr * 1.15) +
+          ' Q ' + (hx - hr * 0.4) + ' ' + (hy - hr * 1.4) + ' ' + (hx - hr * 0.3) + ' ' + (hy - hr * 1.65) +
+          ' Q ' + (hx - hr * 0.1) + ' ' + (hy - hr * 1.5) + ' ' + (hx) + ' ' + (hy - hr * 1.2) +
+          ' Z" fill="' + hairDk + '" opacity="0.25"/>' +
+          '<path d="M ' + (hx + hr * 0.15) + ' ' + (hy - hr * 1.1) +
+          ' Q ' + (hx + hr * 0.4) + ' ' + (hy - hr * 1.35) + ' ' + (hx + hr * 0.35) + ' ' + (hy - hr * 1.6) +
+          ' Q ' + (hx + hr * 0.15) + ' ' + (hy - hr * 1.45) + ' ' + (hx + hr * 0.05) + ' ' + (hy - hr * 1.15) +
+          ' Z" fill="' + hairDk + '" opacity="0.2"/>' +
+          '<path d="M ' + (hx - hr * 0.15) + ' ' + (hy - hr * 0.75) +
+          ' Q ' + (hx - hr * 0.25) + ' ' + (hy - hr * 0.5) + ' ' + (hx - hr * 0.6) + ' ' + (hy - hr * 0.3) +
+          ' L ' + (hx - hr * 0.55) + ' ' + (hy - hr * 0.15) +
+          ' Q ' + (hx - hr * 0.3) + ' ' + (hy - hr * 0.4) + ' ' + (hx - hr * 0.1) + ' ' + (hy - hr * 0.6) +
+          ' Z" fill="' + hair + '" opacity="0.5"/>' +
+          '<path d="M ' + (hx + hr * 0.2) + ' ' + (hy - hr * 0.7) +
+          ' Q ' + (hx + hr * 0.35) + ' ' + (hy - hr * 0.45) + ' ' + (hx + hr * 0.65) + ' ' + (hy - hr * 0.25) +
+          ' L ' + (hx + hr * 0.6) + ' ' + (hy - hr * 0.1) +
+          ' Q ' + (hx + hr * 0.35) + ' ' + (hy - hr * 0.35) + ' ' + (hx + hr * 0.15) + ' ' + (hy - hr * 0.55) +
+          ' Z" fill="' + hair + '" opacity="0.5"/>';
+
       } else if (sty === 'ponytail') {
-        hb = '<path d="M ' + (hx + hr * 0.65) + ' ' + (hy - hr * 0.55) + ' Q ' + (hx + hr * 1.6) + ' ' + (hy + hr * 0.3) + ' ' + (hx + hr * 1.5) + ' ' + (hy + hr * 1.8) + '" stroke="' + hair + '" stroke-width="' + (hr * 0.35) + '" fill="none" stroke-linecap="round"/>' +
-          '<path d="M ' + (hx + hr * 0.65) + ' ' + (hy - hr * 0.55) + ' Q ' + (hx + hr * 1.5) + ' ' + (hy + hr * 0.2) + ' ' + (hx + hr * 1.4) + ' ' + (hy + hr * 1.5) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.12) + '" fill="none" stroke-linecap="round" opacity="0.3"/>';
-        hf = '<path d="M ' + (hx - hr * 0.9) + ' ' + (hy + hr * 0.15) + ' C ' + (hx - hr * 1.05) + ' ' + (hy - hr * 1.5) + ' ' + (hx + hr * 1.05) + ' ' + (hy - hr * 1.5) + ' ' + (hx + hr * 0.9) + ' ' + (hy + hr * 0.15) + ' L ' + (hx + hr * 0.75) + ' ' + (hy - hr * 0.4) + ' C ' + (hx + hr * 0.7) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.7) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.75) + ' ' + (hy - hr * 0.4) + ' Z" fill="' + hg + '"/>' +
-          '<circle cx="' + (hx + hr * 0.7) + '" cy="' + (hy - hr * 0.55) + '" r="' + (hr * 0.2) + '" fill="' + shirt + '"/>';
+        // High ponytail
+        hb = '<path d="M ' + (hx + hr * 0.3) + ' ' + (hy - hr * 1.1) +
+          ' Q ' + (hx + hr * 0.8) + ' ' + (hy - hr * 1.3) + ' ' + (hx + hr * 1.1) + ' ' + (hy - hr * 0.8) +
+          ' Q ' + (hx + hr * 1.4) + ' ' + (hy - hr * 0.3) + ' ' + (hx + hr * 1.3) + ' ' + (hy + hr * 0.3) +
+          ' Q ' + (hx + hr * 1.2) + ' ' + (hy + hr * 1.0) + ' ' + (hx + hr * 0.9) + ' ' + (hy + hr * 1.6) +
+          ' Q ' + (hx + hr * 0.7) + ' ' + (hy + hr * 2.0) + ' ' + (hx + hr * 0.5) + ' ' + (hy + hr * 2.1) +
+          ' Q ' + (hx + hr * 0.4) + ' ' + (hy + hr * 1.8) + ' ' + (hx + hr * 0.5) + ' ' + (hy + hr * 1.4) +
+          ' Q ' + (hx + hr * 0.6) + ' ' + (hy + hr * 0.8) + ' ' + (hx + hr * 0.7) + ' ' + (hy + hr * 0.1) +
+          ' Q ' + (hx + hr * 0.75) + ' ' + (hy - hr * 0.5) + ' ' + (hx + hr * 0.5) + ' ' + (hy - hr * 0.9) +
+          ' Z" fill="' + hg + '"/>' +
+          '<path d="M ' + (hx + hr * 1.1) + ' ' + (hy - hr * 0.5) +
+          ' Q ' + (hx + hr * 1.2) + ' ' + (hy + hr * 0.3) + ' ' + (hx + hr * 1.0) + ' ' + (hy + hr * 1.1) +
+          ' Q ' + (hx + hr * 0.85) + ' ' + (hy + hr * 0.6) + ' ' + (hx + hr * 0.9) + ' ' + (hy - hr * 0.1) +
+          ' Z" fill="' + hairDk + '" opacity="0.35"/>' +
+          '<path d="M ' + (hx + hr * 0.6) + ' ' + (hy - hr * 1.05) +
+          ' Q ' + (hx + hr * 0.9) + ' ' + (hy - hr * 1.15) + ' ' + (hx + hr * 1.05) + ' ' + (hy - hr * 0.9) +
+          ' Q ' + (hx + hr * 0.8) + ' ' + (hy - hr * 0.95) + ' ' + (hx + hr * 0.55) + ' ' + (hy - hr * 0.9) +
+          ' Z" fill="' + hairLt + '" opacity="0.3"/>';
+        hf = '<path d="M ' + (hx - hr * 0.95) + ' ' + (hy - hr * 0.1) +
+          ' Q ' + (hx - hr * 0.85) + ' ' + (hy - hr * 1.1) + ' ' + (hx) + ' ' + (hy - hr * 1.2) +
+          ' Q ' + (hx + hr * 0.85) + ' ' + (hy - hr * 1.1) + ' ' + (hx + hr * 0.95) + ' ' + (hy - hr * 0.1) +
+          ' Q ' + (hx + hr * 0.7) + ' ' + (hy - hr * 0.7) + ' ' + (hx) + ' ' + (hy - hr * 0.8) +
+          ' Q ' + (hx - hr * 0.7) + ' ' + (hy - hr * 0.7) + ' ' + (hx - hr * 0.95) + ' ' + (hy - hr * 0.1) +
+          ' Z" fill="' + hg + '"/>' +
+          '<ellipse cx="' + (hx + hr * 0.35) + '" cy="' + (hy - hr * 1.1) + '" rx="' + (hr * 0.2) + '" ry="' + (hr * 0.12) + '" fill="' + hairDk + '" opacity="0.6"/>' +
+          '<path d="M ' + (hx - hr * 0.7) + ' ' + (hy - hr * 0.75) +
+          ' Q ' + (hx - hr * 0.3) + ' ' + (hy - hr * 0.95) + ' ' + (hx + hr * 0.1) + ' ' + (hy - hr * 1.0) +
+          ' Q ' + (hx - hr * 0.1) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.4) + ' ' + (hy - hr * 1.05) +
+          ' Q ' + (hx - hr * 0.65) + ' ' + (hy - hr * 0.95) + ' ' + (hx - hr * 0.7) + ' ' + (hy - hr * 0.75) +
+          ' Z" fill="' + hairLt + '" opacity="0.3"/>';
+
       } else if (sty === 'spiky') {
-        hf = '<path d="M ' + (hx - hr * 0.85) + ' ' + (hy + hr * 0.15) + ' C ' + (hx - hr * 0.85) + ' ' + (hy - hr * 0.6) + ' ' + (hx + hr * 0.85) + ' ' + (hy - hr * 0.6) + ' ' + (hx + hr * 0.85) + ' ' + (hy + hr * 0.15) + ' L ' + (hx + hr * 0.7) + ' ' + (hy - hr * 0.2) + ' C ' + (hx + hr * 0.65) + ' ' + (hy - hr * 0.5) + ' ' + (hx - hr * 0.65) + ' ' + (hy - hr * 0.5) + ' ' + (hx - hr * 0.7) + ' ' + (hy - hr * 0.2) + ' Z" fill="' + hg + '"/>' +
-          '<polygon points="' + hx + ',' + (hy - hr * 1.5) + ' ' + (hx - hr * 0.3) + ',' + (hy - hr * 0.55) + ' ' + (hx + hr * 0.3) + ',' + (hy - hr * 0.55) + '" fill="' + hg + '"/>' +
-          '<polygon points="' + (hx - hr * 0.5) + ',' + (hy - hr * 1.3) + ' ' + (hx - hr * 0.8) + ',' + (hy - hr * 0.35) + ' ' + (hx - hr * 0.2) + ',' + (hy - hr * 0.45) + '" fill="' + hair + '"/>' +
-          '<polygon points="' + (hx + hr * 0.5) + ',' + (hy - hr * 1.3) + ' ' + (hx + hr * 0.2) + ',' + (hy - hr * 0.45) + ' ' + (hx + hr * 0.8) + ',' + (hy - hr * 0.35) + '" fill="' + hair + '"/>' +
-          '<polygon points="' + (hx - hr * 1) + ',' + (hy - hr * 0.65) + ' ' + (hx - hr * 1.15) + ',' + (hy - hr * 0.05) + ' ' + (hx - hr * 0.65) + ',' + (hy - hr * 0.15) + '" fill="' + hg + '"/>' +
-          '<polygon points="' + (hx + hr * 1) + ',' + (hy - hr * 0.65) + ' ' + (hx + hr * 0.65) + ',' + (hy - hr * 0.15) + ' ' + (hx + hr * 1.15) + ',' + (hy - hr * 0.05) + '" fill="' + hg + '"/>';
+        // Edgy short spiky
+        hb = '<path d="M ' + (hx - hr * 0.9) + ' ' + (hy + hr * 0.1) +
+          ' Q ' + (hx - hr * 0.95) + ' ' + (hy + hr * 0.4) + ' ' + (hx - hr * 0.8) + ' ' + (hy + hr * 0.5) +
+          ' L ' + (hx + hr * 0.8) + ' ' + (hy + hr * 0.5) +
+          ' Q ' + (hx + hr * 0.95) + ' ' + (hy + hr * 0.4) + ' ' + (hx + hr * 0.9) + ' ' + (hy + hr * 0.1) +
+          ' Z" fill="' + hg + '"/>';
+        hf = '<path d="M ' + (hx - hr * 1.1) + ' ' + (hy - hr * 0.2) +
+          ' L ' + (hx - hr * 1.3) + ' ' + (hy - hr * 0.9) +
+          ' L ' + (hx - hr * 0.85) + ' ' + (hy - hr * 0.5) +
+          ' L ' + (hx - hr * 0.9) + ' ' + (hy - hr * 1.4) +
+          ' L ' + (hx - hr * 0.5) + ' ' + (hy - hr * 0.85) +
+          ' L ' + (hx - hr * 0.3) + ' ' + (hy - hr * 1.7) +
+          ' L ' + (hx - hr * 0.1) + ' ' + (hy - hr * 1.0) +
+          ' L ' + (hx + hr * 0.15) + ' ' + (hy - hr * 1.6) +
+          ' L ' + (hx + hr * 0.3) + ' ' + (hy - hr * 0.9) +
+          ' L ' + (hx + hr * 0.6) + ' ' + (hy - hr * 1.5) +
+          ' L ' + (hx + hr * 0.6) + ' ' + (hy - hr * 0.7) +
+          ' L ' + (hx + hr * 1.0) + ' ' + (hy - hr * 1.2) +
+          ' L ' + (hx + hr * 0.9) + ' ' + (hy - hr * 0.4) +
+          ' L ' + (hx + hr * 1.3) + ' ' + (hy - hr * 0.6) +
+          ' L ' + (hx + hr * 1.1) + ' ' + (hy - hr * 0.1) +
+          ' Q ' + (hx + hr * 0.9) + ' ' + (hy - hr * 0.6) + ' ' + (hx) + ' ' + (hy - hr * 0.7) +
+          ' Q ' + (hx - hr * 0.9) + ' ' + (hy - hr * 0.6) + ' ' + (hx - hr * 1.1) + ' ' + (hy - hr * 0.2) +
+          ' Z" fill="' + hg + '"/>' +
+          '<path d="M ' + (hx - hr * 0.3) + ' ' + (hy - hr * 1.5) +
+          ' L ' + (hx - hr * 0.15) + ' ' + (hy - hr * 0.95) +
+          ' L ' + (hx + hr * 0.1) + ' ' + (hy - hr * 1.4) +
+          ' L ' + (hx + hr * 0.2) + ' ' + (hy - hr * 0.9) +
+          ' L ' + (hx - hr * 0.1) + ' ' + (hy - hr * 0.8) +
+          ' Z" fill="' + hairLt + '" opacity="0.35"/>' +
+          '<path d="M ' + (hx + hr * 0.5) + ' ' + (hy - hr * 1.3) +
+          ' L ' + (hx + hr * 0.55) + ' ' + (hy - hr * 0.75) +
+          ' L ' + (hx + hr * 0.9) + ' ' + (hy - hr * 1.0) +
+          ' L ' + (hx + hr * 0.8) + ' ' + (hy - hr * 0.5) +
+          ' L ' + (hx + hr * 0.5) + ' ' + (hy - hr * 0.6) +
+          ' Z" fill="' + hairDk + '" opacity="0.3"/>';
+
       } else if (sty === 'twinpig') {
-        var ptW = hr * 0.3;
-        hb = '<path d="M ' + (hx - hr * 0.75) + ' ' + (hy - hr * 0.2) + ' Q ' + (hx - hr * 1.3) + ' ' + (hy + hr * 0.5) + ' ' + (hx - hr * 1.2) + ' ' + (hy + hr * 1.8) + '" stroke="' + hair + '" stroke-width="' + ptW + '" fill="none" stroke-linecap="round"/>' +
-          '<path d="M ' + (hx + hr * 0.75) + ' ' + (hy - hr * 0.2) + ' Q ' + (hx + hr * 1.3) + ' ' + (hy + hr * 0.5) + ' ' + (hx + hr * 1.2) + ' ' + (hy + hr * 1.8) + '" stroke="' + hair + '" stroke-width="' + ptW + '" fill="none" stroke-linecap="round"/>' +
-          '<path d="M ' + (hx - hr * 0.75) + ' ' + (hy - hr * 0.2) + ' Q ' + (hx - hr * 1.25) + ' ' + (hy + hr * 0.4) + ' ' + (hx - hr * 1.15) + ' ' + (hy + hr * 1.5) + '" stroke="' + hairLt + '" stroke-width="' + (ptW * 0.3) + '" fill="none" stroke-linecap="round" opacity="0.3"/>' +
-          '<path d="M ' + (hx + hr * 0.75) + ' ' + (hy - hr * 0.2) + ' Q ' + (hx + hr * 1.25) + ' ' + (hy + hr * 0.4) + ' ' + (hx + hr * 1.15) + ' ' + (hy + hr * 1.5) + '" stroke="' + hairLt + '" stroke-width="' + (ptW * 0.3) + '" fill="none" stroke-linecap="round" opacity="0.3"/>';
-        hf = '<path d="M ' + (hx - hr * 0.9) + ' ' + (hy + hr * 0.15) + ' C ' + (hx - hr * 1.05) + ' ' + (hy - hr * 1.5) + ' ' + (hx + hr * 1.05) + ' ' + (hy - hr * 1.5) + ' ' + (hx + hr * 0.9) + ' ' + (hy + hr * 0.15) + ' L ' + (hx + hr * 0.75) + ' ' + (hy - hr * 0.4) + ' C ' + (hx + hr * 0.7) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.7) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.75) + ' ' + (hy - hr * 0.4) + ' Z" fill="' + hg + '"/>' +
-          '<circle cx="' + (hx - hr * 0.78) + '" cy="' + (hy - hr * 0.25) + '" r="' + (hr * 0.15) + '" fill="' + shirt + '"/>' +
-          '<circle cx="' + (hx + hr * 0.78) + '" cy="' + (hy - hr * 0.25) + '" r="' + (hr * 0.15) + '" fill="' + shirt + '"/>';
+        // Twin pigtails
+        hb = '<path d="M ' + (hx - hr * 0.8) + ' ' + (hy - hr * 0.3) +
+          ' Q ' + (hx - hr * 1.2) + ' ' + (hy - hr * 0.1) + ' ' + (hx - hr * 1.3) + ' ' + (hy + hr * 0.4) +
+          ' Q ' + (hx - hr * 1.4) + ' ' + (hy + hr * 1.0) + ' ' + (hx - hr * 1.2) + ' ' + (hy + hr * 1.6) +
+          ' Q ' + (hx - hr * 1.1) + ' ' + (hy + hr * 2.0) + ' ' + (hx - hr * 0.85) + ' ' + (hy + hr * 2.0) +
+          ' Q ' + (hx - hr * 0.6) + ' ' + (hy + hr * 1.9) + ' ' + (hx - hr * 0.6) + ' ' + (hy + hr * 1.5) +
+          ' Q ' + (hx - hr * 0.65) + ' ' + (hy + hr * 1.0) + ' ' + (hx - hr * 0.7) + ' ' + (hy + hr * 0.4) +
+          ' Z" fill="' + hg + '"/>' +
+          '<path d="M ' + (hx + hr * 0.8) + ' ' + (hy - hr * 0.3) +
+          ' Q ' + (hx + hr * 1.2) + ' ' + (hy - hr * 0.1) + ' ' + (hx + hr * 1.3) + ' ' + (hy + hr * 0.4) +
+          ' Q ' + (hx + hr * 1.4) + ' ' + (hy + hr * 1.0) + ' ' + (hx + hr * 1.2) + ' ' + (hy + hr * 1.6) +
+          ' Q ' + (hx + hr * 1.1) + ' ' + (hy + hr * 2.0) + ' ' + (hx + hr * 0.85) + ' ' + (hy + hr * 2.0) +
+          ' Q ' + (hx + hr * 0.6) + ' ' + (hy + hr * 1.9) + ' ' + (hx + hr * 0.6) + ' ' + (hy + hr * 1.5) +
+          ' Q ' + (hx + hr * 0.65) + ' ' + (hy + hr * 1.0) + ' ' + (hx + hr * 0.7) + ' ' + (hy + hr * 0.4) +
+          ' Z" fill="' + hg + '"/>' +
+          '<path d="M ' + (hx - hr * 1.3) + ' ' + (hy + hr * 0.7) +
+          ' Q ' + (hx - hr * 1.2) + ' ' + (hy + hr * 1.2) + ' ' + (hx - hr * 1.0) + ' ' + (hy + hr * 1.6) +
+          ' Q ' + (hx - hr * 0.9) + ' ' + (hy + hr * 1.2) + ' ' + (hx - hr * 1.0) + ' ' + (hy + hr * 0.7) +
+          ' Z" fill="' + hairDk + '" opacity="0.35"/>' +
+          '<path d="M ' + (hx + hr * 1.3) + ' ' + (hy + hr * 0.7) +
+          ' Q ' + (hx + hr * 1.2) + ' ' + (hy + hr * 1.2) + ' ' + (hx + hr * 1.0) + ' ' + (hy + hr * 1.6) +
+          ' Q ' + (hx + hr * 0.9) + ' ' + (hy + hr * 1.2) + ' ' + (hx + hr * 1.0) + ' ' + (hy + hr * 0.7) +
+          ' Z" fill="' + hairDk + '" opacity="0.35"/>';
+        hf = '<path d="M ' + (hx - hr * 1.05) + ' ' + (hy - hr * 0.15) +
+          ' Q ' + (hx - hr * 0.9) + ' ' + (hy - hr * 1.2) + ' ' + (hx) + ' ' + (hy - hr * 1.3) +
+          ' Q ' + (hx + hr * 0.9) + ' ' + (hy - hr * 1.2) + ' ' + (hx + hr * 1.05) + ' ' + (hy - hr * 0.15) +
+          ' Q ' + (hx + hr * 0.8) + ' ' + (hy - hr * 0.75) + ' ' + (hx) + ' ' + (hy - hr * 0.8) +
+          ' Q ' + (hx - hr * 0.8) + ' ' + (hy - hr * 0.75) + ' ' + (hx - hr * 1.05) + ' ' + (hy - hr * 0.15) +
+          ' Z" fill="' + hg + '"/>' +
+          '<path d="M ' + (hx - hr * 0.7) + ' ' + (hy - hr * 0.6) +
+          ' Q ' + (hx - hr * 0.35) + ' ' + (hy - hr * 0.4) + ' ' + (hx) + ' ' + (hy - hr * 0.5) +
+          ' Q ' + (hx + hr * 0.35) + ' ' + (hy - hr * 0.6) + ' ' + (hx + hr * 0.7) + ' ' + (hy - hr * 0.55) +
+          ' Q ' + (hx + hr * 0.4) + ' ' + (hy - hr * 0.9) + ' ' + (hx) + ' ' + (hy - hr * 1.0) +
+          ' Q ' + (hx - hr * 0.4) + ' ' + (hy - hr * 0.9) + ' ' + (hx - hr * 0.7) + ' ' + (hy - hr * 0.6) +
+          ' Z" fill="' + hairLt + '" opacity="0.3"/>' +
+          '<circle cx="' + (hx - hr * 0.85) + '" cy="' + (hy - hr * 0.2) + '" r="' + (hr * 0.12) + '" fill="' + hairDk + '"/>' +
+          '<circle cx="' + (hx + hr * 0.85) + '" cy="' + (hy - hr * 0.2) + '" r="' + (hr * 0.12) + '" fill="' + hairDk + '"/>';
+
       } else if (sty === 'spacebuns') {
-        var sbR = hr * 0.32;
-        hf = '<path d="M ' + (hx - hr * 0.9) + ' ' + (hy + hr * 0.15) + ' C ' + (hx - hr * 1.05) + ' ' + (hy - hr * 1.5) + ' ' + (hx + hr * 1.05) + ' ' + (hy - hr * 1.5) + ' ' + (hx + hr * 0.9) + ' ' + (hy + hr * 0.15) + ' L ' + (hx + hr * 0.75) + ' ' + (hy - hr * 0.4) + ' C ' + (hx + hr * 0.7) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.7) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.75) + ' ' + (hy - hr * 0.4) + ' Z" fill="' + hg + '"/>' +
-          '<circle cx="' + (hx - hr * 0.7) + '" cy="' + (hy - hr * 0.95) + '" r="' + sbR + '" fill="' + hg + '"/>' +
-          '<circle cx="' + (hx + hr * 0.7) + '" cy="' + (hy - hr * 0.95) + '" r="' + sbR + '" fill="' + hg + '"/>' +
-          '<circle cx="' + (hx - hr * 0.7 - sbR * 0.2) + '" cy="' + (hy - hr * 0.95 - sbR * 0.3) + '" r="' + (sbR * 0.25) + '" fill="' + hairLt + '" opacity="0.2"/>' +
-          '<circle cx="' + (hx + hr * 0.7 - sbR * 0.2) + '" cy="' + (hy - hr * 0.95 - sbR * 0.3) + '" r="' + (sbR * 0.25) + '" fill="' + hairLt + '" opacity="0.2"/>';
+        // Two round buns on top of head (Sailor Moon style)
+        hb = '<path d="M ' + (hx - hr * 1.0) + ' ' + (hy - hr * 0.1) +
+          ' Q ' + (hx - hr * 1.0) + ' ' + (hy + hr * 0.4) + ' ' + (hx - hr * 0.8) + ' ' + (hy + hr * 0.55) +
+          ' L ' + (hx + hr * 0.8) + ' ' + (hy + hr * 0.55) +
+          ' Q ' + (hx + hr * 1.0) + ' ' + (hy + hr * 0.4) + ' ' + (hx + hr * 1.0) + ' ' + (hy - hr * 0.1) +
+          ' Z" fill="' + hg + '"/>';
+        hf = '<path d="M ' + (hx - hr * 1.0) + ' ' + (hy - hr * 0.1) +
+          ' Q ' + (hx - hr * 0.85) + ' ' + (hy - hr * 1.05) + ' ' + (hx) + ' ' + (hy - hr * 1.1) +
+          ' Q ' + (hx + hr * 0.85) + ' ' + (hy - hr * 1.05) + ' ' + (hx + hr * 1.0) + ' ' + (hy - hr * 0.1) +
+          ' Q ' + (hx + hr * 0.75) + ' ' + (hy - hr * 0.65) + ' ' + (hx) + ' ' + (hy - hr * 0.7) +
+          ' Q ' + (hx - hr * 0.75) + ' ' + (hy - hr * 0.65) + ' ' + (hx - hr * 1.0) + ' ' + (hy - hr * 0.1) +
+          ' Z" fill="' + hg + '"/>' +
+          '<circle cx="' + (hx - hr * 0.7) + '" cy="' + (hy - hr * 1.35) + '" r="' + (hr * 0.45) + '" fill="' + hg + '"/>' +
+          '<circle cx="' + (hx + hr * 0.7) + '" cy="' + (hy - hr * 1.35) + '" r="' + (hr * 0.45) + '" fill="' + hg + '"/>' +
+          '<circle cx="' + (hx - hr * 0.6) + '" cy="' + (hy - hr * 1.45) + '" r="' + (hr * 0.2) + '" fill="' + hairLt + '" opacity="0.35"/>' +
+          '<circle cx="' + (hx + hr * 0.6) + '" cy="' + (hy - hr * 1.45) + '" r="' + (hr * 0.2) + '" fill="' + hairLt + '" opacity="0.35"/>' +
+          '<path d="M ' + (hx - hr * 0.85) + ' ' + (hy - hr * 1.05) +
+          ' Q ' + (hx - hr * 0.95) + ' ' + (hy - hr * 1.3) + ' ' + (hx - hr * 0.85) + ' ' + (hy - hr * 1.55) +
+          ' Q ' + (hx - hr * 0.7) + ' ' + (hy - hr * 1.35) + ' ' + (hx - hr * 0.7) + ' ' + (hy - hr * 1.1) +
+          ' Z" fill="' + hairDk + '" opacity="0.3"/>' +
+          '<path d="M ' + (hx + hr * 0.85) + ' ' + (hy - hr * 1.05) +
+          ' Q ' + (hx + hr * 0.95) + ' ' + (hy - hr * 1.3) + ' ' + (hx + hr * 0.85) + ' ' + (hy - hr * 1.55) +
+          ' Q ' + (hx + hr * 0.7) + ' ' + (hy - hr * 1.35) + ' ' + (hx + hr * 0.7) + ' ' + (hy - hr * 1.1) +
+          ' Z" fill="' + hairDk + '" opacity="0.3"/>' +
+          '<path d="M ' + (hx - hr * 0.65) + ' ' + (hy - hr * 0.7) +
+          ' Q ' + (hx - hr * 0.3) + ' ' + (hy - hr * 0.5) + ' ' + (hx) + ' ' + (hy - hr * 0.55) +
+          ' Q ' + (hx + hr * 0.3) + ' ' + (hy - hr * 0.6) + ' ' + (hx + hr * 0.65) + ' ' + (hy - hr * 0.65) +
+          ' Q ' + (hx + hr * 0.3) + ' ' + (hy - hr * 0.85) + ' ' + (hx) + ' ' + (hy - hr * 0.9) +
+          ' Q ' + (hx - hr * 0.3) + ' ' + (hy - hr * 0.85) + ' ' + (hx - hr * 0.65) + ' ' + (hy - hr * 0.7) +
+          ' Z" fill="' + hairLt + '" opacity="0.25"/>';
+
       } else if (sty === 'longwavy') {
-        var ww = hr * 1.15;
-        hb = '<path d="M ' + (hx - ww) + ' ' + (hy - hr * 0.1) + ' Q ' + (hx - ww - hr * 0.2) + ' ' + (hy + hr * 0.4) + ' ' + (hx - ww + hr * 0.1) + ' ' + (hy + hr * 0.9) + ' Q ' + (hx - ww - hr * 0.3) + ' ' + (hy + hr * 1.4) + ' ' + (hx - ww + hr * 0.2) + ' ' + (hy + hr * 2.2) + ' L ' + (hx - hr * 0.6) + ' ' + (hy + hr * 2) + ' Q ' + (hx - hr * 0.65) + ' ' + (hy + hr * 1.2) + ' ' + (hx - hr * 0.7) + ' ' + (hy + hr * 0.5) + ' Z" fill="' + hg + '"/>' +
-          '<path d="M ' + (hx + ww) + ' ' + (hy - hr * 0.1) + ' Q ' + (hx + ww + hr * 0.2) + ' ' + (hy + hr * 0.4) + ' ' + (hx + ww - hr * 0.1) + ' ' + (hy + hr * 0.9) + ' Q ' + (hx + ww + hr * 0.3) + ' ' + (hy + hr * 1.4) + ' ' + (hx + ww - hr * 0.2) + ' ' + (hy + hr * 2.2) + ' L ' + (hx + hr * 0.6) + ' ' + (hy + hr * 2) + ' Q ' + (hx + hr * 0.65) + ' ' + (hy + hr * 1.2) + ' ' + (hx + hr * 0.7) + ' ' + (hy + hr * 0.5) + ' Z" fill="' + hg + '"/>';
-        hf = '<path d="M ' + (hx - hr * 0.9) + ' ' + (hy + hr * 0.15) + ' C ' + (hx - hr * 1.05) + ' ' + (hy - hr * 1.5) + ' ' + (hx + hr * 1.05) + ' ' + (hy - hr * 1.5) + ' ' + (hx + hr * 0.9) + ' ' + (hy + hr * 0.15) + ' L ' + (hx + hr * 0.75) + ' ' + (hy - hr * 0.4) + ' C ' + (hx + hr * 0.7) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.7) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.75) + ' ' + (hy - hr * 0.4) + ' Z" fill="' + hg + '"/>';
+        // Long wavy/curly hair
+        hb = '<path d="M ' + (hx - hr * 1.1) + ' ' + (hy - hr * 0.3) +
+          ' Q ' + (hx - hr * 1.3) + ' ' + (hy + hr * 0.3) + ' ' + (hx - hr * 1.1) + ' ' + (hy + hr * 0.9) +
+          ' Q ' + (hx - hr * 0.9) + ' ' + (hy + hr * 1.3) + ' ' + (hx - hr * 1.15) + ' ' + (hy + hr * 1.7) +
+          ' Q ' + (hx - hr * 1.0) + ' ' + (hy + hr * 2.1) + ' ' + (hx - hr * 0.7) + ' ' + (hy + hr * 2.2) +
+          ' Q ' + (hx - hr * 0.5) + ' ' + (hy + hr * 2.0) + ' ' + (hx - hr * 0.4) + ' ' + (hy + hr * 1.6) +
+          ' Q ' + (hx - hr * 0.3) + ' ' + (hy + hr * 1.2) + ' ' + (hx - hr * 0.2) + ' ' + (hy + hr * 0.8) +
+          ' L ' + (hx + hr * 0.2) + ' ' + (hy + hr * 0.8) +
+          ' Q ' + (hx + hr * 0.3) + ' ' + (hy + hr * 1.2) + ' ' + (hx + hr * 0.4) + ' ' + (hy + hr * 1.6) +
+          ' Q ' + (hx + hr * 0.5) + ' ' + (hy + hr * 2.0) + ' ' + (hx + hr * 0.7) + ' ' + (hy + hr * 2.2) +
+          ' Q ' + (hx + hr * 1.0) + ' ' + (hy + hr * 2.1) + ' ' + (hx + hr * 1.15) + ' ' + (hy + hr * 1.7) +
+          ' Q ' + (hx + hr * 0.9) + ' ' + (hy + hr * 1.3) + ' ' + (hx + hr * 1.1) + ' ' + (hy + hr * 0.9) +
+          ' Q ' + (hx + hr * 1.3) + ' ' + (hy + hr * 0.3) + ' ' + (hx + hr * 1.1) + ' ' + (hy - hr * 0.3) +
+          ' Z" fill="' + hg + '"/>' +
+          '<path d="M ' + (hx - hr * 1.1) + ' ' + (hy + hr * 0.9) +
+          ' Q ' + (hx - hr * 0.95) + ' ' + (hy + hr * 1.2) + ' ' + (hx - hr * 1.1) + ' ' + (hy + hr * 1.5) +
+          ' Q ' + (hx - hr * 0.9) + ' ' + (hy + hr * 1.3) + ' ' + (hx - hr * 0.85) + ' ' + (hy + hr * 1.0) +
+          ' Z" fill="' + hairDk + '" opacity="0.35"/>' +
+          '<path d="M ' + (hx + hr * 1.1) + ' ' + (hy + hr * 0.9) +
+          ' Q ' + (hx + hr * 0.95) + ' ' + (hy + hr * 1.2) + ' ' + (hx + hr * 1.1) + ' ' + (hy + hr * 1.5) +
+          ' Q ' + (hx + hr * 0.9) + ' ' + (hy + hr * 1.3) + ' ' + (hx + hr * 0.85) + ' ' + (hy + hr * 1.0) +
+          ' Z" fill="' + hairDk + '" opacity="0.35"/>' +
+          '<path d="M ' + (hx - hr * 0.6) + ' ' + (hy + hr * 1.6) +
+          ' Q ' + (hx - hr * 0.75) + ' ' + (hy + hr * 1.9) + ' ' + (hx - hr * 0.65) + ' ' + (hy + hr * 2.1) +
+          ' Q ' + (hx - hr * 0.5) + ' ' + (hy + hr * 1.85) + ' ' + (hx - hr * 0.45) + ' ' + (hy + hr * 1.5) +
+          ' Z" fill="' + hairLt + '" opacity="0.25"/>' +
+          '<path d="M ' + (hx + hr * 0.6) + ' ' + (hy + hr * 1.6) +
+          ' Q ' + (hx + hr * 0.75) + ' ' + (hy + hr * 1.9) + ' ' + (hx + hr * 0.65) + ' ' + (hy + hr * 2.1) +
+          ' Q ' + (hx + hr * 0.5) + ' ' + (hy + hr * 1.85) + ' ' + (hx + hr * 0.45) + ' ' + (hy + hr * 1.5) +
+          ' Z" fill="' + hairLt + '" opacity="0.25"/>';
+        hf = '<path d="M ' + (hx - hr * 1.1) + ' ' + (hy - hr * 0.1) +
+          ' Q ' + (hx - hr * 0.95) + ' ' + (hy - hr * 1.3) + ' ' + (hx) + ' ' + (hy - hr * 1.4) +
+          ' Q ' + (hx + hr * 0.95) + ' ' + (hy - hr * 1.3) + ' ' + (hx + hr * 1.1) + ' ' + (hy - hr * 0.1) +
+          ' Q ' + (hx + hr * 0.85) + ' ' + (hy - hr * 0.8) + ' ' + (hx) + ' ' + (hy - hr * 0.85) +
+          ' Q ' + (hx - hr * 0.85) + ' ' + (hy - hr * 0.8) + ' ' + (hx - hr * 1.1) + ' ' + (hy - hr * 0.1) +
+          ' Z" fill="' + hg + '"/>' +
+          '<path d="M ' + (hx - hr * 0.9) + ' ' + (hy - hr * 0.65) +
+          ' Q ' + (hx - hr * 0.5) + ' ' + (hy - hr * 0.4) + ' ' + (hx - hr * 0.2) + ' ' + (hy - hr * 0.55) +
+          ' Q ' + (hx + hr * 0.2) + ' ' + (hy - hr * 0.7) + ' ' + (hx + hr * 0.5) + ' ' + (hy - hr * 0.55) +
+          ' Q ' + (hx + hr * 0.3) + ' ' + (hy - hr * 0.9) + ' ' + (hx) + ' ' + (hy - hr * 1.05) +
+          ' Q ' + (hx - hr * 0.5) + ' ' + (hy - hr * 1.0) + ' ' + (hx - hr * 0.9) + ' ' + (hy - hr * 0.65) +
+          ' Z" fill="' + hairLt + '" opacity="0.3"/>' +
+          '<path d="M ' + (hx - hr * 1.05) + ' ' + (hy - hr * 0.05) +
+          ' Q ' + (hx - hr * 1.2) + ' ' + (hy + hr * 0.4) + ' ' + (hx - hr * 1.05) + ' ' + (hy + hr * 0.7) +
+          ' L ' + (hx - hr * 0.9) + ' ' + (hy + hr * 0.5) +
+          ' Q ' + (hx - hr * 0.95) + ' ' + (hy + hr * 0.2) + ' ' + (hx - hr * 0.9) + ' ' + (hy - hr * 0.05) +
+          ' Z" fill="' + hg + '"/>' +
+          '<path d="M ' + (hx + hr * 1.05) + ' ' + (hy - hr * 0.05) +
+          ' Q ' + (hx + hr * 1.2) + ' ' + (hy + hr * 0.4) + ' ' + (hx + hr * 1.05) + ' ' + (hy + hr * 0.7) +
+          ' L ' + (hx + hr * 0.9) + ' ' + (hy + hr * 0.5) +
+          ' Q ' + (hx + hr * 0.95) + ' ' + (hy + hr * 0.2) + ' ' + (hx + hr * 0.9) + ' ' + (hy - hr * 0.05) +
+          ' Z" fill="' + hg + '"/>';
+
       } else if (sty === 'sidefringe') {
-        hf = '<path d="M ' + (hx - hr * 0.95) + ' ' + (hy + hr * 0.2) + ' C ' + (hx - hr * 1.1) + ' ' + (hy - hr * 1.55) + ' ' + (hx + hr * 1.1) + ' ' + (hy - hr * 1.55) + ' ' + (hx + hr * 0.95) + ' ' + (hy + hr * 0.2) + ' Q ' + (hx + hr * 0.9) + ' ' + (hy + hr * 0.5) + ' ' + (hx + hr * 0.75) + ' ' + (hy + hr * 0.35) + ' L ' + (hx + hr * 0.7) + ' ' + (hy - hr * 0.35) + ' C ' + (hx + hr * 0.65) + ' ' + (hy - hr * 1.05) + ' ' + (hx - hr * 0.65) + ' ' + (hy - hr * 1.05) + ' ' + (hx - hr * 0.7) + ' ' + (hy - hr * 0.35) + ' L ' + (hx - hr * 0.75) + ' ' + (hy + hr * 0.35) + ' Q ' + (hx - hr * 0.9) + ' ' + (hy + hr * 0.5) + ' ' + (hx - hr * 0.95) + ' ' + (hy + hr * 0.2) + ' Z" fill="' + hg + '"/>' +
-          '<path d="M ' + (hx - hr * 0.7) + ' ' + (hy - hr * 0.4) + ' Q ' + (hx - hr * 1.0) + ' ' + (hy - hr * 0.1) + ' ' + (hx - hr * 0.95) + ' ' + (hy + hr * 0.25) + ' L ' + (hx - hr * 0.3) + ' ' + (hy + hr * 0.05) + ' Q ' + (hx - hr * 0.2) + ' ' + (hy - hr * 0.6) + ' ' + (hx - hr * 0.5) + ' ' + (hy - hr * 0.7) + ' Z" fill="' + hair + '" opacity="0.5"/>';
+        // Asymmetric side-swept fringe
+        hb = '<path d="M ' + (hx - hr * 1.05) + ' ' + (hy - hr * 0.2) +
+          ' Q ' + (hx - hr * 1.1) + ' ' + (hy + hr * 0.4) + ' ' + (hx - hr * 0.95) + ' ' + (hy + hr * 0.8) +
+          ' Q ' + (hx - hr * 0.8) + ' ' + (hy + hr * 1.0) + ' ' + (hx - hr * 0.6) + ' ' + (hy + hr * 1.0) +
+          ' L ' + (hx + hr * 0.6) + ' ' + (hy + hr * 1.0) +
+          ' Q ' + (hx + hr * 0.8) + ' ' + (hy + hr * 1.0) + ' ' + (hx + hr * 0.95) + ' ' + (hy + hr * 0.8) +
+          ' Q ' + (hx + hr * 1.1) + ' ' + (hy + hr * 0.4) + ' ' + (hx + hr * 1.05) + ' ' + (hy - hr * 0.2) +
+          ' Z" fill="' + hg + '"/>' +
+          '<path d="M ' + (hx - hr * 0.95) + ' ' + (hy + hr * 0.5) +
+          ' Q ' + (hx - hr * 0.85) + ' ' + (hy + hr * 0.75) + ' ' + (hx - hr * 0.65) + ' ' + (hy + hr * 0.95) +
+          ' Q ' + (hx - hr * 0.75) + ' ' + (hy + hr * 0.7) + ' ' + (hx - hr * 0.8) + ' ' + (hy + hr * 0.45) +
+          ' Z" fill="' + hairDk + '" opacity="0.3"/>';
+        hf = '<path d="M ' + (hx - hr * 1.05) + ' ' + (hy - hr * 0.15) +
+          ' Q ' + (hx - hr * 0.9) + ' ' + (hy - hr * 1.2) + ' ' + (hx) + ' ' + (hy - hr * 1.3) +
+          ' Q ' + (hx + hr * 0.9) + ' ' + (hy - hr * 1.2) + ' ' + (hx + hr * 1.05) + ' ' + (hy - hr * 0.15) +
+          ' Q ' + (hx + hr * 0.8) + ' ' + (hy - hr * 0.75) + ' ' + (hx) + ' ' + (hy - hr * 0.8) +
+          ' Q ' + (hx - hr * 0.8) + ' ' + (hy - hr * 0.75) + ' ' + (hx - hr * 1.05) + ' ' + (hy - hr * 0.15) +
+          ' Z" fill="' + hg + '"/>' +
+          '<path d="M ' + (hx - hr * 0.9) + ' ' + (hy - hr * 0.9) +
+          ' Q ' + (hx - hr * 0.4) + ' ' + (hy - hr * 0.7) + ' ' + (hx + hr * 0.3) + ' ' + (hy - hr * 0.3) +
+          ' Q ' + (hx + hr * 0.7) + ' ' + (hy - hr * 0.15) + ' ' + (hx + hr * 1.0) + ' ' + (hy - hr * 0.1) +
+          ' L ' + (hx + hr * 0.95) + ' ' + (hy - hr * 0.3) +
+          ' Q ' + (hx + hr * 0.6) + ' ' + (hy - hr * 0.4) + ' ' + (hx + hr * 0.2) + ' ' + (hy - hr * 0.55) +
+          ' Q ' + (hx - hr * 0.3) + ' ' + (hy - hr * 0.8) + ' ' + (hx - hr * 0.7) + ' ' + (hy - hr * 1.0) +
+          ' Z" fill="' + hg + '"/>' +
+          '<path d="M ' + (hx - hr * 0.85) + ' ' + (hy - hr * 0.85) +
+          ' Q ' + (hx - hr * 0.3) + ' ' + (hy - hr * 0.65) + ' ' + (hx + hr * 0.2) + ' ' + (hy - hr * 0.4) +
+          ' Q ' + (hx - hr * 0.1) + ' ' + (hy - hr * 0.7) + ' ' + (hx - hr * 0.5) + ' ' + (hy - hr * 0.9) +
+          ' Z" fill="' + hairLt + '" opacity="0.35"/>' +
+          '<path d="M ' + (hx + hr * 0.4) + ' ' + (hy - hr * 0.35) +
+          ' Q ' + (hx + hr * 0.6) + ' ' + (hy - hr * 0.25) + ' ' + (hx + hr * 0.85) + ' ' + (hy - hr * 0.2) +
+          ' Q ' + (hx + hr * 0.65) + ' ' + (hy - hr * 0.35) + ' ' + (hx + hr * 0.45) + ' ' + (hy - hr * 0.5) +
+          ' Z" fill="' + hairDk + '" opacity="0.25"/>';
+
       } else if (sty === 'lowpig') {
-        var lpW = hr * 0.25;
-        hb = '<path d="M ' + (hx - hr * 0.85) + ' ' + (hy + hr * 0.3) + ' Q ' + (hx - hr * 1.1) + ' ' + (hy + hr * 0.8) + ' ' + (hx - hr * 0.9) + ' ' + (hy + hr * 1.8) + '" stroke="' + hair + '" stroke-width="' + lpW + '" fill="none" stroke-linecap="round"/>' +
-          '<path d="M ' + (hx + hr * 0.85) + ' ' + (hy + hr * 0.3) + ' Q ' + (hx + hr * 1.1) + ' ' + (hy + hr * 0.8) + ' ' + (hx + hr * 0.9) + ' ' + (hy + hr * 1.8) + '" stroke="' + hair + '" stroke-width="' + lpW + '" fill="none" stroke-linecap="round"/>';
-        hf = '<path d="M ' + (hx - hr * 0.9) + ' ' + (hy + hr * 0.15) + ' C ' + (hx - hr * 1.05) + ' ' + (hy - hr * 1.5) + ' ' + (hx + hr * 1.05) + ' ' + (hy - hr * 1.5) + ' ' + (hx + hr * 0.9) + ' ' + (hy + hr * 0.15) + ' L ' + (hx + hr * 0.75) + ' ' + (hy - hr * 0.4) + ' C ' + (hx + hr * 0.7) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.7) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.75) + ' ' + (hy - hr * 0.4) + ' Z" fill="' + hg + '"/>';
+        // Low pigtails from behind ears
+        hb = '<path d="M ' + (hx - hr * 0.75) + ' ' + (hy + hr * 0.3) +
+          ' Q ' + (hx - hr * 0.9) + ' ' + (hy + hr * 0.6) + ' ' + (hx - hr * 0.95) + ' ' + (hy + hr * 1.0) +
+          ' Q ' + (hx - hr * 1.0) + ' ' + (hy + hr * 1.5) + ' ' + (hx - hr * 0.85) + ' ' + (hy + hr * 1.9) +
+          ' Q ' + (hx - hr * 0.75) + ' ' + (hy + hr * 2.1) + ' ' + (hx - hr * 0.6) + ' ' + (hy + hr * 2.05) +
+          ' Q ' + (hx - hr * 0.45) + ' ' + (hy + hr * 1.9) + ' ' + (hx - hr * 0.5) + ' ' + (hy + hr * 1.5) +
+          ' Q ' + (hx - hr * 0.55) + ' ' + (hy + hr * 1.1) + ' ' + (hx - hr * 0.6) + ' ' + (hy + hr * 0.6) +
+          ' Z" fill="' + hg + '"/>' +
+          '<path d="M ' + (hx + hr * 0.75) + ' ' + (hy + hr * 0.3) +
+          ' Q ' + (hx + hr * 0.9) + ' ' + (hy + hr * 0.6) + ' ' + (hx + hr * 0.95) + ' ' + (hy + hr * 1.0) +
+          ' Q ' + (hx + hr * 1.0) + ' ' + (hy + hr * 1.5) + ' ' + (hx + hr * 0.85) + ' ' + (hy + hr * 1.9) +
+          ' Q ' + (hx + hr * 0.75) + ' ' + (hy + hr * 2.1) + ' ' + (hx + hr * 0.6) + ' ' + (hy + hr * 2.05) +
+          ' Q ' + (hx + hr * 0.45) + ' ' + (hy + hr * 1.9) + ' ' + (hx + hr * 0.5) + ' ' + (hy + hr * 1.5) +
+          ' Q ' + (hx + hr * 0.55) + ' ' + (hy + hr * 1.1) + ' ' + (hx + hr * 0.6) + ' ' + (hy + hr * 0.6) +
+          ' Z" fill="' + hg + '"/>' +
+          '<path d="M ' + (hx - hr * 0.95) + ' ' + (hy + hr * 1.1) +
+          ' Q ' + (hx - hr * 0.9) + ' ' + (hy + hr * 1.5) + ' ' + (hx - hr * 0.8) + ' ' + (hy + hr * 1.8) +
+          ' Q ' + (hx - hr * 0.7) + ' ' + (hy + hr * 1.4) + ' ' + (hx - hr * 0.7) + ' ' + (hy + hr * 1.0) +
+          ' Z" fill="' + hairDk + '" opacity="0.3"/>' +
+          '<path d="M ' + (hx + hr * 0.95) + ' ' + (hy + hr * 1.1) +
+          ' Q ' + (hx + hr * 0.9) + ' ' + (hy + hr * 1.5) + ' ' + (hx + hr * 0.8) + ' ' + (hy + hr * 1.8) +
+          ' Q ' + (hx + hr * 0.7) + ' ' + (hy + hr * 1.4) + ' ' + (hx + hr * 0.7) + ' ' + (hy + hr * 1.0) +
+          ' Z" fill="' + hairDk + '" opacity="0.3"/>' +
+          '<path d="M ' + (hx - hr * 0.85) + ' ' + (hy - hr * 0.1) +
+          ' Q ' + (hx - hr * 0.9) + ' ' + (hy + hr * 0.2) + ' ' + (hx - hr * 0.85) + ' ' + (hy + hr * 0.5) +
+          ' L ' + (hx + hr * 0.85) + ' ' + (hy + hr * 0.5) +
+          ' Q ' + (hx + hr * 0.9) + ' ' + (hy + hr * 0.2) + ' ' + (hx + hr * 0.85) + ' ' + (hy - hr * 0.1) +
+          ' Z" fill="' + hg + '"/>';
+        hf = '<path d="M ' + (hx - hr * 1.0) + ' ' + (hy - hr * 0.1) +
+          ' Q ' + (hx - hr * 0.85) + ' ' + (hy - hr * 1.1) + ' ' + (hx) + ' ' + (hy - hr * 1.2) +
+          ' Q ' + (hx + hr * 0.85) + ' ' + (hy - hr * 1.1) + ' ' + (hx + hr * 1.0) + ' ' + (hy - hr * 0.1) +
+          ' Q ' + (hx + hr * 0.75) + ' ' + (hy - hr * 0.7) + ' ' + (hx) + ' ' + (hy - hr * 0.75) +
+          ' Q ' + (hx - hr * 0.75) + ' ' + (hy - hr * 0.7) + ' ' + (hx - hr * 1.0) + ' ' + (hy - hr * 0.1) +
+          ' Z" fill="' + hg + '"/>' +
+          '<path d="M ' + (hx - hr * 0.8) + ' ' + (hy - hr * 0.7) +
+          ' Q ' + (hx - hr * 0.4) + ' ' + (hy - hr * 0.45) + ' ' + (hx) + ' ' + (hy - hr * 0.5) +
+          ' Q ' + (hx + hr * 0.4) + ' ' + (hy - hr * 0.55) + ' ' + (hx + hr * 0.8) + ' ' + (hy - hr * 0.65) +
+          ' Q ' + (hx + hr * 0.4) + ' ' + (hy - hr * 0.85) + ' ' + (hx) + ' ' + (hy - hr * 0.95) +
+          ' Q ' + (hx - hr * 0.4) + ' ' + (hy - hr * 0.9) + ' ' + (hx - hr * 0.8) + ' ' + (hy - hr * 0.7) +
+          ' Z" fill="' + hairLt + '" opacity="0.3"/>' +
+          '<ellipse cx="' + (hx - hr * 0.8) + '" cy="' + (hy + hr * 0.45) + '" rx="' + (hr * 0.1) + '" ry="' + (hr * 0.08) + '" fill="' + hairDk + '"/>' +
+          '<ellipse cx="' + (hx + hr * 0.8) + '" cy="' + (hy + hr * 0.45) + '" rx="' + (hr * 0.1) + '" ry="' + (hr * 0.08) + '" fill="' + hairDk + '"/>';
+
       } else if (sty === 'braidcrown') {
-        var bcW = hr * 0.18;
-        hf = '<path d="M ' + (hx - hr * 0.9) + ' ' + (hy + hr * 0.15) + ' C ' + (hx - hr * 1.05) + ' ' + (hy - hr * 1.5) + ' ' + (hx + hr * 1.05) + ' ' + (hy - hr * 1.5) + ' ' + (hx + hr * 0.9) + ' ' + (hy + hr * 0.15) + ' L ' + (hx + hr * 0.75) + ' ' + (hy - hr * 0.4) + ' C ' + (hx + hr * 0.7) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.7) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.75) + ' ' + (hy - hr * 0.4) + ' Z" fill="' + hg + '"/>' +
-          '<path d="M ' + (hx - hr * 0.6) + ' ' + (hy - hr * 0.75) + ' Q ' + (hx - hr * 0.9) + ' ' + (hy - hr * 1.1) + ' ' + hx + ' ' + (hy - hr * 1.25) + ' Q ' + (hx + hr * 0.9) + ' ' + (hy - hr * 1.1) + ' ' + (hx + hr * 0.6) + ' ' + (hy - hr * 0.75) + '" stroke="' + hairDk + '" stroke-width="' + bcW + '" fill="none" stroke-linecap="round"/>' +
-          '<path d="M ' + (hx - hr * 0.55) + ' ' + (hy - hr * 0.7) + ' Q ' + (hx - hr * 0.85) + ' ' + (hy - hr * 1.05) + ' ' + hx + ' ' + (hy - hr * 1.2) + ' Q ' + (hx + hr * 0.85) + ' ' + (hy - hr * 1.05) + ' ' + (hx + hr * 0.55) + ' ' + (hy - hr * 0.7) + '" stroke="' + hairLt + '" stroke-width="' + (bcW * 0.4) + '" fill="none" stroke-linecap="round" opacity="0.4"/>';
+        // Braided crown wrapping around head
+        hb = '<path d="M ' + (hx - hr * 0.9) + ' ' + (hy - hr * 0.1) +
+          ' Q ' + (hx - hr * 0.95) + ' ' + (hy + hr * 0.3) + ' ' + (hx - hr * 0.85) + ' ' + (hy + hr * 0.55) +
+          ' L ' + (hx + hr * 0.85) + ' ' + (hy + hr * 0.55) +
+          ' Q ' + (hx + hr * 0.95) + ' ' + (hy + hr * 0.3) + ' ' + (hx + hr * 0.9) + ' ' + (hy - hr * 0.1) +
+          ' Z" fill="' + hg + '"/>';
+        hf = '<path d="M ' + (hx - hr * 0.95) + ' ' + (hy - hr * 0.1) +
+          ' Q ' + (hx - hr * 0.8) + ' ' + (hy - hr * 1.05) + ' ' + (hx) + ' ' + (hy - hr * 1.1) +
+          ' Q ' + (hx + hr * 0.8) + ' ' + (hy - hr * 1.05) + ' ' + (hx + hr * 0.95) + ' ' + (hy - hr * 0.1) +
+          ' Q ' + (hx + hr * 0.7) + ' ' + (hy - hr * 0.65) + ' ' + (hx) + ' ' + (hy - hr * 0.7) +
+          ' Q ' + (hx - hr * 0.7) + ' ' + (hy - hr * 0.65) + ' ' + (hx - hr * 0.95) + ' ' + (hy - hr * 0.1) +
+          ' Z" fill="' + hg + '"/>' +
+          '<path d="M ' + (hx - hr * 0.95) + ' ' + (hy - hr * 0.85) +
+          ' Q ' + (hx - hr * 0.6) + ' ' + (hy - hr * 1.25) + ' ' + (hx - hr * 0.1) + ' ' + (hy - hr * 1.35) +
+          ' Q ' + (hx + hr * 0.4) + ' ' + (hy - hr * 1.4) + ' ' + (hx + hr * 0.85) + ' ' + (hy - hr * 1.15) +
+          ' Q ' + (hx + hr * 1.05) + ' ' + (hy - hr * 0.9) + ' ' + (hx + hr * 1.0) + ' ' + (hy - hr * 0.55) +
+          ' Q ' + (hx + hr * 0.95) + ' ' + (hy - hr * 0.75) + ' ' + (hx + hr * 0.75) + ' ' + (hy - hr * 0.95) +
+          ' Q ' + (hx + hr * 0.3) + ' ' + (hy - hr * 1.2) + ' ' + (hx - hr * 0.2) + ' ' + (hy - hr * 1.15) +
+          ' Q ' + (hx - hr * 0.6) + ' ' + (hy - hr * 1.05) + ' ' + (hx - hr * 0.8) + ' ' + (hy - hr * 0.7) +
+          ' Z" fill="' + hair + '"/>' +
+          '<path d="M ' + (hx - hr * 0.9) + ' ' + (hy - hr * 0.8) +
+          ' L ' + (hx - hr * 0.7) + ' ' + (hy - hr * 1.05) +
+          ' L ' + (hx - hr * 0.55) + ' ' + (hy - hr * 0.9) +
+          ' L ' + (hx - hr * 0.35) + ' ' + (hy - hr * 1.15) +
+          ' L ' + (hx - hr * 0.2) + ' ' + (hy - hr * 1.0) +
+          ' L ' + (hx) + ' ' + (hy - hr * 1.2) +
+          ' L ' + (hx + hr * 0.15) + ' ' + (hy - hr * 1.05) +
+          ' L ' + (hx + hr * 0.35) + ' ' + (hy - hr * 1.25) +
+          ' L ' + (hx + hr * 0.5) + ' ' + (hy - hr * 1.1) +
+          ' L ' + (hx + hr * 0.7) + ' ' + (hy - hr * 1.2) +
+          ' L ' + (hx + hr * 0.8) + ' ' + (hy - hr * 1.0) +
+          ' L ' + (hx + hr * 0.95) + ' ' + (hy - hr * 1.05) +
+          ' Q ' + (hx + hr * 1.0) + ' ' + (hy - hr * 0.75) + ' ' + (hx + hr * 0.95) + ' ' + (hy - hr * 0.5) +
+          ' L ' + (hx + hr * 0.8) + ' ' + (hy - hr * 0.7) +
+          ' L ' + (hx + hr * 0.6) + ' ' + (hy - hr * 0.85) +
+          ' L ' + (hx + hr * 0.4) + ' ' + (hy - hr * 1.0) +
+          ' L ' + (hx + hr * 0.2) + ' ' + (hy - hr * 1.1) +
+          ' L ' + (hx) + ' ' + (hy - hr * 1.0) +
+          ' L ' + (hx - hr * 0.2) + ' ' + (hy - hr * 1.1) +
+          ' L ' + (hx - hr * 0.4) + ' ' + (hy - hr * 1.0) +
+          ' L ' + (hx - hr * 0.6) + ' ' + (hy - hr * 1.1) +
+          ' L ' + (hx - hr * 0.75) + ' ' + (hy - hr * 0.9) +
+          ' Q ' + (hx - hr * 0.9) + ' ' + (hy - hr * 0.85) + ' ' + (hx - hr * 0.9) + ' ' + (hy - hr * 0.65) +
+          ' Z" fill="' + hairDk + '" opacity="0.3"/>' +
+          '<path d="M ' + (hx - hr * 0.75) + ' ' + (hy - hr * 0.95) +
+          ' Q ' + (hx - hr * 0.4) + ' ' + (hy - hr * 1.15) + ' ' + (hx) + ' ' + (hy - hr * 1.2) +
+          ' Q ' + (hx + hr * 0.3) + ' ' + (hy - hr * 1.2) + ' ' + (hx + hr * 0.55) + ' ' + (hy - hr * 1.1) +
+          ' Q ' + (hx + hr * 0.25) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.1) + ' ' + (hy - hr * 1.05) +
+          ' Q ' + (hx - hr * 0.4) + ' ' + (hy - hr * 1.0) + ' ' + (hx - hr * 0.65) + ' ' + (hy - hr * 0.85) +
+          ' Z" fill="' + hairLt + '" opacity="0.3"/>';
       } else if (sty === 'buzzcut') {
-        // Tight-cropped stubble dome sitting close to head with texture marks
-        hf = '<path d="M ' + (hx - hr * 0.88) + ' ' + (hy + hr * 0.08) + ' C ' + (hx - hr * 0.94) + ' ' + (hy - hr * 1.05) + ' ' + (hx + hr * 0.94) + ' ' + (hy - hr * 1.05) + ' ' + (hx + hr * 0.88) + ' ' + (hy + hr * 0.08) + ' L ' + (hx + hr * 0.84) + ' ' + (hy - hr * 0.15) + ' C ' + (hx + hr * 0.8) + ' ' + (hy - hr * 0.82) + ' ' + (hx - hr * 0.8) + ' ' + (hy - hr * 0.82) + ' ' + (hx - hr * 0.84) + ' ' + (hy - hr * 0.15) + ' Z" fill="' + hairDk + '"/>' +
-          '<path d="M ' + (hx - hr * 0.82) + ' ' + (hy + hr * 0.02) + ' C ' + (hx - hr * 0.88) + ' ' + (hy - hr * 0.95) + ' ' + (hx + hr * 0.88) + ' ' + (hy - hr * 0.95) + ' ' + (hx + hr * 0.82) + ' ' + (hy + hr * 0.02) + ' L ' + (hx + hr * 0.78) + ' ' + (hy - hr * 0.2) + ' C ' + (hx + hr * 0.74) + ' ' + (hy - hr * 0.75) + ' ' + (hx - hr * 0.74) + ' ' + (hy - hr * 0.75) + ' ' + (hx - hr * 0.78) + ' ' + (hy - hr * 0.2) + ' Z" fill="' + hair + '" opacity="0.6"/>' +
-          '<path d="M ' + (hx - hr * 0.5) + ' ' + (hy - hr * 0.8) + ' L ' + (hx - hr * 0.48) + ' ' + (hy - hr * 0.7) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.04) + '" stroke-linecap="round" opacity="0.25"/>' +
-          '<path d="M ' + (hx - hr * 0.2) + ' ' + (hy - hr * 0.88) + ' L ' + (hx - hr * 0.18) + ' ' + (hy - hr * 0.78) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.04) + '" stroke-linecap="round" opacity="0.25"/>' +
-          '<path d="M ' + (hx + hr * 0.1) + ' ' + (hy - hr * 0.9) + ' L ' + (hx + hr * 0.12) + ' ' + (hy - hr * 0.8) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.04) + '" stroke-linecap="round" opacity="0.25"/>' +
-          '<path d="M ' + (hx + hr * 0.4) + ' ' + (hy - hr * 0.82) + ' L ' + (hx + hr * 0.42) + ' ' + (hy - hr * 0.72) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.04) + '" stroke-linecap="round" opacity="0.25"/>' +
-          '<path d="M ' + (hx - hr * 0.35) + ' ' + (hy - hr * 0.55) + ' L ' + (hx - hr * 0.33) + ' ' + (hy - hr * 0.45) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.04) + '" stroke-linecap="round" opacity="0.2"/>' +
-          '<path d="M ' + (hx + hr * 0.25) + ' ' + (hy - hr * 0.6) + ' L ' + (hx + hr * 0.27) + ' ' + (hy - hr * 0.5) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.04) + '" stroke-linecap="round" opacity="0.2"/>';
+        // Buzzcut - very short textured dome hugging the head
+        var bTop = hy - hr * 1.05;
+        var bLeft = hx - hr * 0.92;
+        var bRight = hx + hr * 0.92;
+        var bBot = hy + hr * 0.3;
+        hb = '<path d="M ' + bLeft + ' ' + (hy + hr * 0.1) +
+          ' Q ' + bLeft + ' ' + (bTop + s * 0.5) + ' ' + (hx - hr * 0.5) + ' ' + bTop +
+          ' Q ' + hx + ' ' + (bTop - s * 0.8) + ' ' + (hx + hr * 0.5) + ' ' + bTop +
+          ' Q ' + bRight + ' ' + (bTop + s * 0.5) + ' ' + bRight + ' ' + (hy + hr * 0.1) +
+          ' Q ' + bRight + ' ' + (bBot) + ' ' + hx + ' ' + (bBot + s * 0.3) +
+          ' Q ' + bLeft + ' ' + bBot + ' ' + bLeft + ' ' + (hy + hr * 0.1) +
+          ' Z" fill="' + hairDk + '"/>';
+        // Texture dots for buzzcut effect
+        var dots = '';
+        var dotRows = 5;
+        var dotCols = 7;
+        var i, j, dx, dy, dotOp;
+        for (i = 0; i < dotRows; i++) {
+          for (j = 0; j < dotCols; j++) {
+            dx = bLeft + s * 1.5 + j * (bRight - bLeft - s * 3) / (dotCols - 1);
+            dy = bTop + s * 1.2 + i * (hy - bTop - s) / (dotRows - 1);
+            dotOp = 0.15 + ((i * 7 + j * 3) % 5) * 0.05;
+            dots += '<circle cx="' + dx + '" cy="' + dy + '" r="' + (s * 0.3) + '" fill="' + hair + '" opacity="' + dotOp + '"/>';
+          }
+        }
+        hf = '<path d="M ' + (hx - hr * 0.88) + ' ' + (hy - hr * 0.15) +
+          ' Q ' + (hx - hr * 0.88) + ' ' + (hy - hr * 0.95) + ' ' + (hx - hr * 0.4) + ' ' + (hy - hr * 1.02) +
+          ' Q ' + hx + ' ' + (hy - hr * 1.12) + ' ' + (hx + hr * 0.4) + ' ' + (hy - hr * 1.02) +
+          ' Q ' + (hx + hr * 0.88) + ' ' + (hy - hr * 0.95) + ' ' + (hx + hr * 0.88) + ' ' + (hy - hr * 0.15) +
+          ' Z" fill="' + hg + '"/>' +
+          '<path d="M ' + (hx - hr * 0.75) + ' ' + (hy - hr * 0.3) +
+          ' Q ' + (hx - hr * 0.75) + ' ' + (hy - hr * 0.9) + ' ' + (hx - hr * 0.3) + ' ' + (hy - hr * 0.97) +
+          ' Q ' + hx + ' ' + (hy - hr * 1.05) + ' ' + (hx + hr * 0.3) + ' ' + (hy - hr * 0.97) +
+          ' Q ' + (hx + hr * 0.6) + ' ' + (hy - hr * 0.9) + ' ' + (hx + hr * 0.6) + ' ' + (hy - hr * 0.5) +
+          ' Z" fill="' + hairLt + '" opacity="0.3"/>' +
+          dots;
+
       } else if (sty === 'combover') {
-        // Classic side-parted comb-over with volume and defined part line
-        hf = '<path d="M ' + (hx - hr * 0.92) + ' ' + (hy + hr * 0.12) + ' C ' + (hx - hr * 1.05) + ' ' + (hy - hr * 1.45) + ' ' + (hx + hr * 1.05) + ' ' + (hy - hr * 1.45) + ' ' + (hx + hr * 0.92) + ' ' + (hy + hr * 0.12) + ' L ' + (hx + hr * 0.78) + ' ' + (hy - hr * 0.3) + ' C ' + (hx + hr * 0.72) + ' ' + (hy - hr * 1.05) + ' ' + (hx - hr * 0.72) + ' ' + (hy - hr * 1.05) + ' ' + (hx - hr * 0.78) + ' ' + (hy - hr * 0.3) + ' Z" fill="' + hg + '"/>' +
-          '<path d="M ' + (hx + hr * 0.35) + ' ' + (hy - hr * 1.1) + ' Q ' + (hx + hr * 0.1) + ' ' + (hy - hr * 1.35) + ' ' + (hx - hr * 0.3) + ' ' + (hy - hr * 1.15) + ' Q ' + (hx - hr * 0.65) + ' ' + (hy - hr * 0.9) + ' ' + (hx - hr * 0.9) + ' ' + (hy - hr * 0.2) + ' L ' + (hx - hr * 0.75) + ' ' + (hy - hr * 0.35) + ' Q ' + (hx - hr * 0.5) + ' ' + (hy - hr * 0.85) + ' ' + (hx - hr * 0.15) + ' ' + (hy - hr * 1.0) + ' Q ' + (hx + hr * 0.1) + ' ' + (hy - hr * 1.1) + ' ' + (hx + hr * 0.35) + ' ' + (hy - hr * 0.95) + ' Z" fill="' + hair + '" opacity="0.5"/>' +
-          '<path d="M ' + (hx + hr * 0.35) + ' ' + (hy - hr * 1.05) + ' Q ' + (hx + hr * 0.15) + ' ' + (hy - hr * 1.3) + ' ' + (hx - hr * 0.2) + ' ' + (hy - hr * 1.15) + '" stroke="' + hairDk + '" stroke-width="' + (hr * 0.05) + '" fill="none" stroke-linecap="round" opacity="0.6"/>' +
-          '<path d="M ' + (hx - hr * 0.4) + ' ' + (hy - hr * 0.95) + ' Q ' + (hx - hr * 0.6) + ' ' + (hy - hr * 0.7) + ' ' + (hx - hr * 0.8) + ' ' + (hy - hr * 0.2) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.06) + '" fill="none" stroke-linecap="round" opacity="0.3"/>' +
-          '<path d="M ' + (hx - hr * 0.15) + ' ' + (hy - hr * 1.05) + ' Q ' + (hx - hr * 0.35) + ' ' + (hy - hr * 0.75) + ' ' + (hx - hr * 0.55) + ' ' + (hy - hr * 0.25) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.05) + '" fill="none" stroke-linecap="round" opacity="0.2"/>';
+        // Combover - side-parted with volume sweeping left
+        var partX = hx + hr * 0.3;
+        var partTop = hy - hr * 1.05;
+        var sweptPeak = hy - hr * 1.4;
+        hb = '<path d="M ' + (hx - hr * 1.0) + ' ' + (hy + hr * 0.2) +
+          ' Q ' + (hx - hr * 1.1) + ' ' + (hy - hr * 0.3) + ' ' + (hx - hr * 0.9) + ' ' + (hy - hr * 0.8) +
+          ' Q ' + (hx - hr * 0.6) + ' ' + (hy - hr * 1.1) + ' ' + hx + ' ' + (hy - hr * 1.05) +
+          ' Q ' + (hx + hr * 0.5) + ' ' + (hy - hr * 1.0) + ' ' + (hx + hr * 0.85) + ' ' + (hy - hr * 0.7) +
+          ' Q ' + (hx + hr * 1.0) + ' ' + (hy - hr * 0.3) + ' ' + (hx + hr * 0.95) + ' ' + (hy + hr * 0.2) +
+          ' Z" fill="' + hair + '"/>';
+        hf = '<path d="M ' + partX + ' ' + partTop +
+          ' Q ' + (hx + hr * 0.1) + ' ' + (partTop - s * 2) + ' ' + (hx - hr * 0.3) + ' ' + sweptPeak +
+          ' Q ' + (hx - hr * 0.7) + ' ' + (sweptPeak + s * 0.5) + ' ' + (hx - hr * 1.05) + ' ' + (hy - hr * 0.6) +
+          ' Q ' + (hx - hr * 1.1) + ' ' + (hy - hr * 0.2) + ' ' + (hx - hr * 0.95) + ' ' + (hy + hr * 0.05) +
+          ' L ' + (hx - hr * 0.85) + ' ' + (hy - hr * 0.2) +
+          ' Q ' + (hx - hr * 0.85) + ' ' + (hy - hr * 0.7) + ' ' + (hx - hr * 0.5) + ' ' + (hy - hr * 1.0) +
+          ' Q ' + (hx - hr * 0.1) + ' ' + (hy - hr * 1.15) + ' ' + partX + ' ' + partTop +
+          ' Z" fill="' + hg + '"/>' +
+          // Part line
+          '<path d="M ' + partX + ' ' + partTop +
+          ' Q ' + (partX + s * 0.3) + ' ' + (hy - hr * 0.7) + ' ' + (partX - s * 0.2) + ' ' + (hy - hr * 0.4) +
+          '" stroke="' + hairDk + '" stroke-width="' + (s * 0.4) + '" fill="none" opacity="0.6"/>' +
+          // Right side (shorter, tapered)
+          '<path d="M ' + partX + ' ' + partTop +
+          ' Q ' + (hx + hr * 0.6) + ' ' + (hy - hr * 1.0) + ' ' + (hx + hr * 0.8) + ' ' + (hy - hr * 0.75) +
+          ' Q ' + (hx + hr * 0.9) + ' ' + (hy - hr * 0.5) + ' ' + (hx + hr * 0.85) + ' ' + (hy - hr * 0.2) +
+          ' L ' + (hx + hr * 0.75) + ' ' + (hy - hr * 0.3) +
+          ' Q ' + (hx + hr * 0.7) + ' ' + (hy - hr * 0.65) + ' ' + (hx + hr * 0.5) + ' ' + (hy - hr * 0.85) +
+          ' Q ' + (hx + hr * 0.3) + ' ' + (hy - hr * 0.97) + ' ' + partX + ' ' + partTop +
+          ' Z" fill="' + hg + '"/>' +
+          // Volume highlight on swept section
+          '<path d="M ' + (hx - hr * 0.1) + ' ' + (hy - hr * 1.15) +
+          ' Q ' + (hx - hr * 0.5) + ' ' + (sweptPeak + s * 1.5) + ' ' + (hx - hr * 0.85) + ' ' + (hy - hr * 0.7) +
+          ' Q ' + (hx - hr * 0.7) + ' ' + (hy - hr * 0.9) + ' ' + (hx - hr * 0.4) + ' ' + (hy - hr * 1.05) +
+          ' Q ' + (hx - hr * 0.1) + ' ' + (hy - hr * 1.18) + ' ' + (hx - hr * 0.1) + ' ' + (hy - hr * 1.15) +
+          ' Z" fill="' + hairLt + '" opacity="0.35"/>';
+
       } else if (sty === 'fauxhawk') {
-        // Mohawk-lite: short textured sides with a tall defined center ridge
-        hf = '<path d="M ' + (hx - hr * 0.88) + ' ' + (hy + hr * 0.1) + ' C ' + (hx - hr * 0.92) + ' ' + (hy - hr * 0.8) + ' ' + (hx + hr * 0.92) + ' ' + (hy - hr * 0.8) + ' ' + (hx + hr * 0.88) + ' ' + (hy + hr * 0.1) + ' L ' + (hx + hr * 0.8) + ' ' + (hy - hr * 0.15) + ' C ' + (hx + hr * 0.76) + ' ' + (hy - hr * 0.6) + ' ' + (hx - hr * 0.76) + ' ' + (hy - hr * 0.6) + ' ' + (hx - hr * 0.8) + ' ' + (hy - hr * 0.15) + ' Z" fill="' + hairDk + '"/>' +
-          '<path d="M ' + (hx - hr * 0.35) + ' ' + (hy - hr * 0.6) + ' Q ' + (hx - hr * 0.3) + ' ' + (hy - hr * 1.25) + ' ' + hx + ' ' + (hy - hr * 1.55) + ' Q ' + (hx + hr * 0.3) + ' ' + (hy - hr * 1.25) + ' ' + (hx + hr * 0.35) + ' ' + (hy - hr * 0.6) + ' L ' + (hx + hr * 0.2) + ' ' + (hy - hr * 0.65) + ' Q ' + (hx + hr * 0.15) + ' ' + (hy - hr * 1.1) + ' ' + hx + ' ' + (hy - hr * 1.3) + ' Q ' + (hx - hr * 0.15) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.2) + ' ' + (hy - hr * 0.65) + ' Z" fill="' + hg + '"/>' +
-          '<path d="M ' + (hx - hr * 0.1) + ' ' + (hy - hr * 0.7) + ' Q ' + hx + ' ' + (hy - hr * 1.35) + ' ' + (hx + hr * 0.1) + ' ' + (hy - hr * 0.7) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.06) + '" fill="none" stroke-linecap="round" opacity="0.35"/>' +
-          '<path d="M ' + (hx - hr * 0.6) + ' ' + (hy - hr * 0.4) + ' L ' + (hx - hr * 0.55) + ' ' + (hy - hr * 0.55) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.04) + '" stroke-linecap="round" opacity="0.2"/>' +
-          '<path d="M ' + (hx + hr * 0.6) + ' ' + (hy - hr * 0.4) + ' L ' + (hx + hr * 0.55) + ' ' + (hy - hr * 0.55) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.04) + '" stroke-linecap="round" opacity="0.2"/>' +
-          '<path d="M ' + (hx - hr * 0.7) + ' ' + (hy - hr * 0.2) + ' L ' + (hx - hr * 0.68) + ' ' + (hy - hr * 0.35) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.04) + '" stroke-linecap="round" opacity="0.2"/>' +
-          '<path d="M ' + (hx + hr * 0.7) + ' ' + (hy - hr * 0.2) + ' L ' + (hx + hr * 0.68) + ' ' + (hy - hr * 0.35) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.04) + '" stroke-linecap="round" opacity="0.2"/>';
+        // Fauxhawk - buzzed sides with raised center ridge
+        var ridgeTop = hy - hr * 1.45;
+        var ridgeW = hr * 0.35;
+        hb = '<path d="M ' + (hx - hr * 0.95) + ' ' + (hy + hr * 0.15) +
+          ' Q ' + (hx - hr * 1.0) + ' ' + (hy - hr * 0.4) + ' ' + (hx - hr * 0.85) + ' ' + (hy - hr * 0.8) +
+          ' Q ' + (hx - hr * 0.5) + ' ' + (hy - hr * 1.05) + ' ' + hx + ' ' + (hy - hr * 1.0) +
+          ' Q ' + (hx + hr * 0.5) + ' ' + (hy - hr * 1.05) + ' ' + (hx + hr * 0.85) + ' ' + (hy - hr * 0.8) +
+          ' Q ' + (hx + hr * 1.0) + ' ' + (hy - hr * 0.4) + ' ' + (hx + hr * 0.95) + ' ' + (hy + hr * 0.15) +
+          ' Z" fill="' + hairDk + '"/>';
+        hf = // Short sides (dark buzz)
+          '<path d="M ' + (hx - hr * 0.9) + ' ' + (hy - hr * 0.15) +
+          ' Q ' + (hx - hr * 0.9) + ' ' + (hy - hr * 0.7) + ' ' + (hx - hr * 0.6) + ' ' + (hy - hr * 0.92) +
+          ' L ' + (hx - ridgeW) + ' ' + (hy - hr * 0.95) +
+          ' L ' + (hx - ridgeW) + ' ' + (hy - hr * 0.2) +
+          ' Z" fill="' + hairDk + '" opacity="0.85"/>' +
+          '<path d="M ' + (hx + hr * 0.9) + ' ' + (hy - hr * 0.15) +
+          ' Q ' + (hx + hr * 0.9) + ' ' + (hy - hr * 0.7) + ' ' + (hx + hr * 0.6) + ' ' + (hy - hr * 0.92) +
+          ' L ' + (hx + ridgeW) + ' ' + (hy - hr * 0.95) +
+          ' L ' + (hx + ridgeW) + ' ' + (hy - hr * 0.2) +
+          ' Z" fill="' + hairDk + '" opacity="0.85"/>' +
+          // Center ridge (tall, prominent)
+          '<path d="M ' + (hx - ridgeW) + ' ' + (hy - hr * 0.2) +
+          ' Q ' + (hx - ridgeW * 1.2) + ' ' + (hy - hr * 0.8) + ' ' + (hx - ridgeW * 0.8) + ' ' + (hy - hr * 1.1) +
+          ' Q ' + (hx - ridgeW * 0.4) + ' ' + (ridgeTop + s) + ' ' + hx + ' ' + ridgeTop +
+          ' Q ' + (hx + ridgeW * 0.4) + ' ' + (ridgeTop + s) + ' ' + (hx + ridgeW * 0.8) + ' ' + (hy - hr * 1.1) +
+          ' Q ' + (hx + ridgeW * 1.2) + ' ' + (hy - hr * 0.8) + ' ' + (hx + ridgeW) + ' ' + (hy - hr * 0.2) +
+          ' Z" fill="' + hg + '"/>' +
+          // Ridge highlight
+          '<path d="M ' + (hx - ridgeW * 0.4) + ' ' + (hy - hr * 0.5) +
+          ' Q ' + (hx - ridgeW * 0.3) + ' ' + (hy - hr * 0.9) + ' ' + hx + ' ' + (ridgeTop + s * 1.5) +
+          ' Q ' + (hx + ridgeW * 0.2) + ' ' + (hy - hr * 0.85) + ' ' + (hx + ridgeW * 0.3) + ' ' + (hy - hr * 0.5) +
+          ' Z" fill="' + hairLt + '" opacity="0.35"/>';
+
       } else if (sty === 'curtains') {
-        // Center-parted curtain hair with two flowy sections framing the face
-        hf = '<path d="M ' + (hx - hr * 0.95) + ' ' + (hy + hr * 0.2) + ' C ' + (hx - hr * 1.08) + ' ' + (hy - hr * 1.5) + ' ' + (hx + hr * 1.08) + ' ' + (hy - hr * 1.5) + ' ' + (hx + hr * 0.95) + ' ' + (hy + hr * 0.2) + ' L ' + (hx + hr * 0.8) + ' ' + (hy - hr * 0.3) + ' C ' + (hx + hr * 0.75) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.75) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.8) + ' ' + (hy - hr * 0.3) + ' Z" fill="' + hg + '"/>' +
-          '<path d="M ' + hx + ' ' + (hy - hr * 1.15) + ' Q ' + (hx - hr * 0.15) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.4) + ' ' + (hy - hr * 0.85) + ' Q ' + (hx - hr * 0.7) + ' ' + (hy - hr * 0.5) + ' ' + (hx - hr * 0.9) + ' ' + (hy + hr * 0.1) + ' Q ' + (hx - hr * 0.95) + ' ' + (hy + hr * 0.25) + ' ' + (hx - hr * 0.85) + ' ' + (hy + hr * 0.35) + ' L ' + (hx - hr * 0.65) + ' ' + (hy + hr * 0.15) + ' Q ' + (hx - hr * 0.55) + ' ' + (hy - hr * 0.3) + ' ' + (hx - hr * 0.35) + ' ' + (hy - hr * 0.65) + ' Q ' + (hx - hr * 0.15) + ' ' + (hy - hr * 0.9) + ' ' + hx + ' ' + (hy - hr * 0.95) + ' Z" fill="' + hair + '" opacity="0.5"/>' +
-          '<path d="M ' + hx + ' ' + (hy - hr * 1.15) + ' Q ' + (hx + hr * 0.15) + ' ' + (hy - hr * 1.1) + ' ' + (hx + hr * 0.4) + ' ' + (hy - hr * 0.85) + ' Q ' + (hx + hr * 0.7) + ' ' + (hy - hr * 0.5) + ' ' + (hx + hr * 0.9) + ' ' + (hy + hr * 0.1) + ' Q ' + (hx + hr * 0.95) + ' ' + (hy + hr * 0.25) + ' ' + (hx + hr * 0.85) + ' ' + (hy + hr * 0.35) + ' L ' + (hx + hr * 0.65) + ' ' + (hy + hr * 0.15) + ' Q ' + (hx + hr * 0.55) + ' ' + (hy - hr * 0.3) + ' ' + (hx + hr * 0.35) + ' ' + (hy - hr * 0.65) + ' Q ' + (hx + hr * 0.15) + ' ' + (hy - hr * 0.9) + ' ' + hx + ' ' + (hy - hr * 0.95) + ' Z" fill="' + hair + '" opacity="0.5"/>' +
-          '<path d="M ' + hx + ' ' + (hy - hr * 1.12) + ' L ' + hx + ' ' + (hy - hr * 0.9) + '" stroke="' + hairDk + '" stroke-width="' + (hr * 0.04) + '" stroke-linecap="round" opacity="0.5"/>' +
-          '<path d="M ' + (hx - hr * 0.25) + ' ' + (hy - hr * 1.0) + ' Q ' + (hx - hr * 0.5) + ' ' + (hy - hr * 0.6) + ' ' + (hx - hr * 0.7) + ' ' + (hy - hr * 0.15) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.05) + '" fill="none" stroke-linecap="round" opacity="0.3"/>' +
-          '<path d="M ' + (hx + hr * 0.25) + ' ' + (hy - hr * 1.0) + ' Q ' + (hx + hr * 0.5) + ' ' + (hy - hr * 0.6) + ' ' + (hx + hr * 0.7) + ' ' + (hy - hr * 0.15) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.05) + '" fill="none" stroke-linecap="round" opacity="0.3"/>';
+        // Curtains - center-parted, falls to each side with volume and flip
+        var curtainBot = hy + hr * 0.45;
+        var curtainW = hr * 1.15;
+        var flipOut = hr * 0.2;
+        hb = '<path d="M ' + (hx - curtainW) + ' ' + (hy + hr * 0.1) +
+          ' Q ' + (hx - curtainW - s) + ' ' + (hy - hr * 0.3) + ' ' + (hx - hr * 0.8) + ' ' + (hy - hr * 0.85) +
+          ' Q ' + (hx - hr * 0.4) + ' ' + (hy - hr * 1.1) + ' ' + hx + ' ' + (hy - hr * 1.08) +
+          ' Q ' + (hx + hr * 0.4) + ' ' + (hy - hr * 1.1) + ' ' + (hx + hr * 0.8) + ' ' + (hy - hr * 0.85) +
+          ' Q ' + (hx + curtainW + s) + ' ' + (hy - hr * 0.3) + ' ' + (hx + curtainW) + ' ' + (hy + hr * 0.1) +
+          ' L ' + (hx + curtainW + flipOut) + ' ' + curtainBot +
+          ' Q ' + (hx + hr * 0.6) + ' ' + (curtainBot + s) + ' ' + (hx + hr * 0.3) + ' ' + (hy + hr * 0.2) +
+          ' L ' + hx + ' ' + (hy - hr * 0.5) +
+          ' L ' + (hx - hr * 0.3) + ' ' + (hy + hr * 0.2) +
+          ' Q ' + (hx - hr * 0.6) + ' ' + (curtainBot + s) + ' ' + (hx - curtainW - flipOut) + ' ' + curtainBot +
+          ' Z" fill="' + hair + '"/>';
+        hf = // Left curtain
+          '<path d="M ' + hx + ' ' + (hy - hr * 1.05) +
+          ' Q ' + (hx - hr * 0.15) + ' ' + (hy - hr * 1.0) + ' ' + (hx - hr * 0.45) + ' ' + (hy - hr * 0.85) +
+          ' Q ' + (hx - hr * 0.8) + ' ' + (hy - hr * 0.5) + ' ' + (hx - hr * 0.95) + ' ' + (hy - hr * 0.1) +
+          ' Q ' + (hx - hr * 1.05) + ' ' + (hy + hr * 0.15) + ' ' + (hx - curtainW - flipOut * 0.5) + ' ' + (curtainBot - s) +
+          ' Q ' + (hx - curtainW - flipOut) + ' ' + curtainBot + ' ' + (hx - curtainW - flipOut * 1.3) + ' ' + (curtainBot - s * 1.5) +
+          ' Q ' + (hx - hr * 1.1) + ' ' + (hy - hr * 0.1) + ' ' + (hx - hr * 0.9) + ' ' + (hy - hr * 0.6) +
+          ' Q ' + (hx - hr * 0.55) + ' ' + (hy - hr * 1.0) + ' ' + hx + ' ' + (hy - hr * 1.05) +
+          ' Z" fill="' + hg + '"/>' +
+          // Right curtain
+          '<path d="M ' + hx + ' ' + (hy - hr * 1.05) +
+          ' Q ' + (hx + hr * 0.15) + ' ' + (hy - hr * 1.0) + ' ' + (hx + hr * 0.45) + ' ' + (hy - hr * 0.85) +
+          ' Q ' + (hx + hr * 0.8) + ' ' + (hy - hr * 0.5) + ' ' + (hx + hr * 0.95) + ' ' + (hy - hr * 0.1) +
+          ' Q ' + (hx + hr * 1.05) + ' ' + (hy + hr * 0.15) + ' ' + (hx + curtainW + flipOut * 0.5) + ' ' + (curtainBot - s) +
+          ' Q ' + (hx + curtainW + flipOut) + ' ' + curtainBot + ' ' + (hx + curtainW + flipOut * 1.3) + ' ' + (curtainBot - s * 1.5) +
+          ' Q ' + (hx + hr * 1.1) + ' ' + (hy - hr * 0.1) + ' ' + (hx + hr * 0.9) + ' ' + (hy - hr * 0.6) +
+          ' Q ' + (hx + hr * 0.55) + ' ' + (hy - hr * 1.0) + ' ' + hx + ' ' + (hy - hr * 1.05) +
+          ' Z" fill="' + hg + '"/>' +
+          // Center part line
+          '<path d="M ' + hx + ' ' + (hy - hr * 1.08) +
+          ' L ' + hx + ' ' + (hy - hr * 0.55) +
+          '" stroke="' + hairDk + '" stroke-width="' + (s * 0.5) + '" fill="none" opacity="0.5"/>' +
+          // Left highlight
+          '<path d="M ' + (hx - hr * 0.15) + ' ' + (hy - hr * 0.95) +
+          ' Q ' + (hx - hr * 0.5) + ' ' + (hy - hr * 0.7) + ' ' + (hx - hr * 0.7) + ' ' + (hy - hr * 0.3) +
+          ' Q ' + (hx - hr * 0.55) + ' ' + (hy - hr * 0.6) + ' ' + (hx - hr * 0.35) + ' ' + (hy - hr * 0.85) +
+          ' Z" fill="' + hairLt + '" opacity="0.3"/>' +
+          // Right highlight
+          '<path d="M ' + (hx + hr * 0.15) + ' ' + (hy - hr * 0.95) +
+          ' Q ' + (hx + hr * 0.5) + ' ' + (hy - hr * 0.7) + ' ' + (hx + hr * 0.7) + ' ' + (hy - hr * 0.3) +
+          ' Q ' + (hx + hr * 0.55) + ' ' + (hy - hr * 0.6) + ' ' + (hx + hr * 0.35) + ' ' + (hy - hr * 0.85) +
+          ' Z" fill="' + hairLt + '" opacity="0.3"/>';
+
       } else if (sty === 'undercut') {
-        // Strong contrast: dark buzzed sides/back with longer styled top swept back
-        hf = '<path d="M ' + (hx - hr * 0.9) + ' ' + (hy + hr * 0.1) + ' C ' + (hx - hr * 0.94) + ' ' + (hy - hr * 0.7) + ' ' + (hx + hr * 0.94) + ' ' + (hy - hr * 0.7) + ' ' + (hx + hr * 0.9) + ' ' + (hy + hr * 0.1) + ' L ' + (hx + hr * 0.84) + ' ' + (hy - hr * 0.12) + ' C ' + (hx + hr * 0.8) + ' ' + (hy - hr * 0.55) + ' ' + (hx - hr * 0.8) + ' ' + (hy - hr * 0.55) + ' ' + (hx - hr * 0.84) + ' ' + (hy - hr * 0.12) + ' Z" fill="' + hairDk + '"/>' +
-          '<path d="M ' + (hx - hr * 0.65) + ' ' + (hy - hr * 0.45) + ' L ' + (hx - hr * 0.6) + ' ' + (hy - hr * 0.35) + '" stroke="' + hair + '" stroke-width="' + (hr * 0.03) + '" stroke-linecap="round" opacity="0.3"/>' +
-          '<path d="M ' + (hx + hr * 0.65) + ' ' + (hy - hr * 0.45) + ' L ' + (hx + hr * 0.6) + ' ' + (hy - hr * 0.35) + '" stroke="' + hair + '" stroke-width="' + (hr * 0.03) + '" stroke-linecap="round" opacity="0.3"/>' +
-          '<path d="M ' + (hx - hr * 0.5) + ' ' + (hy - hr * 0.3) + ' L ' + (hx - hr * 0.47) + ' ' + (hy - hr * 0.2) + '" stroke="' + hair + '" stroke-width="' + (hr * 0.03) + '" stroke-linecap="round" opacity="0.3"/>' +
-          '<path d="M ' + (hx + hr * 0.5) + ' ' + (hy - hr * 0.3) + ' L ' + (hx + hr * 0.47) + ' ' + (hy - hr * 0.2) + '" stroke="' + hair + '" stroke-width="' + (hr * 0.03) + '" stroke-linecap="round" opacity="0.3"/>' +
-          '<path d="M ' + (hx - hr * 0.72) + ' ' + (hy - hr * 0.5) + ' C ' + (hx - hr * 0.82) + ' ' + (hy - hr * 1.55) + ' ' + (hx + hr * 0.82) + ' ' + (hy - hr * 1.55) + ' ' + (hx + hr * 0.85) + ' ' + (hy - hr * 0.6) + ' Q ' + (hx + hr * 0.9) + ' ' + (hy - hr * 0.5) + ' ' + (hx + hr * 0.88) + ' ' + (hy - hr * 0.35) + ' L ' + (hx + hr * 0.65) + ' ' + (hy - hr * 0.5) + ' C ' + (hx + hr * 0.6) + ' ' + (hy - hr * 1.15) + ' ' + (hx - hr * 0.55) + ' ' + (hy - hr * 1.15) + ' ' + (hx - hr * 0.58) + ' ' + (hy - hr * 0.55) + ' Z" fill="' + hg + '"/>' +
-          '<path d="M ' + (hx - hr * 0.3) + ' ' + (hy - hr * 0.9) + ' Q ' + (hx + hr * 0.1) + ' ' + (hy - hr * 1.1) + ' ' + (hx + hr * 0.5) + ' ' + (hy - hr * 0.8) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.06) + '" fill="none" stroke-linecap="round" opacity="0.3"/>' +
-          '<path d="M ' + (hx - hr * 0.15) + ' ' + (hy - hr * 0.95) + ' Q ' + (hx + hr * 0.2) + ' ' + (hy - hr * 1.05) + ' ' + (hx + hr * 0.6) + ' ' + (hy - hr * 0.7) + '" stroke="' + hairLt + '" stroke-width="' + (hr * 0.04) + '" fill="none" stroke-linecap="round" opacity="0.2"/>';
+        // Undercut - shaved sides with long voluminous top swept to one side
+        var ucSweepX = hx - hr * 1.2;
+        var ucSweepY = hy - hr * 0.6;
+        var ucTop = hy - hr * 1.5;
+        hb = '<path d="M ' + (hx - hr * 0.9) + ' ' + (hy + hr * 0.25) +
+          ' Q ' + (hx - hr * 0.95) + ' ' + (hy - hr * 0.3) + ' ' + (hx - hr * 0.7) + ' ' + (hy - hr * 0.75) +
+          ' Q ' + (hx - hr * 0.3) + ' ' + (hy - hr * 1.0) + ' ' + hx + ' ' + (hy - hr * 1.0) +
+          ' Q ' + (hx + hr * 0.4) + ' ' + (hy - hr * 1.0) + ' ' + (hx + hr * 0.8) + ' ' + (hy - hr * 0.7) +
+          ' Q ' + (hx + hr * 0.95) + ' ' + (hy - hr * 0.3) + ' ' + (hx + hr * 0.9) + ' ' + (hy + hr * 0.25) +
+          ' Z" fill="' + hairDk + '"/>';
+        hf = // Shaved sides (very dark, tight to head)
+          '<path d="M ' + (hx - hr * 0.85) + ' ' + (hy + hr * 0.15) +
+          ' Q ' + (hx - hr * 0.87) + ' ' + (hy - hr * 0.15) + ' ' + (hx - hr * 0.8) + ' ' + (hy - hr * 0.4) +
+          ' L ' + (hx - hr * 0.5) + ' ' + (hy - hr * 0.55) +
+          ' L ' + (hx - hr * 0.45) + ' ' + (hy - hr * 0.1) +
+          ' Z" fill="' + hairDk + '" opacity="0.9"/>' +
+          '<path d="M ' + (hx + hr * 0.85) + ' ' + (hy + hr * 0.15) +
+          ' Q ' + (hx + hr * 0.87) + ' ' + (hy - hr * 0.15) + ' ' + (hx + hr * 0.8) + ' ' + (hy - hr * 0.4) +
+          ' L ' + (hx + hr * 0.5) + ' ' + (hy - hr * 0.55) +
+          ' L ' + (hx + hr * 0.45) + ' ' + (hy - hr * 0.1) +
+          ' Z" fill="' + hairDk + '" opacity="0.9"/>' +
+          // Long voluminous top swept left
+          '<path d="M ' + (hx + hr * 0.6) + ' ' + (hy - hr * 0.6) +
+          ' Q ' + (hx + hr * 0.4) + ' ' + (hy - hr * 1.0) + ' ' + hx + ' ' + (hy - hr * 1.15) +
+          ' Q ' + (hx - hr * 0.4) + ' ' + (ucTop + s) + ' ' + (hx - hr * 0.7) + ' ' + ucTop +
+          ' Q ' + (hx - hr * 1.0) + ' ' + (ucTop + s * 0.5) + ' ' + ucSweepX + ' ' + ucSweepY +
+          ' Q ' + (hx - hr * 1.15) + ' ' + (hy - hr * 0.3) + ' ' + (hx - hr * 1.0) + ' ' + (hy - hr * 0.05) +
+          ' Q ' + (hx - hr * 0.85) + ' ' + (hy - hr * 0.3) + ' ' + (hx - hr * 0.6) + ' ' + (hy - hr * 0.6) +
+          ' Q ' + (hx - hr * 0.3) + ' ' + (hy - hr * 0.95) + ' ' + (hx + hr * 0.1) + ' ' + (hy - hr * 1.05) +
+          ' Q ' + (hx + hr * 0.35) + ' ' + (hy - hr * 0.9) + ' ' + (hx + hr * 0.6) + ' ' + (hy - hr * 0.6) +
+          ' Z" fill="' + hg + '"/>' +
+          // Swept highlight
+          '<path d="M ' + (hx + hr * 0.1) + ' ' + (hy - hr * 1.1) +
+          ' Q ' + (hx - hr * 0.3) + ' ' + (ucTop + s * 2) + ' ' + (hx - hr * 0.65) + ' ' + (ucTop + s * 2) +
+          ' Q ' + (hx - hr * 0.85) + ' ' + (hy - hr * 1.0) + ' ' + (hx - hr * 1.0) + ' ' + (hy - hr * 0.7) +
+          ' Q ' + (hx - hr * 0.8) + ' ' + (hy - hr * 0.9) + ' ' + (hx - hr * 0.5) + ' ' + (hy - hr * 1.1) +
+          ' Q ' + (hx - hr * 0.2) + ' ' + (hy - hr * 1.2) + ' ' + (hx + hr * 0.1) + ' ' + (hy - hr * 1.1) +
+          ' Z" fill="' + hairLt + '" opacity="0.3"/>' +
+          // Sharp contrast line between shaved and long
+          '<path d="M ' + (hx - hr * 0.5) + ' ' + (hy - hr * 0.55) +
+          ' Q ' + (hx - hr * 0.1) + ' ' + (hy - hr * 0.65) + ' ' + (hx + hr * 0.3) + ' ' + (hy - hr * 0.6) +
+          ' L ' + (hx + hr * 0.5) + ' ' + (hy - hr * 0.55) +
+          '" stroke="' + hairDk + '" stroke-width="' + (s * 0.5) + '" fill="none" opacity="0.7"/>';
+
       } else if (sty === 'moptop') {
-        // Shaggy, messy floppy hair with irregular edges and fringe over forehead
-        hf = '<path d="M ' + (hx - hr * 1.0) + ' ' + (hy + hr * 0.25) + ' C ' + (hx - hr * 1.15) + ' ' + (hy - hr * 1.45) + ' ' + (hx + hr * 1.15) + ' ' + (hy - hr * 1.45) + ' ' + (hx + hr * 1.0) + ' ' + (hy + hr * 0.25) + ' Q ' + (hx + hr * 0.95) + ' ' + (hy + hr * 0.4) + ' ' + (hx + hr * 0.85) + ' ' + (hy + hr * 0.3) + ' L ' + (hx + hr * 0.8) + ' ' + (hy - hr * 0.05) + ' C ' + (hx + hr * 0.75) + ' ' + (hy - hr * 0.85) + ' ' + (hx - hr * 0.75) + ' ' + (hy - hr * 0.85) + ' ' + (hx - hr * 0.8) + ' ' + (hy - hr * 0.05) + ' L ' + (hx - hr * 0.85) + ' ' + (hy + hr * 0.3) + ' Q ' + (hx - hr * 0.95) + ' ' + (hy + hr * 0.4) + ' ' + (hx - hr * 1.0) + ' ' + (hy + hr * 0.25) + ' Z" fill="' + hg + '"/>' +
-          '<path d="M ' + (hx - hr * 0.55) + ' ' + (hy - hr * 0.5) + ' Q ' + (hx - hr * 0.5) + ' ' + (hy - hr * 0.2) + ' ' + (hx - hr * 0.6) + ' ' + (hy + hr * 0.05) + ' Q ' + (hx - hr * 0.65) + ' ' + (hy + hr * 0.2) + ' ' + (hx - hr * 0.55) + ' ' + (hy + hr * 0.3) + '" stroke="' + hair + '" stroke-width="' + (hr * 0.18) + '" fill="none" stroke-linecap="round" opacity="0.5"/>' +
-          '<path d="M ' + (hx - hr * 0.25) + ' ' + (hy - hr * 0.7) + ' Q ' + (hx - hr * 0.2) + ' ' + (hy - hr * 0.35) + ' ' + (hx - hr * 0.3) + ' ' + (hy - hr * 0.05) + ' Q ' + (hx - hr * 0.35) + ' ' + (hy + hr * 0.15) + ' ' + (hx - hr * 0.25) + ' ' + (hy + hr * 0.3) + '" stroke="' + hair + '" stroke-width="' + (hr * 0.16) + '" fill="none" stroke-linecap="round" opacity="0.45"/>' +
-          '<path d="M ' + (hx + hr * 0.05) + ' ' + (hy - hr * 0.8) + ' Q ' + (hx + hr * 0.1) + ' ' + (hy - hr * 0.4) + ' ' + hx + ' ' + (hy - hr * 0.1) + ' Q ' + (hx - hr * 0.05) + ' ' + (hy + hr * 0.1) + ' ' + (hx + hr * 0.05) + ' ' + (hy + hr * 0.25) + '" stroke="' + hair + '" stroke-width="' + (hr * 0.15) + '" fill="none" stroke-linecap="round" opacity="0.4"/>' +
-          '<path d="M ' + (hx + hr * 0.35) + ' ' + (hy - hr * 0.65) + ' Q ' + (hx + hr * 0.4) + ' ' + (hy - hr * 0.3) + ' ' + (hx + hr * 0.3) + ' ' + (hy + hr * 0.05) + '" stroke="' + hair + '" stroke-width="' + (hr * 0.14) + '" fill="none" stroke-linecap="round" opacity="0.4"/>' +
-          '<path d="M ' + (hx + hr * 0.6) + ' ' + (hy - hr * 0.45) + ' Q ' + (hx + hr * 0.65) + ' ' + (hy - hr * 0.15) + ' ' + (hx + hr * 0.55) + ' ' + (hy + hr * 0.15) + '" stroke="' + hair + '" stroke-width="' + (hr * 0.12) + '" fill="none" stroke-linecap="round" opacity="0.35"/>' +
-          '<circle cx="' + (hx - hr * 0.3) + '" cy="' + (hy - hr * 0.95) + '" r="' + (hr * 0.12) + '" fill="' + hairLt + '" opacity="0.15"/>' +
-          '<circle cx="' + (hx + hr * 0.15) + '" cy="' + (hy - hr * 1.05) + '" r="' + (hr * 0.1) + '" fill="' + hairLt + '" opacity="0.12"/>';
+        // Moptop - shaggy Beatles-style mop, messy overlapping layers
+        var mopW = hr * 1.25;
+        var mopTop = hy - hr * 1.3;
+        var mopBot = hy + hr * 0.5;
+        hb = '<path d="M ' + (hx - mopW) + ' ' + (hy + hr * 0.3) +
+          ' Q ' + (hx - mopW - s) + ' ' + (hy - hr * 0.2) + ' ' + (hx - hr * 0.9) + ' ' + (hy - hr * 0.75) +
+          ' Q ' + (hx - hr * 0.5) + ' ' + (hy - hr * 1.15) + ' ' + hx + ' ' + (hy - hr * 1.1) +
+          ' Q ' + (hx + hr * 0.5) + ' ' + (hy - hr * 1.15) + ' ' + (hx + hr * 0.9) + ' ' + (hy - hr * 0.75) +
+          ' Q ' + (hx + mopW + s) + ' ' + (hy - hr * 0.2) + ' ' + (hx + mopW) + ' ' + (hy + hr * 0.3) +
+          ' Q ' + (hx + mopW) + ' ' + mopBot + ' ' + (hx + hr * 0.7) + ' ' + (mopBot + s * 0.5) +
+          ' L ' + (hx - hr * 0.7) + ' ' + (mopBot + s * 0.5) +
+          ' Q ' + (hx - mopW) + ' ' + mopBot + ' ' + (hx - mopW) + ' ' + (hy + hr * 0.3) +
+          ' Z" fill="' + hair + '"/>';
+        hf = // Main mop shape covering forehead
+          '<path d="M ' + (hx - mopW) + ' ' + (hy + hr * 0.1) +
+          ' Q ' + (hx - mopW * 1.05) + ' ' + (hy - hr * 0.4) + ' ' + (hx - hr * 0.85) + ' ' + (hy - hr * 0.85) +
+          ' Q ' + (hx - hr * 0.5) + ' ' + mopTop + ' ' + hx + ' ' + (mopTop - s * 0.5) +
+          ' Q ' + (hx + hr * 0.5) + ' ' + mopTop + ' ' + (hx + hr * 0.85) + ' ' + (hy - hr * 0.85) +
+          ' Q ' + (hx + mopW * 1.05) + ' ' + (hy - hr * 0.4) + ' ' + (hx + mopW) + ' ' + (hy + hr * 0.1) +
+          ' Q ' + (hx + mopW) + ' ' + (hy + hr * 0.35) + ' ' + (hx + hr * 0.9) + ' ' + mopBot +
+          ' L ' + (hx - hr * 0.9) + ' ' + mopBot +
+          ' Q ' + (hx - mopW) + ' ' + (hy + hr * 0.35) + ' ' + (hx - mopW) + ' ' + (hy + hr * 0.1) +
+          ' Z" fill="' + hg + '"/>' +
+          // Chunky strand overlays (choppy fringe)
+          '<path d="M ' + (hx - hr * 0.7) + ' ' + (hy - hr * 0.85) +
+          ' Q ' + (hx - hr * 0.55) + ' ' + (hy - hr * 0.5) + ' ' + (hx - hr * 0.65) + ' ' + (hy - hr * 0.15) +
+          ' Q ' + (hx - hr * 0.5) + ' ' + (hy - hr * 0.05) + ' ' + (hx - hr * 0.35) + ' ' + (hy - hr * 0.2) +
+          ' Q ' + (hx - hr * 0.4) + ' ' + (hy - hr * 0.55) + ' ' + (hx - hr * 0.5) + ' ' + (hy - hr * 0.8) +
+          ' Z" fill="' + hairDk + '" opacity="0.4"/>' +
+          '<path d="M ' + (hx - hr * 0.2) + ' ' + (mopTop + s) +
+          ' Q ' + (hx - hr * 0.1) + ' ' + (hy - hr * 0.5) + ' ' + (hx - hr * 0.25) + ' ' + (hy - hr * 0.1) +
+          ' Q ' + (hx - hr * 0.05) + ' ' + (hy - hr * 0.05) + ' ' + (hx + hr * 0.1) + ' ' + (hy - hr * 0.15) +
+          ' Q ' + (hx + hr * 0.05) + ' ' + (hy - hr * 0.55) + ' ' + (hx + hr * 0.05) + ' ' + (mopTop + s * 1.5) +
+          ' Z" fill="' + hairDk + '" opacity="0.35"/>' +
+          '<path d="M ' + (hx + hr * 0.35) + ' ' + (hy - hr * 0.9) +
+          ' Q ' + (hx + hr * 0.45) + ' ' + (hy - hr * 0.5) + ' ' + (hx + hr * 0.35) + ' ' + (hy - hr * 0.1) +
+          ' Q ' + (hx + hr * 0.55) + ' ' + (hy - hr * 0.05) + ' ' + (hx + hr * 0.65) + ' ' + (hy - hr * 0.2) +
+          ' Q ' + (hx + hr * 0.6) + ' ' + (hy - hr * 0.55) + ' ' + (hx + hr * 0.55) + ' ' + (hy - hr * 0.85) +
+          ' Z" fill="' + hairDk + '" opacity="0.4"/>' +
+          // Side chunks extending past ears
+          '<path d="M ' + (hx - mopW) + ' ' + (hy - hr * 0.1) +
+          ' Q ' + (hx - mopW - s * 0.8) + ' ' + (hy + hr * 0.15) + ' ' + (hx - mopW - s * 0.5) + ' ' + (hy + hr * 0.4) +
+          ' Q ' + (hx - mopW) + ' ' + (hy + hr * 0.45) + ' ' + (hx - mopW + s * 0.5) + ' ' + (hy + hr * 0.3) +
+          ' Z" fill="' + hair + '"/>' +
+          '<path d="M ' + (hx + mopW) + ' ' + (hy - hr * 0.1) +
+          ' Q ' + (hx + mopW + s * 0.8) + ' ' + (hy + hr * 0.15) + ' ' + (hx + mopW + s * 0.5) + ' ' + (hy + hr * 0.4) +
+          ' Q ' + (hx + mopW) + ' ' + (hy + hr * 0.45) + ' ' + (hx + mopW - s * 0.5) + ' ' + (hy + hr * 0.3) +
+          ' Z" fill="' + hair + '"/>' +
+          // Large highlight area
+          '<path d="M ' + (hx - hr * 0.3) + ' ' + (mopTop + s * 0.5) +
+          ' Q ' + hx + ' ' + (mopTop - s * 0.5) + ' ' + (hx + hr * 0.35) + ' ' + (mopTop + s) +
+          ' Q ' + (hx + hr * 0.2) + ' ' + (hy - hr * 0.65) + ' ' + hx + ' ' + (hy - hr * 0.6) +
+          ' Q ' + (hx - hr * 0.15) + ' ' + (hy - hr * 0.65) + ' ' + (hx - hr * 0.3) + ' ' + (mopTop + s * 0.5) +
+          ' Z" fill="' + hairLt + '" opacity="0.3"/>';
       } else {
         hf = '<path d="M ' + (hx - hr * 0.9) + ' ' + (hy + hr * 0.15) + ' C ' + (hx - hr * 1.05) + ' ' + (hy - hr * 1.5) + ' ' + (hx + hr * 1.05) + ' ' + (hy - hr * 1.5) + ' ' + (hx + hr * 0.9) + ' ' + (hy + hr * 0.15) + ' L ' + (hx + hr * 0.75) + ' ' + (hy - hr * 0.4) + ' C ' + (hx + hr * 0.7) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.7) + ' ' + (hy - hr * 1.1) + ' ' + (hx - hr * 0.75) + ' ' + (hy - hr * 0.4) + ' Z" fill="' + hg + '"/>';
       }
       return { ears: ears, face: fc, cheeks: ck, eyes: ew, brows: br, nose: ns, mouth: mt, hairBack: hb, hairFront: hf };
+    }
+
+    function drawSceneItem(key, x, y, scale) {
+      var s = scale || 1;
+      var svg = '';
+    
+      switch (key) {
+    
+        // =========================================================================
+        // TOYS
+        // =========================================================================
+    
+        case 'toy:teddy':
+          // Ears
+          svg += '<circle cx="' + (x - 10 * s) + '" cy="' + (y - 14 * s) + '" r="' + (5 * s) + '" fill="#A0522D"/>';
+          svg += '<circle cx="' + (x + 10 * s) + '" cy="' + (y - 14 * s) + '" r="' + (5 * s) + '" fill="#A0522D"/>';
+          svg += '<circle cx="' + (x - 10 * s) + '" cy="' + (y - 14 * s) + '" r="' + (3 * s) + '" fill="#C4834E"/>';
+          svg += '<circle cx="' + (x + 10 * s) + '" cy="' + (y - 14 * s) + '" r="' + (3 * s) + '" fill="#C4834E"/>';
+          // Head
+          svg += '<circle cx="' + x + '" cy="' + (y - 8 * s) + '" r="' + (11 * s) + '" fill="#8B4513"/>';
+          // Muzzle
+          svg += '<ellipse cx="' + x + '" cy="' + (y - 5 * s) + '" rx="' + (6 * s) + '" ry="' + (4 * s) + '" fill="#C4834E"/>';
+          // Eyes
+          svg += '<circle cx="' + (x - 4 * s) + '" cy="' + (y - 10 * s) + '" r="' + (1.5 * s) + '" fill="#1a1a1a"/>';
+          svg += '<circle cx="' + (x + 4 * s) + '" cy="' + (y - 10 * s) + '" r="' + (1.5 * s) + '" fill="#1a1a1a"/>';
+          // Nose
+          svg += '<ellipse cx="' + x + '" cy="' + (y - 6 * s) + '" rx="' + (2 * s) + '" ry="' + (1.5 * s) + '" fill="#1a1a1a"/>';
+          // Body
+          svg += '<ellipse cx="' + x + '" cy="' + (y + 8 * s) + '" rx="' + (9 * s) + '" ry="' + (10 * s) + '" fill="#8B4513"/>';
+          // Belly
+          svg += '<ellipse cx="' + x + '" cy="' + (y + 8 * s) + '" rx="' + (6 * s) + '" ry="' + (7 * s) + '" fill="#C4834E"/>';
+          // Arms
+          svg += '<ellipse cx="' + (x - 11 * s) + '" cy="' + (y + 5 * s) + '" rx="' + (4 * s) + '" ry="' + (6 * s) + '" fill="#8B4513" transform="rotate(-15,' + (x - 11 * s) + ',' + (y + 5 * s) + ')"/>';
+          svg += '<ellipse cx="' + (x + 11 * s) + '" cy="' + (y + 5 * s) + '" rx="' + (4 * s) + '" ry="' + (6 * s) + '" fill="#8B4513" transform="rotate(15,' + (x + 11 * s) + ',' + (y + 5 * s) + ')"/>';
+          // Feet
+          svg += '<ellipse cx="' + (x - 5 * s) + '" cy="' + (y + 16 * s) + '" rx="' + (5 * s) + '" ry="' + (3 * s) + '" fill="#8B4513"/>';
+          svg += '<ellipse cx="' + (x + 5 * s) + '" cy="' + (y + 16 * s) + '" rx="' + (5 * s) + '" ry="' + (3 * s) + '" fill="#8B4513"/>';
+          break;
+    
+        case 'toy:soccer':
+          // Main ball
+          svg += '<circle cx="' + x + '" cy="' + y + '" r="' + (14 * s) + '" fill="white" stroke="#333" stroke-width="' + (0.8 * s) + '"/>';
+          // Pentagon patches
+          svg += '<polygon points="' + x + ',' + (y - 6 * s) + ' ' + (x + 5.7 * s) + ',' + (y - 1.8 * s) + ' ' + (x + 3.5 * s) + ',' + (y + 4.9 * s) + ' ' + (x - 3.5 * s) + ',' + (y + 4.9 * s) + ' ' + (x - 5.7 * s) + ',' + (y - 1.8 * s) + '" fill="#222"/>';
+          svg += '<polygon points="' + (x - 1 * s) + ',' + (y - 14 * s) + ' ' + (x + 5 * s) + ',' + (y - 12 * s) + ' ' + (x + 4 * s) + ',' + (y - 8 * s) + ' ' + (x - 2 * s) + ',' + (y - 8 * s) + ' ' + (x - 5 * s) + ',' + (y - 11 * s) + '" fill="#222"/>';
+          svg += '<polygon points="' + (x + 11 * s) + ',' + (y - 6 * s) + ' ' + (x + 14 * s) + ',' + (y - 1 * s) + ' ' + (x + 12 * s) + ',' + (y + 3 * s) + ' ' + (x + 8 * s) + ',' + (y + 1 * s) + ' ' + (x + 8 * s) + ',' + (y - 4 * s) + '" fill="#222"/>';
+          svg += '<polygon points="' + (x - 11 * s) + ',' + (y - 6 * s) + ' ' + (x - 8 * s) + ',' + (y - 4 * s) + ' ' + (x - 8 * s) + ',' + (y + 1 * s) + ' ' + (x - 12 * s) + ',' + (y + 3 * s) + ' ' + (x - 14 * s) + ',' + (y - 1 * s) + '" fill="#222"/>';
+          svg += '<polygon points="' + (x + 7 * s) + ',' + (y + 9 * s) + ' ' + (x + 11 * s) + ',' + (y + 9 * s) + ' ' + (x + 13 * s) + ',' + (y + 12 * s) + ' ' + (x + 9 * s) + ',' + (y + 14 * s) + ' ' + (x + 6 * s) + ',' + (y + 12 * s) + '" fill="#222"/>';
+          svg += '<polygon points="' + (x - 7 * s) + ',' + (y + 9 * s) + ' ' + (x - 6 * s) + ',' + (y + 12 * s) + ' ' + (x - 9 * s) + ',' + (y + 14 * s) + ' ' + (x - 13 * s) + ',' + (y + 12 * s) + ' ' + (x - 11 * s) + ',' + (y + 9 * s) + '" fill="#222"/>';
+          // Highlight
+          svg += '<circle cx="' + (x - 5 * s) + '" cy="' + (y - 6 * s) + '" r="' + (2.5 * s) + '" fill="white" opacity="0.5"/>';
+          break;
+    
+        case 'toy:basketball':
+          // Main ball
+          svg += '<circle cx="' + x + '" cy="' + y + '" r="' + (14 * s) + '" fill="#E87121"/>';
+          // Shadow
+          svg += '<circle cx="' + x + '" cy="' + y + '" r="' + (14 * s) + '" fill="url(#)" opacity="0"/>';
+          // Lines
+          svg += '<line x1="' + (x - 14 * s) + '" y1="' + y + '" x2="' + (x + 14 * s) + '" y2="' + y + '" stroke="#1a1a1a" stroke-width="' + (1 * s) + '" opacity="0.4"/>';
+          svg += '<line x1="' + x + '" y1="' + (y - 14 * s) + '" x2="' + x + '" y2="' + (y + 14 * s) + '" stroke="#1a1a1a" stroke-width="' + (1 * s) + '" opacity="0.4"/>';
+          // Curved seams
+          svg += '<path d="M ' + (x - 8 * s) + ' ' + (y - 12 * s) + ' Q ' + (x - 14 * s) + ' ' + y + ' ' + (x - 8 * s) + ' ' + (y + 12 * s) + '" fill="none" stroke="#1a1a1a" stroke-width="' + (1 * s) + '" opacity="0.4"/>';
+          svg += '<path d="M ' + (x + 8 * s) + ' ' + (y - 12 * s) + ' Q ' + (x + 14 * s) + ' ' + y + ' ' + (x + 8 * s) + ' ' + (y + 12 * s) + '" fill="none" stroke="#1a1a1a" stroke-width="' + (1 * s) + '" opacity="0.4"/>';
+          // Highlight
+          svg += '<circle cx="' + (x - 5 * s) + '" cy="' + (y - 5 * s) + '" r="' + (4 * s) + '" fill="white" opacity="0.2"/>';
+          // Darker bottom edge
+          svg += '<path d="M ' + (x - 12 * s) + ' ' + (y + 6 * s) + ' Q ' + x + ' ' + (y + 18 * s) + ' ' + (x + 12 * s) + ' ' + (y + 6 * s) + '" fill="#C45A10" opacity="0.3"/>';
+          break;
+    
+        case 'toy:skateboard':
+          // Deck
+          svg += '<path d="M ' + (x - 18 * s) + ' ' + (y - 2 * s) + ' Q ' + (x - 20 * s) + ' ' + (y - 6 * s) + ' ' + (x - 16 * s) + ' ' + (y - 6 * s) + ' L ' + (x + 16 * s) + ' ' + (y - 6 * s) + ' Q ' + (x + 20 * s) + ' ' + (y - 6 * s) + ' ' + (x + 18 * s) + ' ' + (y - 2 * s) + ' L ' + (x + 16 * s) + ' ' + (y - 2 * s) + ' L ' + (x - 16 * s) + ' ' + (y - 2 * s) + ' Z" fill="#E63946"/>';
+          // Deck stripe
+          svg += '<rect x="' + (x - 12 * s) + '" y="' + (y - 5.5 * s) + '" width="' + (24 * s) + '" height="' + (1.5 * s) + '" fill="#F4A261" rx="' + (0.5 * s) + '"/>';
+          // Grip tape top
+          svg += '<rect x="' + (x - 14 * s) + '" y="' + (y - 7 * s) + '" width="' + (28 * s) + '" height="' + (1.5 * s) + '" fill="#2a2a2a" rx="' + (0.5 * s) + '"/>';
+          // Trucks (metal parts)
+          svg += '<rect x="' + (x - 12 * s) + '" y="' + (y - 1 * s) + '" width="' + (6 * s) + '" height="' + (3 * s) + '" fill="#888" rx="' + (0.5 * s) + '"/>';
+          svg += '<rect x="' + (x + 6 * s) + '" y="' + (y - 1 * s) + '" width="' + (6 * s) + '" height="' + (3 * s) + '" fill="#888" rx="' + (0.5 * s) + '"/>';
+          // Wheels
+          svg += '<circle cx="' + (x - 13 * s) + '" cy="' + (y + 4 * s) + '" r="' + (3.5 * s) + '" fill="#F4D03F"/>';
+          svg += '<circle cx="' + (x - 7 * s) + '" cy="' + (y + 4 * s) + '" r="' + (3.5 * s) + '" fill="#F4D03F"/>';
+          svg += '<circle cx="' + (x + 7 * s) + '" cy="' + (y + 4 * s) + '" r="' + (3.5 * s) + '" fill="#F4D03F"/>';
+          svg += '<circle cx="' + (x + 13 * s) + '" cy="' + (y + 4 * s) + '" r="' + (3.5 * s) + '" fill="#F4D03F"/>';
+          // Wheel hubs
+          svg += '<circle cx="' + (x - 13 * s) + '" cy="' + (y + 4 * s) + '" r="' + (1.2 * s) + '" fill="#888"/>';
+          svg += '<circle cx="' + (x - 7 * s) + '" cy="' + (y + 4 * s) + '" r="' + (1.2 * s) + '" fill="#888"/>';
+          svg += '<circle cx="' + (x + 7 * s) + '" cy="' + (y + 4 * s) + '" r="' + (1.2 * s) + '" fill="#888"/>';
+          svg += '<circle cx="' + (x + 13 * s) + '" cy="' + (y + 4 * s) + '" r="' + (1.2 * s) + '" fill="#888"/>';
+          break;
+    
+        case 'toy:surfboard':
+          // Board body (angled)
+          svg += '<path d="M ' + (x - 4 * s) + ' ' + (y - 18 * s) + ' Q ' + (x + 8 * s) + ' ' + (y - 10 * s) + ' ' + (x + 8 * s) + ' ' + y + ' Q ' + (x + 8 * s) + ' ' + (y + 10 * s) + ' ' + (x + 2 * s) + ' ' + (y + 18 * s) + ' Q ' + (x - 2 * s) + ' ' + (y + 20 * s) + ' ' + (x - 4 * s) + ' ' + (y + 16 * s) + ' Q ' + (x - 8 * s) + ' ' + (y + 6 * s) + ' ' + (x - 8 * s) + ' ' + y + ' Q ' + (x - 8 * s) + ' ' + (y - 12 * s) + ' ' + (x - 4 * s) + ' ' + (y - 18 * s) + ' Z" fill="#00B4D8"/>';
+          // Center stripe
+          svg += '<path d="M ' + (x - 1 * s) + ' ' + (y - 16 * s) + ' Q ' + (x + 3 * s) + ' ' + (y - 6 * s) + ' ' + (x + 2 * s) + ' ' + (y + 4 * s) + ' Q ' + (x + 1 * s) + ' ' + (y + 12 * s) + ' ' + (x - 1 * s) + ' ' + (y + 16 * s) + '" fill="none" stroke="white" stroke-width="' + (3 * s) + '" opacity="0.6"/>';
+          // Highlight
+          svg += '<path d="M ' + (x - 5 * s) + ' ' + (y - 14 * s) + ' Q ' + (x - 7 * s) + ' ' + (y - 4 * s) + ' ' + (x - 6 * s) + ' ' + (y + 4 * s) + '" fill="none" stroke="white" stroke-width="' + (1.5 * s) + '" opacity="0.3"/>';
+          // Fin
+          svg += '<path d="M ' + (x - 1 * s) + ' ' + (y + 14 * s) + ' L ' + (x - 4 * s) + ' ' + (y + 18 * s) + ' L ' + (x + 1 * s) + ' ' + (y + 17 * s) + ' Z" fill="#0077B6"/>';
+          break;
+    
+        case 'toy:guitar':
+          // Neck
+          svg += '<rect x="' + (x - 1.5 * s) + '" y="' + (y - 18 * s) + '" width="' + (3 * s) + '" height="' + (20 * s) + '" fill="#6B3A2A" rx="' + (1 * s) + '"/>';
+          // Frets
+          svg += '<line x1="' + (x - 1.5 * s) + '" y1="' + (y - 14 * s) + '" x2="' + (x + 1.5 * s) + '" y2="' + (y - 14 * s) + '" stroke="#D4A76A" stroke-width="' + (0.5 * s) + '"/>';
+          svg += '<line x1="' + (x - 1.5 * s) + '" y1="' + (y - 10 * s) + '" x2="' + (x + 1.5 * s) + '" y2="' + (y - 10 * s) + '" stroke="#D4A76A" stroke-width="' + (0.5 * s) + '"/>';
+          svg += '<line x1="' + (x - 1.5 * s) + '" y1="' + (y - 6 * s) + '" x2="' + (x + 1.5 * s) + '" y2="' + (y - 6 * s) + '" stroke="#D4A76A" stroke-width="' + (0.5 * s) + '"/>';
+          // Headstock
+          svg += '<rect x="' + (x - 2.5 * s) + '" y="' + (y - 20 * s) + '" width="' + (5 * s) + '" height="' + (3 * s) + '" fill="#3E2215" rx="' + (1 * s) + '"/>';
+          // Tuning pegs
+          svg += '<circle cx="' + (x - 3.5 * s) + '" cy="' + (y - 19 * s) + '" r="' + (1 * s) + '" fill="#D4A76A"/>';
+          svg += '<circle cx="' + (x + 3.5 * s) + '" cy="' + (y - 19 * s) + '" r="' + (1 * s) + '" fill="#D4A76A"/>';
+          svg += '<circle cx="' + (x - 3.5 * s) + '" cy="' + (y - 17.5 * s) + '" r="' + (1 * s) + '" fill="#D4A76A"/>';
+          svg += '<circle cx="' + (x + 3.5 * s) + '" cy="' + (y - 17.5 * s) + '" r="' + (1 * s) + '" fill="#D4A76A"/>';
+          // Body
+          svg += '<ellipse cx="' + x + '" cy="' + (y + 7 * s) + '" rx="' + (10 * s) + '" ry="' + (8 * s) + '" fill="#D4A76A"/>';
+          svg += '<ellipse cx="' + x + '" cy="' + (y + 12 * s) + '" rx="' + (12 * s) + '" ry="' + (8 * s) + '" fill="#C49A6C"/>';
+          // Sound hole
+          svg += '<circle cx="' + x + '" cy="' + (y + 8 * s) + '" r="' + (4 * s) + '" fill="#3E2215"/>';
+          svg += '<circle cx="' + x + '" cy="' + (y + 8 * s) + '" r="' + (5 * s) + '" fill="none" stroke="#B8860B" stroke-width="' + (0.8 * s) + '"/>';
+          // Strings
+          svg += '<line x1="' + (x - 1 * s) + '" y1="' + (y - 18 * s) + '" x2="' + (x - 1 * s) + '" y2="' + (y + 16 * s) + '" stroke="#ddd" stroke-width="' + (0.3 * s) + '"/>';
+          svg += '<line x1="' + x + '" y1="' + (y - 18 * s) + '" x2="' + x + '" y2="' + (y + 16 * s) + '" stroke="#ddd" stroke-width="' + (0.3 * s) + '"/>';
+          svg += '<line x1="' + (x + 1 * s) + '" y1="' + (y - 18 * s) + '" x2="' + (x + 1 * s) + '" y2="' + (y + 16 * s) + '" stroke="#ddd" stroke-width="' + (0.3 * s) + '"/>';
+          break;
+    
+        case 'toy:trophy':
+          // Cup body
+          svg += '<path d="M ' + (x - 8 * s) + ' ' + (y - 10 * s) + ' L ' + (x - 6 * s) + ' ' + (y + 2 * s) + ' Q ' + x + ' ' + (y + 5 * s) + ' ' + (x + 6 * s) + ' ' + (y + 2 * s) + ' L ' + (x + 8 * s) + ' ' + (y - 10 * s) + ' Z" fill="#FFD700"/>';
+          // Cup rim
+          svg += '<rect x="' + (x - 10 * s) + '" y="' + (y - 12 * s) + '" width="' + (20 * s) + '" height="' + (3 * s) + '" fill="#FFC107" rx="' + (1.5 * s) + '"/>';
+          // Left handle
+          svg += '<path d="M ' + (x - 8 * s) + ' ' + (y - 8 * s) + ' Q ' + (x - 14 * s) + ' ' + (y - 6 * s) + ' ' + (x - 13 * s) + ' ' + (y - 2 * s) + ' Q ' + (x - 12 * s) + ' ' + (y + 2 * s) + ' ' + (x - 7 * s) + ' ' + (y + 1 * s) + '" fill="none" stroke="#FFD700" stroke-width="' + (2.5 * s) + '"/>';
+          // Right handle
+          svg += '<path d="M ' + (x + 8 * s) + ' ' + (y - 8 * s) + ' Q ' + (x + 14 * s) + ' ' + (y - 6 * s) + ' ' + (x + 13 * s) + ' ' + (y - 2 * s) + ' Q ' + (x + 12 * s) + ' ' + (y + 2 * s) + ' ' + (x + 7 * s) + ' ' + (y + 1 * s) + '" fill="none" stroke="#FFD700" stroke-width="' + (2.5 * s) + '"/>';
+          // Stem
+          svg += '<rect x="' + (x - 2 * s) + '" y="' + (y + 3 * s) + '" width="' + (4 * s) + '" height="' + (8 * s) + '" fill="#DAA520"/>';
+          // Base
+          svg += '<ellipse cx="' + x + '" cy="' + (y + 12 * s) + '" rx="' + (8 * s) + '" ry="' + (3 * s) + '" fill="#DAA520"/>';
+          svg += '<rect x="' + (x - 8 * s) + '" y="' + (y + 10 * s) + '" width="' + (16 * s) + '" height="' + (3 * s) + '" fill="#B8860B" rx="' + (1 * s) + '"/>';
+          // Star on cup
+          svg += '<polygon points="' + x + ',' + (y - 7 * s) + ' ' + (x + 2 * s) + ',' + (y - 3 * s) + ' ' + (x + 6 * s) + ',' + (y - 3 * s) + ' ' + (x + 3 * s) + ',' + (y - 0.5 * s) + ' ' + (x + 4 * s) + ',' + (y + 3 * s) + ' ' + x + ',' + (y + 1 * s) + ' ' + (x - 4 * s) + ',' + (y + 3 * s) + ' ' + (x - 3 * s) + ',' + (y - 0.5 * s) + ' ' + (x - 6 * s) + ',' + (y - 3 * s) + ' ' + (x - 2 * s) + ',' + (y - 3 * s) + '" fill="#FFF8DC" opacity="0.6"/>';
+          // Highlight
+          svg += '<path d="M ' + (x - 5 * s) + ' ' + (y - 9 * s) + ' L ' + (x - 4 * s) + ' ' + (y - 1 * s) + '" stroke="white" stroke-width="' + (1.5 * s) + '" opacity="0.3" stroke-linecap="round"/>';
+          break;
+    
+        case 'toy:rocket':
+          // Body
+          svg += '<path d="M ' + x + ' ' + (y - 18 * s) + ' Q ' + (x + 7 * s) + ' ' + (y - 10 * s) + ' ' + (x + 7 * s) + ' ' + (y + 6 * s) + ' L ' + (x - 7 * s) + ' ' + (y + 6 * s) + ' Q ' + (x - 7 * s) + ' ' + (y - 10 * s) + ' ' + x + ' ' + (y - 18 * s) + ' Z" fill="#E63946"/>';
+          // White stripe
+          svg += '<rect x="' + (x - 4 * s) + '" y="' + (y - 10 * s) + '" width="' + (8 * s) + '" height="' + (14 * s) + '" fill="white" rx="' + (1 * s) + '"/>';
+          // Window
+          svg += '<circle cx="' + x + '" cy="' + (y - 5 * s) + '" r="' + (3.5 * s) + '" fill="#4CC9F0"/>';
+          svg += '<circle cx="' + x + '" cy="' + (y - 5 * s) + '" r="' + (3.5 * s) + '" fill="none" stroke="#2196F3" stroke-width="' + (0.8 * s) + '"/>';
+          svg += '<circle cx="' + (x - 1 * s) + '" cy="' + (y - 6 * s) + '" r="' + (1.2 * s) + '" fill="white" opacity="0.5"/>';
+          // Left fin
+          svg += '<path d="M ' + (x - 7 * s) + ' ' + (y + 2 * s) + ' L ' + (x - 13 * s) + ' ' + (y + 12 * s) + ' L ' + (x - 7 * s) + ' ' + (y + 6 * s) + ' Z" fill="#1D3557"/>';
+          // Right fin
+          svg += '<path d="M ' + (x + 7 * s) + ' ' + (y + 2 * s) + ' L ' + (x + 13 * s) + ' ' + (y + 12 * s) + ' L ' + (x + 7 * s) + ' ' + (y + 6 * s) + ' Z" fill="#1D3557"/>';
+          // Flame
+          svg += '<path d="M ' + (x - 4 * s) + ' ' + (y + 6 * s) + ' Q ' + (x - 2 * s) + ' ' + (y + 12 * s) + ' ' + x + ' ' + (y + 18 * s) + ' Q ' + (x + 2 * s) + ' ' + (y + 12 * s) + ' ' + (x + 4 * s) + ' ' + (y + 6 * s) + ' Z" fill="#FF9F1C"/>';
+          svg += '<path d="M ' + (x - 2 * s) + ' ' + (y + 6 * s) + ' Q ' + (x - 1 * s) + ' ' + (y + 10 * s) + ' ' + x + ' ' + (y + 14 * s) + ' Q ' + (x + 1 * s) + ' ' + (y + 10 * s) + ' ' + (x + 2 * s) + ' ' + (y + 6 * s) + ' Z" fill="#FFDD00"/>';
+          break;
+    
+        case 'toy:sword':
+          // Blade
+          svg += '<path d="M ' + x + ' ' + (y - 18 * s) + ' L ' + (x + 2.5 * s) + ' ' + (y - 15 * s) + ' L ' + (x + 2 * s) + ' ' + (y + 2 * s) + ' L ' + (x - 2 * s) + ' ' + (y + 2 * s) + ' L ' + (x - 2.5 * s) + ' ' + (y - 15 * s) + ' Z" fill="#C0C0C0"/>';
+          // Blade highlight
+          svg += '<path d="M ' + (x - 0.5 * s) + ' ' + (y - 16 * s) + ' L ' + (x - 0.5 * s) + ' ' + (y + 1 * s) + '" stroke="white" stroke-width="' + (1 * s) + '" opacity="0.4"/>';
+          // Blade edge
+          svg += '<path d="M ' + x + ' ' + (y - 18 * s) + ' L ' + (x + 2.5 * s) + ' ' + (y - 15 * s) + ' L ' + (x + 2 * s) + ' ' + (y + 2 * s) + ' L ' + (x - 2 * s) + ' ' + (y + 2 * s) + ' L ' + (x - 2.5 * s) + ' ' + (y - 15 * s) + ' Z" fill="none" stroke="#999" stroke-width="' + (0.5 * s) + '"/>';
+          // Guard (crosspiece)
+          svg += '<rect x="' + (x - 8 * s) + '" y="' + (y + 1 * s) + '" width="' + (16 * s) + '" height="' + (3 * s) + '" fill="#2563EB" rx="' + (1.5 * s) + '"/>';
+          // Guard gem
+          svg += '<circle cx="' + x + '" cy="' + (y + 2.5 * s) + '" r="' + (1.5 * s) + '" fill="#DC2626"/>';
+          // Handle grip
+          svg += '<rect x="' + (x - 2 * s) + '" y="' + (y + 4 * s) + '" width="' + (4 * s) + '" height="' + (10 * s) + '" fill="#6B3A2A" rx="' + (1 * s) + '"/>';
+          // Handle wrapping
+          svg += '<line x1="' + (x - 2 * s) + '" y1="' + (y + 6 * s) + '" x2="' + (x + 2 * s) + '" y2="' + (y + 7.5 * s) + '" stroke="#D4A76A" stroke-width="' + (0.7 * s) + '"/>';
+          svg += '<line x1="' + (x - 2 * s) + '" y1="' + (y + 9 * s) + '" x2="' + (x + 2 * s) + '" y2="' + (y + 10.5 * s) + '" stroke="#D4A76A" stroke-width="' + (0.7 * s) + '"/>';
+          // Pommel
+          svg += '<circle cx="' + x + '" cy="' + (y + 15 * s) + '" r="' + (3 * s) + '" fill="#DAA520"/>';
+          svg += '<circle cx="' + x + '" cy="' + (y + 15 * s) + '" r="' + (1.5 * s) + '" fill="#FFD700"/>';
+          break;
+    
+        case 'toy:wand':
+          // Wand stick
+          svg += '<rect x="' + (x - 1 * s) + '" y="' + (y - 6 * s) + '" width="' + (2 * s) + '" height="' + (22 * s) + '" fill="#4A2C6B" rx="' + (0.5 * s) + '"/>';
+          // Handle rings
+          svg += '<rect x="' + (x - 1.5 * s) + '" y="' + (y + 10 * s) + '" width="' + (3 * s) + '" height="' + (2 * s) + '" fill="#DAA520" rx="' + (0.5 * s) + '"/>';
+          svg += '<rect x="' + (x - 1.5 * s) + '" y="' + (y + 13 * s) + '" width="' + (3 * s) + '" height="' + (2 * s) + '" fill="#DAA520" rx="' + (0.5 * s) + '"/>';
+          // Star (5-pointed at tip)
+          svg += '<polygon points="' + x + ',' + (y - 16 * s) + ' ' + (x + 2 * s) + ',' + (y - 10 * s) + ' ' + (x + 7 * s) + ',' + (y - 10 * s) + ' ' + (x + 3 * s) + ',' + (y - 7 * s) + ' ' + (x + 5 * s) + ',' + (y - 2 * s) + ' ' + x + ',' + (y - 5 * s) + ' ' + (x - 5 * s) + ',' + (y - 2 * s) + ' ' + (x - 3 * s) + ',' + (y - 7 * s) + ' ' + (x - 7 * s) + ',' + (y - 10 * s) + ' ' + (x - 2 * s) + ',' + (y - 10 * s) + '" fill="#FFD700"/>';
+          // Star highlight
+          svg += '<polygon points="' + x + ',' + (y - 14 * s) + ' ' + (x + 1 * s) + ',' + (y - 10 * s) + ' ' + (x + 4 * s) + ',' + (y - 10 * s) + ' ' + (x + 2 * s) + ',' + (y - 8 * s) + ' ' + (x + 3 * s) + ',' + (y - 5 * s) + ' ' + x + ',' + (y - 7 * s) + ' ' + (x - 3 * s) + ',' + (y - 5 * s) + ' ' + (x - 2 * s) + ',' + (y - 8 * s) + ' ' + (x - 4 * s) + ',' + (y - 10 * s) + ' ' + (x - 1 * s) + ',' + (y - 10 * s) + '" fill="#FFF8DC" opacity="0.4"/>';
+          // Sparkles
+          svg += '<circle cx="' + (x + 8 * s) + '" cy="' + (y - 14 * s) + '" r="' + (1 * s) + '" fill="#FFD700" opacity="0.8"/>';
+          svg += '<circle cx="' + (x - 6 * s) + '" cy="' + (y - 16 * s) + '" r="' + (0.7 * s) + '" fill="#FFD700" opacity="0.6"/>';
+          svg += '<circle cx="' + (x + 5 * s) + '" cy="' + (y - 18 * s) + '" r="' + (0.8 * s) + '" fill="#FFF8DC" opacity="0.7"/>';
+          svg += '<circle cx="' + (x - 9 * s) + '" cy="' + (y - 12 * s) + '" r="' + (0.6 * s) + '" fill="#FFF8DC" opacity="0.5"/>';
+          break;
+    
+        case 'toy:kite':
+          // Kite body (diamond)
+          svg += '<polygon points="' + x + ',' + (y - 16 * s) + ' ' + (x + 10 * s) + ',' + (y - 4 * s) + ' ' + x + ',' + (y + 8 * s) + ' ' + (x - 10 * s) + ',' + (y - 4 * s) + '" fill="#E63946"/>';
+          // Cross struts
+          svg += '<line x1="' + x + '" y1="' + (y - 16 * s) + '" x2="' + x + '" y2="' + (y + 8 * s) + '" stroke="#333" stroke-width="' + (0.8 * s) + '"/>';
+          svg += '<line x1="' + (x - 10 * s) + '" y1="' + (y - 4 * s) + '" x2="' + (x + 10 * s) + '" y2="' + (y - 4 * s) + '" stroke="#333" stroke-width="' + (0.8 * s) + '"/>';
+          // Color sections
+          svg += '<polygon points="' + x + ',' + (y - 16 * s) + ' ' + (x + 10 * s) + ',' + (y - 4 * s) + ' ' + x + ',' + (y - 4 * s) + '" fill="#F4A261" opacity="0.7"/>';
+          svg += '<polygon points="' + x + ',' + (y - 4 * s) + ' ' + (x - 10 * s) + ',' + (y - 4 * s) + ' ' + x + ',' + (y + 8 * s) + '" fill="#2A9D8F" opacity="0.7"/>';
+          // Tail string
+          svg += '<path d="M ' + x + ' ' + (y + 8 * s) + ' Q ' + (x + 4 * s) + ' ' + (y + 12 * s) + ' ' + (x + 2 * s) + ' ' + (y + 15 * s) + ' Q ' + (x - 2 * s) + ' ' + (y + 18 * s) + ' ' + (x + 1 * s) + ' ' + (y + 20 * s) + '" fill="none" stroke="#333" stroke-width="' + (0.6 * s) + '"/>';
+          // Tail bows
+          svg += '<path d="M ' + (x + 3 * s) + ' ' + (y + 12 * s) + ' L ' + (x + 6 * s) + ' ' + (y + 11 * s) + ' L ' + (x + 3 * s) + ' ' + (y + 13 * s) + '" fill="#4CC9F0" stroke="#4CC9F0" stroke-width="' + (0.5 * s) + '"/>';
+          svg += '<path d="M ' + (x - 1 * s) + ' ' + (y + 17 * s) + ' L ' + (x - 4 * s) + ' ' + (y + 16 * s) + ' L ' + (x - 1 * s) + ' ' + (y + 18 * s) + '" fill="#FFD700" stroke="#FFD700" stroke-width="' + (0.5 * s) + '"/>';
+          break;
+    
+        case 'toy:balloon':
+          // String
+          svg += '<path d="M ' + x + ' ' + (y + 2 * s) + ' Q ' + (x + 3 * s) + ' ' + (y + 10 * s) + ' ' + (x - 1 * s) + ' ' + (y + 18 * s) + '" fill="none" stroke="#999" stroke-width="' + (0.7 * s) + '"/>';
+          // Balloon body
+          svg += '<ellipse cx="' + x + '" cy="' + (y - 6 * s) + '" rx="' + (10 * s) + '" ry="' + (12 * s) + '" fill="#E63946"/>';
+          // Knot
+          svg += '<path d="M ' + (x - 2 * s) + ' ' + (y + 5 * s) + ' L ' + x + ' ' + (y + 8 * s) + ' L ' + (x + 2 * s) + ' ' + (y + 5 * s) + ' Z" fill="#C1121F"/>';
+          // Highlight
+          svg += '<ellipse cx="' + (x - 3 * s) + '" cy="' + (y - 10 * s) + '" rx="' + (3 * s) + '" ry="' + (5 * s) + '" fill="white" opacity="0.25" transform="rotate(-15,' + (x - 3 * s) + ',' + (y - 10 * s) + ')"/>';
+          break;
+    
+        // =========================================================================
+        // VEHICLES
+        // =========================================================================
+    
+        case 'veh:racecar':
+          // Body
+          svg += '<path d="M ' + (x - 18 * s) + ' ' + (y + 2 * s) + ' L ' + (x - 14 * s) + ' ' + (y - 4 * s) + ' L ' + (x - 6 * s) + ' ' + (y - 4 * s) + ' L ' + (x - 3 * s) + ' ' + (y - 10 * s) + ' L ' + (x + 8 * s) + ' ' + (y - 10 * s) + ' L ' + (x + 12 * s) + ' ' + (y - 4 * s) + ' L ' + (x + 18 * s) + ' ' + (y - 4 * s) + ' L ' + (x + 18 * s) + ' ' + (y + 2 * s) + ' Z" fill="#E63946"/>';
+          // Windshield
+          svg += '<path d="M ' + (x - 2 * s) + ' ' + (y - 9 * s) + ' L ' + (x + 7 * s) + ' ' + (y - 9 * s) + ' L ' + (x + 10 * s) + ' ' + (y - 4 * s) + ' L ' + (x - 5 * s) + ' ' + (y - 4 * s) + ' Z" fill="#87CEEB" opacity="0.8"/>';
+          // Stripe
+          svg += '<rect x="' + (x - 16 * s) + '" y="' + (y - 2 * s) + '" width="' + (34 * s) + '" height="' + (2 * s) + '" fill="white" opacity="0.5"/>';
+          // Rear spoiler
+          svg += '<rect x="' + (x - 16 * s) + '" y="' + (y - 8 * s) + '" width="' + (8 * s) + '" height="' + (1.5 * s) + '" fill="#C1121F"/>';
+          svg += '<rect x="' + (x - 14 * s) + '" y="' + (y - 6.5 * s) + '" width="' + (1.5 * s) + '" height="' + (3 * s) + '" fill="#C1121F"/>';
+          // Wheels
+          svg += '<circle cx="' + (x - 10 * s) + '" cy="' + (y + 4 * s) + '" r="' + (4 * s) + '" fill="#333"/>';
+          svg += '<circle cx="' + (x + 12 * s) + '" cy="' + (y + 4 * s) + '" r="' + (4 * s) + '" fill="#333"/>';
+          svg += '<circle cx="' + (x - 10 * s) + '" cy="' + (y + 4 * s) + '" r="' + (2 * s) + '" fill="#888"/>';
+          svg += '<circle cx="' + (x + 12 * s) + '" cy="' + (y + 4 * s) + '" r="' + (2 * s) + '" fill="#888"/>';
+          // Headlight
+          svg += '<rect x="' + (x + 16 * s) + '" y="' + (y - 3 * s) + '" width="' + (2 * s) + '" height="' + (2 * s) + '" fill="#FFD700" rx="' + (0.5 * s) + '"/>';
+          break;
+    
+        case 'veh:monstertruck':
+          // Body
+          svg += '<path d="M ' + (x - 12 * s) + ' ' + (y - 2 * s) + ' L ' + (x - 12 * s) + ' ' + (y - 10 * s) + ' L ' + (x - 4 * s) + ' ' + (y - 10 * s) + ' L ' + (x - 2 * s) + ' ' + (y - 14 * s) + ' L ' + (x + 8 * s) + ' ' + (y - 14 * s) + ' L ' + (x + 10 * s) + ' ' + (y - 10 * s) + ' L ' + (x + 14 * s) + ' ' + (y - 10 * s) + ' L ' + (x + 14 * s) + ' ' + (y - 2 * s) + ' Z" fill="#2E86AB"/>';
+          // Windshield
+          svg += '<path d="M ' + (x - 1 * s) + ' ' + (y - 13 * s) + ' L ' + (x + 7 * s) + ' ' + (y - 13 * s) + ' L ' + (x + 9 * s) + ' ' + (y - 10 * s) + ' L ' + (x - 3 * s) + ' ' + (y - 10 * s) + ' Z" fill="#87CEEB" opacity="0.7"/>';
+          // Suspension rods
+          svg += '<line x1="' + (x - 8 * s) + '" y1="' + (y - 2 * s) + '" x2="' + (x - 10 * s) + '" y2="' + (y + 4 * s) + '" stroke="#555" stroke-width="' + (1.5 * s) + '"/>';
+          svg += '<line x1="' + (x + 10 * s) + '" y1="' + (y - 2 * s) + '" x2="' + (x + 12 * s) + '" y2="' + (y + 4 * s) + '" stroke="#555" stroke-width="' + (1.5 * s) + '"/>';
+          // Big wheels
+          svg += '<circle cx="' + (x - 10 * s) + '" cy="' + (y + 8 * s) + '" r="' + (7 * s) + '" fill="#333"/>';
+          svg += '<circle cx="' + (x + 12 * s) + '" cy="' + (y + 8 * s) + '" r="' + (7 * s) + '" fill="#333"/>';
+          // Wheel tread pattern
+          svg += '<circle cx="' + (x - 10 * s) + '" cy="' + (y + 8 * s) + '" r="' + (7 * s) + '" fill="none" stroke="#555" stroke-width="' + (1.5 * s) + '" stroke-dasharray="' + (3 * s) + ' ' + (2 * s) + '"/>';
+          svg += '<circle cx="' + (x + 12 * s) + '" cy="' + (y + 8 * s) + '" r="' + (7 * s) + '" fill="none" stroke="#555" stroke-width="' + (1.5 * s) + '" stroke-dasharray="' + (3 * s) + ' ' + (2 * s) + '"/>';
+          // Wheel hubs
+          svg += '<circle cx="' + (x - 10 * s) + '" cy="' + (y + 8 * s) + '" r="' + (3 * s) + '" fill="#888"/>';
+          svg += '<circle cx="' + (x + 12 * s) + '" cy="' + (y + 8 * s) + '" r="' + (3 * s) + '" fill="#888"/>';
+          // Headlights
+          svg += '<rect x="' + (x + 12 * s) + '" y="' + (y - 8 * s) + '" width="' + (2 * s) + '" height="' + (3 * s) + '" fill="#FFD700" rx="' + (0.5 * s) + '"/>';
+          break;
+    
+        case 'veh:bicycle':
+          // Wheels
+          svg += '<circle cx="' + (x - 10 * s) + '" cy="' + (y + 6 * s) + '" r="' + (7 * s) + '" fill="none" stroke="#333" stroke-width="' + (1.5 * s) + '"/>';
+          svg += '<circle cx="' + (x + 10 * s) + '" cy="' + (y + 6 * s) + '" r="' + (7 * s) + '" fill="none" stroke="#333" stroke-width="' + (1.5 * s) + '"/>';
+          // Wheel hubs
+          svg += '<circle cx="' + (x - 10 * s) + '" cy="' + (y + 6 * s) + '" r="' + (1.5 * s) + '" fill="#888"/>';
+          svg += '<circle cx="' + (x + 10 * s) + '" cy="' + (y + 6 * s) + '" r="' + (1.5 * s) + '" fill="#888"/>';
+          // Spokes (simplified)
+          svg += '<line x1="' + (x - 10 * s) + '" y1="' + (y - 1 * s) + '" x2="' + (x - 10 * s) + '" y2="' + (y + 13 * s) + '" stroke="#aaa" stroke-width="' + (0.4 * s) + '"/>';
+          svg += '<line x1="' + (x - 17 * s) + '" y1="' + (y + 6 * s) + '" x2="' + (x - 3 * s) + '" y2="' + (y + 6 * s) + '" stroke="#aaa" stroke-width="' + (0.4 * s) + '"/>';
+          svg += '<line x1="' + (x + 10 * s) + '" y1="' + (y - 1 * s) + '" x2="' + (x + 10 * s) + '" y2="' + (y + 13 * s) + '" stroke="#aaa" stroke-width="' + (0.4 * s) + '"/>';
+          svg += '<line x1="' + (x + 3 * s) + '" y1="' + (y + 6 * s) + '" x2="' + (x + 17 * s) + '" y2="' + (y + 6 * s) + '" stroke="#aaa" stroke-width="' + (0.4 * s) + '"/>';
+          // Frame
+          svg += '<line x1="' + (x - 10 * s) + '" y1="' + (y + 6 * s) + '" x2="' + x + '" y2="' + (y - 2 * s) + '" stroke="#E63946" stroke-width="' + (2 * s) + '"/>';
+          svg += '<line x1="' + x + '" y1="' + (y - 2 * s) + '" x2="' + (x + 10 * s) + '" y2="' + (y + 6 * s) + '" stroke="#E63946" stroke-width="' + (2 * s) + '"/>';
+          svg += '<line x1="' + (x - 10 * s) + '" y1="' + (y + 6 * s) + '" x2="' + (x + 2 * s) + '" y2="' + (y + 6 * s) + '" stroke="#E63946" stroke-width="' + (2 * s) + '"/>';
+          svg += '<line x1="' + (x + 2 * s) + '" y1="' + (y + 6 * s) + '" x2="' + x + '" y2="' + (y - 2 * s) + '" stroke="#E63946" stroke-width="' + (2 * s) + '"/>';
+          // Seat
+          svg += '<ellipse cx="' + (x - 1 * s) + '" cy="' + (y - 3 * s) + '" rx="' + (4 * s) + '" ry="' + (1.5 * s) + '" fill="#333"/>';
+          // Seat post
+          svg += '<line x1="' + x + '" y1="' + (y - 2 * s) + '" x2="' + (x - 1 * s) + '" y2="' + (y - 6 * s) + '" stroke="#333" stroke-width="' + (1.5 * s) + '"/>';
+          // Handlebars
+          svg += '<line x1="' + (x + 10 * s) + '" y1="' + (y + 6 * s) + '" x2="' + (x + 10 * s) + '" y2="' + (y - 6 * s) + '" stroke="#333" stroke-width="' + (1.5 * s) + '"/>';
+          svg += '<line x1="' + (x + 7 * s) + '" y1="' + (y - 6 * s) + '" x2="' + (x + 13 * s) + '" y2="' + (y - 6 * s) + '" stroke="#333" stroke-width="' + (2 * s) + '"/>';
+          // Pedal
+          svg += '<circle cx="' + (x + 2 * s) + '" cy="' + (y + 6 * s) + '" r="' + (2 * s) + '" fill="#555"/>';
+          break;
+    
+        case 'veh:aeroplane':
+          // Fuselage
+          svg += '<ellipse cx="' + x + '" cy="' + y + '" rx="' + (18 * s) + '" ry="' + (5 * s) + '" fill="#4CC9F0"/>';
+          // Nose
+          svg += '<path d="M ' + (x + 16 * s) + ' ' + (y - 3 * s) + ' Q ' + (x + 22 * s) + ' ' + y + ' ' + (x + 16 * s) + ' ' + (y + 3 * s) + ' Z" fill="#3A86A8"/>';
+          // Cockpit window
+          svg += '<path d="M ' + (x + 12 * s) + ' ' + (y - 3 * s) + ' Q ' + (x + 16 * s) + ' ' + (y - 4 * s) + ' ' + (x + 18 * s) + ' ' + (y - 1 * s) + ' L ' + (x + 14 * s) + ' ' + (y - 1 * s) + ' Z" fill="#87CEEB" opacity="0.7"/>';
+          // Wing
+          svg += '<path d="M ' + (x - 2 * s) + ' ' + (y - 1 * s) + ' L ' + (x + 6 * s) + ' ' + (y - 14 * s) + ' L ' + (x + 10 * s) + ' ' + (y - 14 * s) + ' L ' + (x + 4 * s) + ' ' + (y - 1 * s) + ' Z" fill="#3A86A8"/>';
+          svg += '<path d="M ' + (x - 2 * s) + ' ' + (y + 1 * s) + ' L ' + (x + 6 * s) + ' ' + (y + 14 * s) + ' L ' + (x + 10 * s) + ' ' + (y + 14 * s) + ' L ' + (x + 4 * s) + ' ' + (y + 1 * s) + ' Z" fill="#3A86A8"/>';
+          // Tail fin (vertical)
+          svg += '<path d="M ' + (x - 16 * s) + ' ' + (y - 2 * s) + ' L ' + (x - 14 * s) + ' ' + (y - 12 * s) + ' L ' + (x - 10 * s) + ' ' + (y - 12 * s) + ' L ' + (x - 12 * s) + ' ' + (y - 2 * s) + ' Z" fill="#E63946"/>';
+          // Tail wing (horizontal)
+          svg += '<path d="M ' + (x - 16 * s) + ' ' + (y + 1 * s) + ' L ' + (x - 13 * s) + ' ' + (y + 7 * s) + ' L ' + (x - 10 * s) + ' ' + (y + 7 * s) + ' L ' + (x - 12 * s) + ' ' + (y + 1 * s) + ' Z" fill="#E63946"/>';
+          // Propeller hub
+          svg += '<circle cx="' + (x + 20 * s) + '" cy="' + y + '" r="' + (2 * s) + '" fill="#555"/>';
+          // Propeller blades
+          svg += '<ellipse cx="' + (x + 20 * s) + '" cy="' + (y - 5 * s) + '" rx="' + (1.5 * s) + '" ry="' + (5 * s) + '" fill="#999" opacity="0.7"/>';
+          svg += '<ellipse cx="' + (x + 20 * s) + '" cy="' + (y + 5 * s) + '" rx="' + (1.5 * s) + '" ry="' + (5 * s) + '" fill="#999" opacity="0.7"/>';
+          break;
+    
+        case 'veh:speedboat':
+          // Water
+          svg += '<path d="M ' + (x - 20 * s) + ' ' + (y + 6 * s) + ' Q ' + (x - 15 * s) + ' ' + (y + 4 * s) + ' ' + (x - 10 * s) + ' ' + (y + 6 * s) + ' Q ' + (x - 5 * s) + ' ' + (y + 8 * s) + ' ' + x + ' ' + (y + 6 * s) + ' Q ' + (x + 5 * s) + ' ' + (y + 4 * s) + ' ' + (x + 10 * s) + ' ' + (y + 6 * s) + ' Q ' + (x + 15 * s) + ' ' + (y + 8 * s) + ' ' + (x + 20 * s) + ' ' + (y + 6 * s) + '" fill="none" stroke="#4CC9F0" stroke-width="' + (1.5 * s) + '" opacity="0.5"/>';
+          // Hull
+          svg += '<path d="M ' + (x - 16 * s) + ' ' + (y + 2 * s) + ' L ' + (x + 18 * s) + ' ' + (y + 2 * s) + ' L ' + (x + 14 * s) + ' ' + (y + 8 * s) + ' L ' + (x - 12 * s) + ' ' + (y + 8 * s) + ' Z" fill="white"/>';
+          // Hull stripe
+          svg += '<path d="M ' + (x - 14 * s) + ' ' + (y + 5 * s) + ' L ' + (x + 16 * s) + ' ' + (y + 5 * s) + ' L ' + (x + 14.5 * s) + ' ' + (y + 7 * s) + ' L ' + (x - 12.5 * s) + ' ' + (y + 7 * s) + ' Z" fill="#E63946"/>';
+          // Cabin/windshield
+          svg += '<path d="M ' + (x - 4 * s) + ' ' + (y + 2 * s) + ' L ' + (x - 2 * s) + ' ' + (y - 6 * s) + ' L ' + (x + 6 * s) + ' ' + (y - 6 * s) + ' L ' + (x + 6 * s) + ' ' + (y + 2 * s) + ' Z" fill="#87CEEB" opacity="0.7"/>';
+          // Cabin frame
+          svg += '<line x1="' + (x - 4 * s) + '" y1="' + (y + 2 * s) + '" x2="' + (x - 2 * s) + '" y2="' + (y - 6 * s) + '" stroke="#333" stroke-width="' + (0.8 * s) + '"/>';
+          svg += '<line x1="' + (x + 6 * s) + '" y1="' + (y + 2 * s) + '" x2="' + (x + 6 * s) + '" y2="' + (y - 6 * s) + '" stroke="#333" stroke-width="' + (0.8 * s) + '"/>';
+          // Wake spray
+          svg += '<path d="M ' + (x - 16 * s) + ' ' + (y + 2 * s) + ' Q ' + (x - 20 * s) + ' ' + (y - 2 * s) + ' ' + (x - 22 * s) + ' ' + (y + 3 * s) + '" fill="none" stroke="#87CEEB" stroke-width="' + (1.5 * s) + '" opacity="0.5"/>';
+          break;
+    
+        case 'veh:helicopter':
+          // Body
+          svg += '<ellipse cx="' + (x + 2 * s) + '" cy="' + (y + 2 * s) + '" rx="' + (12 * s) + '" ry="' + (6 * s) + '" fill="#E63946"/>';
+          // Cockpit
+          svg += '<path d="M ' + (x + 10 * s) + ' ' + (y - 1 * s) + ' Q ' + (x + 18 * s) + ' ' + (y - 2 * s) + ' ' + (x + 16 * s) + ' ' + (y + 4 * s) + ' L ' + (x + 10 * s) + ' ' + (y + 4 * s) + ' Z" fill="#87CEEB" opacity="0.7"/>';
+          // Tail boom
+          svg += '<path d="M ' + (x - 10 * s) + ' ' + (y + 1 * s) + ' L ' + (x - 20 * s) + ' ' + (y - 4 * s) + ' L ' + (x - 20 * s) + ' ' + (y - 1 * s) + ' L ' + (x - 10 * s) + ' ' + (y + 3 * s) + ' Z" fill="#C1121F"/>';
+          // Tail rotor
+          svg += '<ellipse cx="' + (x - 20 * s) + '" cy="' + (y - 5 * s) + '" rx="' + (1 * s) + '" ry="' + (4 * s) + '" fill="#999" opacity="0.6"/>';
+          svg += '<circle cx="' + (x - 20 * s) + '" cy="' + (y - 2.5 * s) + '" r="' + (1.5 * s) + '" fill="#555"/>';
+          // Rotor mast
+          svg += '<line x1="' + (x + 2 * s) + '" y1="' + (y - 4 * s) + '" x2="' + (x + 2 * s) + '" y2="' + (y - 8 * s) + '" stroke="#555" stroke-width="' + (2 * s) + '"/>';
+          // Main rotor blades
+          svg += '<ellipse cx="' + (x + 2 * s) + '" cy="' + (y - 8 * s) + '" rx="' + (20 * s) + '" ry="' + (1.5 * s) + '" fill="#999" opacity="0.5"/>';
+          // Skid landing gear
+          svg += '<line x1="' + (x - 4 * s) + '" y1="' + (y + 8 * s) + '" x2="' + (x + 10 * s) + '" y2="' + (y + 8 * s) + '" stroke="#555" stroke-width="' + (1.5 * s) + '"/>';
+          svg += '<line x1="' + (x - 2 * s) + '" y1="' + (y + 5 * s) + '" x2="' + (x - 2 * s) + '" y2="' + (y + 8 * s) + '" stroke="#555" stroke-width="' + (1 * s) + '"/>';
+          svg += '<line x1="' + (x + 8 * s) + '" y1="' + (y + 5 * s) + '" x2="' + (x + 8 * s) + '" y2="' + (y + 8 * s) + '" stroke="#555" stroke-width="' + (1 * s) + '"/>';
+          break;
+    
+        case 'veh:train':
+          // Boiler body
+          svg += '<rect x="' + (x - 12 * s) + '" y="' + (y - 6 * s) + '" width="' + (22 * s) + '" height="' + (12 * s) + '" fill="#1a1a1a" rx="' + (2 * s) + '"/>';
+          // Boiler cylinder
+          svg += '<rect x="' + (x + 2 * s) + '" y="' + (y - 8 * s) + '" width="' + (14 * s) + '" height="' + (10 * s) + '" fill="#E63946" rx="' + (5 * s) + '"/>';
+          // Cab
+          svg += '<rect x="' + (x - 14 * s) + '" y="' + (y - 12 * s) + '" width="' + (10 * s) + '" height="' + (16 * s) + '" fill="#E63946" rx="' + (1 * s) + '"/>';
+          // Cab window
+          svg += '<rect x="' + (x - 12 * s) + '" y="' + (y - 10 * s) + '" width="' + (6 * s) + '" height="' + (5 * s) + '" fill="#87CEEB" rx="' + (1 * s) + '"/>';
+          // Cab roof
+          svg += '<rect x="' + (x - 16 * s) + '" y="' + (y - 13 * s) + '" width="' + (14 * s) + '" height="' + (2 * s) + '" fill="#333" rx="' + (1 * s) + '"/>';
+          // Smokestack
+          svg += '<rect x="' + (x + 8 * s) + '" y="' + (y - 14 * s) + '" width="' + (4 * s) + '" height="' + (7 * s) + '" fill="#333"/>';
+          svg += '<rect x="' + (x + 7 * s) + '" y="' + (y - 15 * s) + '" width="' + (6 * s) + '" height="' + (2 * s) + '" fill="#555" rx="' + (1 * s) + '"/>';
+          // Smoke puffs
+          svg += '<circle cx="' + (x + 10 * s) + '" cy="' + (y - 18 * s) + '" r="' + (3 * s) + '" fill="#ddd" opacity="0.4"/>';
+          svg += '<circle cx="' + (x + 7 * s) + '" cy="' + (y - 20 * s) + '" r="' + (2 * s) + '" fill="#ddd" opacity="0.3"/>';
+          // Front headlight
+          svg += '<circle cx="' + (x + 16 * s) + '" cy="' + (y - 2 * s) + '" r="' + (2 * s) + '" fill="#FFD700"/>';
+          // Cow catcher
+          svg += '<path d="M ' + (x + 16 * s) + ' ' + (y + 2 * s) + ' L ' + (x + 20 * s) + ' ' + (y + 6 * s) + ' L ' + (x + 16 * s) + ' ' + (y + 6 * s) + ' Z" fill="#555"/>';
+          // Wheels
+          svg += '<circle cx="' + (x - 10 * s) + '" cy="' + (y + 8 * s) + '" r="' + (4 * s) + '" fill="#333"/>';
+          svg += '<circle cx="' + (x - 2 * s) + '" cy="' + (y + 8 * s) + '" r="' + (4 * s) + '" fill="#333"/>';
+          svg += '<circle cx="' + (x + 8 * s) + '" cy="' + (y + 8 * s) + '" r="' + (4 * s) + '" fill="#333"/>';
+          svg += '<circle cx="' + (x - 10 * s) + '" cy="' + (y + 8 * s) + '" r="' + (1.5 * s) + '" fill="#888"/>';
+          svg += '<circle cx="' + (x - 2 * s) + '" cy="' + (y + 8 * s) + '" r="' + (1.5 * s) + '" fill="#888"/>';
+          svg += '<circle cx="' + (x + 8 * s) + '" cy="' + (y + 8 * s) + '" r="' + (1.5 * s) + '" fill="#888"/>';
+          break;
+    
+        case 'veh:ufo':
+          // Beam / glow beneath
+          svg += '<ellipse cx="' + x + '" cy="' + (y + 10 * s) + '" rx="' + (8 * s) + '" ry="' + (3 * s) + '" fill="#90EE90" opacity="0.2"/>';
+          // Saucer body
+          svg += '<ellipse cx="' + x + '" cy="' + (y + 2 * s) + '" rx="' + (18 * s) + '" ry="' + (5 * s) + '" fill="#888"/>';
+          // Saucer top
+          svg += '<ellipse cx="' + x + '" cy="' + (y + 1 * s) + '" rx="' + (18 * s) + '" ry="' + (4 * s) + '" fill="#A9A9A9"/>';
+          // Dome
+          svg += '<ellipse cx="' + x + '" cy="' + (y - 4 * s) + '" rx="' + (8 * s) + '" ry="' + (6 * s) + '" fill="#87CEEB" opacity="0.6"/>';
+          svg += '<ellipse cx="' + x + '" cy="' + (y - 4 * s) + '" rx="' + (8 * s) + '" ry="' + (6 * s) + '" fill="none" stroke="#4CC9F0" stroke-width="' + (0.8 * s) + '"/>';
+          // Dome highlight
+          svg += '<ellipse cx="' + (x - 2 * s) + '" cy="' + (y - 6 * s) + '" rx="' + (3 * s) + '" ry="' + (2 * s) + '" fill="white" opacity="0.3"/>';
+          // Lights on rim
+          svg += '<circle cx="' + (x - 12 * s) + '" cy="' + (y + 1 * s) + '" r="' + (1.5 * s) + '" fill="#FF6B6B"/>';
+          svg += '<circle cx="' + (x - 6 * s) + '" cy="' + (y + 2.5 * s) + '" r="' + (1.5 * s) + '" fill="#51CF66"/>';
+          svg += '<circle cx="' + x + '" cy="' + (y + 3 * s) + '" r="' + (1.5 * s) + '" fill="#FFD700"/>';
+          svg += '<circle cx="' + (x + 6 * s) + '" cy="' + (y + 2.5 * s) + '" r="' + (1.5 * s) + '" fill="#51CF66"/>';
+          svg += '<circle cx="' + (x + 12 * s) + '" cy="' + (y + 1 * s) + '" r="' + (1.5 * s) + '" fill="#FF6B6B"/>';
+          break;
+    
+        case 'veh:fireengine':
+          // Main body
+          svg += '<rect x="' + (x - 18 * s) + '" y="' + (y - 4 * s) + '" width="' + (36 * s) + '" height="' + (10 * s) + '" fill="#E63946" rx="' + (1 * s) + '"/>';
+          // Cab
+          svg += '<rect x="' + (x + 10 * s) + '" y="' + (y - 10 * s) + '" width="' + (10 * s) + '" height="' + (14 * s) + '" fill="#C1121F" rx="' + (2 * s) + '"/>';
+          // Cab windshield
+          svg += '<rect x="' + (x + 12 * s) + '" y="' + (y - 8 * s) + '" width="' + (7 * s) + '" height="' + (5 * s) + '" fill="#87CEEB" rx="' + (1 * s) + '"/>';
+          // Ladder on top
+          svg += '<rect x="' + (x - 16 * s) + '" y="' + (y - 6 * s) + '" width="' + (24 * s) + '" height="' + (1.5 * s) + '" fill="#DAA520"/>';
+          svg += '<rect x="' + (x - 16 * s) + '" y="' + (y - 8 * s) + '" width="' + (24 * s) + '" height="' + (1.5 * s) + '" fill="#B8860B"/>';
+          // Ladder rungs
+          svg += '<rect x="' + (x - 12 * s) + '" y="' + (y - 8 * s) + '" width="' + (1 * s) + '" height="' + (3.5 * s) + '" fill="#DAA520"/>';
+          svg += '<rect x="' + (x - 6 * s) + '" y="' + (y - 8 * s) + '" width="' + (1 * s) + '" height="' + (3.5 * s) + '" fill="#DAA520"/>';
+          svg += '<rect x="' + (x - 0 * s) + '" y="' + (y - 8 * s) + '" width="' + (1 * s) + '" height="' + (3.5 * s) + '" fill="#DAA520"/>';
+          // Light bar
+          svg += '<rect x="' + (x + 12 * s) + '" y="' + (y - 12 * s) + '" width="' + (6 * s) + '" height="' + (2 * s) + '" fill="#333" rx="' + (1 * s) + '"/>';
+          svg += '<circle cx="' + (x + 14 * s) + '" cy="' + (y - 11 * s) + '" r="' + (1.2 * s) + '" fill="#FF0000"/>';
+          svg += '<circle cx="' + (x + 16.5 * s) + '" cy="' + (y - 11 * s) + '" r="' + (1.2 * s) + '" fill="#4CC9F0"/>';
+          // Wheels
+          svg += '<circle cx="' + (x - 10 * s) + '" cy="' + (y + 8 * s) + '" r="' + (4 * s) + '" fill="#333"/>';
+          svg += '<circle cx="' + (x + 12 * s) + '" cy="' + (y + 8 * s) + '" r="' + (4 * s) + '" fill="#333"/>';
+          svg += '<circle cx="' + (x - 10 * s) + '" cy="' + (y + 8 * s) + '" r="' + (2 * s) + '" fill="#888"/>';
+          svg += '<circle cx="' + (x + 12 * s) + '" cy="' + (y + 8 * s) + '" r="' + (2 * s) + '" fill="#888"/>';
+          // Stripe
+          svg += '<rect x="' + (x - 18 * s) + '" y="' + (y + 2 * s) + '" width="' + (28 * s) + '" height="' + (1.5 * s) + '" fill="white" opacity="0.5"/>';
+          break;
+    
+        case 'veh:digger':
+          // Tracks
+          svg += '<rect x="' + (x - 14 * s) + '" y="' + (y + 4 * s) + '" width="' + (20 * s) + '" height="' + (8 * s) + '" fill="#333" rx="' + (4 * s) + '"/>';
+          svg += '<rect x="' + (x - 12 * s) + '" y="' + (y + 6 * s) + '" width="' + (16 * s) + '" height="' + (4 * s) + '" fill="#555" rx="' + (2 * s) + '"/>';
+          // Cab body
+          svg += '<rect x="' + (x - 10 * s) + '" y="' + (y - 6 * s) + '" width="' + (14 * s) + '" height="' + (12 * s) + '" fill="#F4D03F" rx="' + (2 * s) + '"/>';
+          // Cab window
+          svg += '<rect x="' + (x - 8 * s) + '" y="' + (y - 4 * s) + '" width="' + (8 * s) + '" height="' + (6 * s) + '" fill="#87CEEB" rx="' + (1 * s) + '"/>';
+          // Cab roof
+          svg += '<rect x="' + (x - 12 * s) + '" y="' + (y - 8 * s) + '" width="' + (16 * s) + '" height="' + (2.5 * s) + '" fill="#DAA520" rx="' + (1 * s) + '"/>';
+          // Arm base
+          svg += '<path d="M ' + (x + 4 * s) + ' ' + (y - 2 * s) + ' L ' + (x + 12 * s) + ' ' + (y - 14 * s) + ' L ' + (x + 15 * s) + ' ' + (y - 13 * s) + ' L ' + (x + 7 * s) + ' ' + (y - 1 * s) + ' Z" fill="#F4D03F"/>';
+          svg += '<path d="M ' + (x + 4 * s) + ' ' + (y - 2 * s) + ' L ' + (x + 12 * s) + ' ' + (y - 14 * s) + ' L ' + (x + 15 * s) + ' ' + (y - 13 * s) + ' L ' + (x + 7 * s) + ' ' + (y - 1 * s) + ' Z" fill="none" stroke="#B8860B" stroke-width="' + (0.8 * s) + '"/>';
+          // Arm extension
+          svg += '<path d="M ' + (x + 13 * s) + ' ' + (y - 14 * s) + ' L ' + (x + 20 * s) + ' ' + (y - 8 * s) + ' L ' + (x + 18 * s) + ' ' + (y - 6 * s) + ' L ' + (x + 11 * s) + ' ' + (y - 12 * s) + ' Z" fill="#F4D03F"/>';
+          // Bucket
+          svg += '<path d="M ' + (x + 18 * s) + ' ' + (y - 8 * s) + ' L ' + (x + 22 * s) + ' ' + (y - 6 * s) + ' L ' + (x + 20 * s) + ' ' + (y - 2 * s) + ' L ' + (x + 16 * s) + ' ' + (y - 4 * s) + ' Z" fill="#888"/>';
+          // Bucket teeth
+          svg += '<path d="M ' + (x + 20 * s) + ' ' + (y - 2 * s) + ' L ' + (x + 21 * s) + ' ' + y + ' M ' + (x + 18 * s) + ' ' + (y - 3 * s) + ' L ' + (x + 19 * s) + ' ' + (y - 1 * s) + '" stroke="#666" stroke-width="' + (1 * s) + '"/>';
+          // Pivot joints
+          svg += '<circle cx="' + (x + 5 * s) + '" cy="' + (y - 1 * s) + '" r="' + (2 * s) + '" fill="#888"/>';
+          svg += '<circle cx="' + (x + 13 * s) + '" cy="' + (y - 13 * s) + '" r="' + (2 * s) + '" fill="#888"/>';
+          break;
+    
+        case 'veh:jetski':
+          // Water
+          svg += '<path d="M ' + (x - 18 * s) + ' ' + (y + 8 * s) + ' Q ' + (x - 12 * s) + ' ' + (y + 6 * s) + ' ' + (x - 6 * s) + ' ' + (y + 8 * s) + ' Q ' + x + ' ' + (y + 10 * s) + ' ' + (x + 6 * s) + ' ' + (y + 8 * s) + ' Q ' + (x + 12 * s) + ' ' + (y + 6 * s) + ' ' + (x + 18 * s) + ' ' + (y + 8 * s) + '" fill="none" stroke="#4CC9F0" stroke-width="' + (1.2 * s) + '" opacity="0.5"/>';
+          // Hull bottom
+          svg += '<path d="M ' + (x - 14 * s) + ' ' + (y + 4 * s) + ' Q ' + (x - 16 * s) + ' ' + (y + 6 * s) + ' ' + (x - 10 * s) + ' ' + (y + 7 * s) + ' L ' + (x + 10 * s) + ' ' + (y + 7 * s) + ' Q ' + (x + 16 * s) + ' ' + (y + 6 * s) + ' ' + (x + 14 * s) + ' ' + (y + 4 * s) + ' Z" fill="#1D3557"/>';
+          // Hull body
+          svg += '<path d="M ' + (x - 14 * s) + ' ' + (y + 4 * s) + ' L ' + (x - 12 * s) + ' ' + (y - 2 * s) + ' L ' + (x + 12 * s) + ' ' + (y - 2 * s) + ' L ' + (x + 14 * s) + ' ' + (y + 4 * s) + ' Z" fill="#4CC9F0"/>';
+          // Seat
+          svg += '<rect x="' + (x - 6 * s) + '" y="' + (y - 6 * s) + '" width="' + (12 * s) + '" height="' + (4 * s) + '" fill="#333" rx="' + (2 * s) + '"/>';
+          // Handlebars
+          svg += '<path d="M ' + (x + 6 * s) + ' ' + (y - 5 * s) + ' L ' + (x + 10 * s) + ' ' + (y - 8 * s) + ' L ' + (x + 12 * s) + ' ' + (y - 7 * s) + '" fill="none" stroke="#555" stroke-width="' + (1.5 * s) + '" stroke-linecap="round"/>';
+          // Nose
+          svg += '<path d="M ' + (x + 12 * s) + ' ' + (y - 2 * s) + ' L ' + (x + 18 * s) + ' ' + (y + 1 * s) + ' L ' + (x + 14 * s) + ' ' + (y + 4 * s) + '" fill="#3A86A8"/>';
+          // Wake spray
+          svg += '<path d="M ' + (x - 14 * s) + ' ' + (y + 3 * s) + ' Q ' + (x - 18 * s) + ' ' + y + ' ' + (x - 20 * s) + ' ' + (y + 4 * s) + '" fill="none" stroke="white" stroke-width="' + (1 * s) + '" opacity="0.4"/>';
+          break;
+    
+        case 'veh:motorbike':
+          // Wheels
+          svg += '<circle cx="' + (x - 10 * s) + '" cy="' + (y + 6 * s) + '" r="' + (6 * s) + '" fill="none" stroke="#333" stroke-width="' + (2.5 * s) + '"/>';
+          svg += '<circle cx="' + (x + 12 * s) + '" cy="' + (y + 6 * s) + '" r="' + (6 * s) + '" fill="none" stroke="#333" stroke-width="' + (2.5 * s) + '"/>';
+          svg += '<circle cx="' + (x - 10 * s) + '" cy="' + (y + 6 * s) + '" r="' + (2 * s) + '" fill="#888"/>';
+          svg += '<circle cx="' + (x + 12 * s) + '" cy="' + (y + 6 * s) + '" r="' + (2 * s) + '" fill="#888"/>';
+          // Frame
+          svg += '<line x1="' + (x - 10 * s) + '" y1="' + (y + 6 * s) + '" x2="' + (x - 2 * s) + '" y2="' + (y - 4 * s) + '" stroke="#E63946" stroke-width="' + (2 * s) + '"/>';
+          svg += '<line x1="' + (x - 2 * s) + '" y1="' + (y - 4 * s) + '" x2="' + (x + 4 * s) + '" y2="' + (y + 2 * s) + '" stroke="#E63946" stroke-width="' + (2 * s) + '"/>';
+          svg += '<line x1="' + (x + 4 * s) + '" y1="' + (y + 2 * s) + '" x2="' + (x + 12 * s) + '" y2="' + (y + 6 * s) + '" stroke="#E63946" stroke-width="' + (2 * s) + '"/>';
+          // Engine block
+          svg += '<rect x="' + (x - 4 * s) + '" y="' + (y - 1 * s) + '" width="' + (8 * s) + '" height="' + (5 * s) + '" fill="#555" rx="' + (1 * s) + '"/>';
+          // Tank
+          svg += '<ellipse cx="' + (x - 1 * s) + '" cy="' + (y - 5 * s) + '" rx="' + (6 * s) + '" ry="' + (3 * s) + '" fill="#E63946"/>';
+          svg += '<ellipse cx="' + (x - 1 * s) + '" cy="' + (y - 6 * s) + '" rx="' + (4 * s) + '" ry="' + (1.5 * s) + '" fill="#FF6B6B" opacity="0.4"/>';
+          // Seat
+          svg += '<path d="M ' + (x - 4 * s) + ' ' + (y - 5 * s) + ' Q ' + (x - 8 * s) + ' ' + (y - 7 * s) + ' ' + (x - 10 * s) + ' ' + (y - 2 * s) + '" fill="none" stroke="#333" stroke-width="' + (2.5 * s) + '" stroke-linecap="round"/>';
+          // Handlebar area
+          svg += '<line x1="' + (x + 10 * s) + '" y1="' + (y + 2 * s) + '" x2="' + (x + 12 * s) + '" y2="' + (y - 4 * s) + '" stroke="#333" stroke-width="' + (1.5 * s) + '"/>';
+          svg += '<line x1="' + (x + 9 * s) + '" y1="' + (y - 5 * s) + '" x2="' + (x + 15 * s) + '" y2="' + (y - 5 * s) + '" stroke="#555" stroke-width="' + (2 * s) + '" stroke-linecap="round"/>';
+          // Headlight
+          svg += '<circle cx="' + (x + 14 * s) + '" cy="' + (y - 2 * s) + '" r="' + (2 * s) + '" fill="#FFD700"/>';
+          // Exhaust pipes
+          svg += '<path d="M ' + (x - 2 * s) + ' ' + (y + 3 * s) + ' L ' + (x - 8 * s) + ' ' + (y + 5 * s) + ' L ' + (x - 12 * s) + ' ' + (y + 3 * s) + '" fill="none" stroke="#888" stroke-width="' + (1.5 * s) + '" stroke-linecap="round"/>';
+          break;
+    
+        case 'veh:scooter':
+          // Deck
+          svg += '<rect x="' + (x - 6 * s) + '" y="' + (y + 6 * s) + '" width="' + (16 * s) + '" height="' + (2 * s) + '" fill="#555" rx="' + (1 * s) + '"/>';
+          // Back wheel
+          svg += '<circle cx="' + (x - 6 * s) + '" cy="' + (y + 10 * s) + '" r="' + (3.5 * s) + '" fill="#333"/>';
+          svg += '<circle cx="' + (x - 6 * s) + '" cy="' + (y + 10 * s) + '" r="' + (1.5 * s) + '" fill="#888"/>';
+          // Rear fork
+          svg += '<line x1="' + (x - 6 * s) + '" y1="' + (y + 7 * s) + '" x2="' + (x - 6 * s) + '" y2="' + (y + 10 * s) + '" stroke="#555" stroke-width="' + (1.5 * s) + '"/>';
+          // Front wheel
+          svg += '<circle cx="' + (x + 10 * s) + '" cy="' + (y + 10 * s) + '" r="' + (3.5 * s) + '" fill="#333"/>';
+          svg += '<circle cx="' + (x + 10 * s) + '" cy="' + (y + 10 * s) + '" r="' + (1.5 * s) + '" fill="#888"/>';
+          // Steering column
+          svg += '<line x1="' + (x + 10 * s) + '" y1="' + (y + 7 * s) + '" x2="' + (x + 8 * s) + '" y2="' + (y - 10 * s) + '" stroke="#4CC9F0" stroke-width="' + (2.5 * s) + '" stroke-linecap="round"/>';
+          // Fork to wheel
+          svg += '<line x1="' + (x + 10 * s) + '" y1="' + (y + 10 * s) + '" x2="' + (x + 9 * s) + '" y2="' + (y + 3 * s) + '" stroke="#4CC9F0" stroke-width="' + (1.5 * s) + '"/>';
+          // Handlebars
+          svg += '<line x1="' + (x + 4 * s) + '" y1="' + (y - 10 * s) + '" x2="' + (x + 12 * s) + '" y2="' + (y - 10 * s) + '" stroke="#333" stroke-width="' + (2.5 * s) + '" stroke-linecap="round"/>';
+          // Grips
+          svg += '<circle cx="' + (x + 4 * s) + '" cy="' + (y - 10 * s) + '" r="' + (1.5 * s) + '" fill="#E63946"/>';
+          svg += '<circle cx="' + (x + 12 * s) + '" cy="' + (y - 10 * s) + '" r="' + (1.5 * s) + '" fill="#E63946"/>';
+          // Brake
+          svg += '<line x1="' + (x + 10 * s) + '" y1="' + (y + 7 * s) + '" x2="' + (x + 2 * s) + '" y2="' + (y + 7 * s) + '" stroke="#888" stroke-width="' + (0.8 * s) + '"/>';
+          break;
+    
+        case 'veh:rollerblades':
+          // Left boot
+          svg += '<path d="M ' + (x - 16 * s) + ' ' + (y - 8 * s) + ' L ' + (x - 14 * s) + ' ' + (y - 14 * s) + ' L ' + (x - 8 * s) + ' ' + (y - 14 * s) + ' L ' + (x - 6 * s) + ' ' + (y - 8 * s) + ' L ' + (x - 4 * s) + ' ' + (y - 4 * s) + ' L ' + (x - 4 * s) + ' ' + (y - 2 * s) + ' L ' + (x - 16 * s) + ' ' + (y - 2 * s) + ' Z" fill="#4CC9F0"/>';
+          svg += '<rect x="' + (x - 16 * s) + '" y="' + (y - 10 * s) + '" width="' + (10 * s) + '" height="' + (2 * s) + '" fill="#3A86A8" rx="' + (0.5 * s) + '"/>';
+          // Left boot sole
+          svg += '<rect x="' + (x - 17 * s) + '" y="' + (y - 2 * s) + '" width="' + (14 * s) + '" height="' + (2 * s) + '" fill="#333" rx="' + (1 * s) + '"/>';
+          // Left wheels
+          svg += '<circle cx="' + (x - 15 * s) + '" cy="' + (y + 3 * s) + '" r="' + (2.5 * s) + '" fill="#E63946"/>';
+          svg += '<circle cx="' + (x - 10 * s) + '" cy="' + (y + 3 * s) + '" r="' + (2.5 * s) + '" fill="#E63946"/>';
+          svg += '<circle cx="' + (x - 5 * s) + '" cy="' + (y + 3 * s) + '" r="' + (2.5 * s) + '" fill="#E63946"/>';
+          // Left wheel frame
+          svg += '<rect x="' + (x - 16 * s) + '" y="' + (y + 0 * s) + '" width="' + (12 * s) + '" height="' + (1.5 * s) + '" fill="#888"/>';
+          // Right boot (offset)
+          svg += '<path d="M ' + (x + 4 * s) + ' ' + (y - 8 * s) + ' L ' + (x + 6 * s) + ' ' + (y - 14 * s) + ' L ' + (x + 12 * s) + ' ' + (y - 14 * s) + ' L ' + (x + 14 * s) + ' ' + (y - 8 * s) + ' L ' + (x + 16 * s) + ' ' + (y - 4 * s) + ' L ' + (x + 16 * s) + ' ' + (y - 2 * s) + ' L ' + (x + 4 * s) + ' ' + (y - 2 * s) + ' Z" fill="#4CC9F0"/>';
+          svg += '<rect x="' + (x + 4 * s) + '" y="' + (y - 10 * s) + '" width="' + (10 * s) + '" height="' + (2 * s) + '" fill="#3A86A8" rx="' + (0.5 * s) + '"/>';
+          // Right boot sole
+          svg += '<rect x="' + (x + 3 * s) + '" y="' + (y - 2 * s) + '" width="' + (14 * s) + '" height="' + (2 * s) + '" fill="#333" rx="' + (1 * s) + '"/>';
+          // Right wheels
+          svg += '<circle cx="' + (x + 5 * s) + '" cy="' + (y + 3 * s) + '" r="' + (2.5 * s) + '" fill="#E63946"/>';
+          svg += '<circle cx="' + (x + 10 * s) + '" cy="' + (y + 3 * s) + '" r="' + (2.5 * s) + '" fill="#E63946"/>';
+          svg += '<circle cx="' + (x + 15 * s) + '" cy="' + (y + 3 * s) + '" r="' + (2.5 * s) + '" fill="#E63946"/>';
+          // Right wheel frame
+          svg += '<rect x="' + (x + 4 * s) + '" y="' + (y + 0 * s) + '" width="' + (12 * s) + '" height="' + (1.5 * s) + '" fill="#888"/>';
+          break;
+    
+        // =========================================================================
+        // HOUSES
+        // =========================================================================
+    
+        case 'house:castle':
+          // Main wall
+          svg += '<rect x="' + (x - 14 * s) + '" y="' + (y - 6 * s) + '" width="' + (28 * s) + '" height="' + (20 * s) + '" fill="#B0A090"/>';
+          // Battlements
+          svg += '<rect x="' + (x - 14 * s) + '" y="' + (y - 10 * s) + '" width="' + (5 * s) + '" height="' + (4 * s) + '" fill="#B0A090"/>';
+          svg += '<rect x="' + (x - 5 * s) + '" y="' + (y - 10 * s) + '" width="' + (5 * s) + '" height="' + (4 * s) + '" fill="#B0A090"/>';
+          svg += '<rect x="' + (x + 4 * s) + '" y="' + (y - 10 * s) + '" width="' + (5 * s) + '" height="' + (4 * s) + '" fill="#B0A090"/>';
+          // Left tower
+          svg += '<rect x="' + (x - 18 * s) + '" y="' + (y - 14 * s) + '" width="' + (8 * s) + '" height="' + (28 * s) + '" fill="#9A8A7A"/>';
+          svg += '<polygon points="' + (x - 18 * s) + ',' + (y - 14 * s) + ' ' + (x - 14 * s) + ',' + (y - 20 * s) + ' ' + (x - 10 * s) + ',' + (y - 14 * s) + '" fill="#E63946"/>';
+          // Right tower
+          svg += '<rect x="' + (x + 10 * s) + '" y="' + (y - 14 * s) + '" width="' + (8 * s) + '" height="' + (28 * s) + '" fill="#9A8A7A"/>';
+          svg += '<polygon points="' + (x + 10 * s) + ',' + (y - 14 * s) + ' ' + (x + 14 * s) + ',' + (y - 20 * s) + ' ' + (x + 18 * s) + ',' + (y - 14 * s) + '" fill="#E63946"/>';
+          // Gate
+          svg += '<path d="M ' + (x - 5 * s) + ' ' + (y + 14 * s) + ' L ' + (x - 5 * s) + ' ' + (y + 4 * s) + ' Q ' + x + ' ' + (y - 1 * s) + ' ' + (x + 5 * s) + ' ' + (y + 4 * s) + ' L ' + (x + 5 * s) + ' ' + (y + 14 * s) + ' Z" fill="#4A3728"/>';
+          // Tower windows
+          svg += '<rect x="' + (x - 16 * s) + '" y="' + (y - 8 * s) + '" width="' + (4 * s) + '" height="' + (5 * s) + '" fill="#4A3728" rx="' + (2 * s) + '"/>';
+          svg += '<rect x="' + (x + 12 * s) + '" y="' + (y - 8 * s) + '" width="' + (4 * s) + '" height="' + (5 * s) + '" fill="#4A3728" rx="' + (2 * s) + '"/>';
+          // Flag
+          svg += '<line x1="' + (x + 14 * s) + '" y1="' + (y - 20 * s) + '" x2="' + (x + 14 * s) + '" y2="' + (y - 26 * s) + '" stroke="#555" stroke-width="' + (0.8 * s) + '"/>';
+          svg += '<polygon points="' + (x + 14 * s) + ',' + (y - 26 * s) + ' ' + (x + 20 * s) + ',' + (y - 24 * s) + ' ' + (x + 14 * s) + ',' + (y - 22 * s) + '" fill="#E63946"/>';
+          break;
+    
+        case 'house:treehouse':
+          // Tree trunk
+          svg += '<rect x="' + (x - 3 * s) + '" y="' + (y - 4 * s) + '" width="' + (6 * s) + '" height="' + (22 * s) + '" fill="#6B3A2A"/>';
+          // Bark texture
+          svg += '<line x1="' + (x - 1 * s) + '" y1="' + (y + 2 * s) + '" x2="' + (x - 1 * s) + '" y2="' + (y + 10 * s) + '" stroke="#5A2D1A" stroke-width="' + (0.5 * s) + '"/>';
+          svg += '<line x1="' + (x + 1 * s) + '" y1="' + (y + 6 * s) + '" x2="' + (x + 1 * s) + '" y2="' + (y + 14 * s) + '" stroke="#5A2D1A" stroke-width="' + (0.5 * s) + '"/>';
+          // Branches
+          svg += '<line x1="' + (x - 3 * s) + '" y1="' + (y - 2 * s) + '" x2="' + (x - 12 * s) + '" y2="' + (y - 8 * s) + '" stroke="#6B3A2A" stroke-width="' + (2.5 * s) + '"/>';
+          svg += '<line x1="' + (x + 3 * s) + '" y1="' + (y - 2 * s) + '" x2="' + (x + 12 * s) + '" y2="' + (y - 8 * s) + '" stroke="#6B3A2A" stroke-width="' + (2.5 * s) + '"/>';
+          // Foliage
+          svg += '<circle cx="' + (x - 10 * s) + '" cy="' + (y - 14 * s) + '" r="' + (8 * s) + '" fill="#2D6A4F"/>';
+          svg += '<circle cx="' + (x + 10 * s) + '" cy="' + (y - 14 * s) + '" r="' + (8 * s) + '" fill="#2D6A4F"/>';
+          svg += '<circle cx="' + x + '" cy="' + (y - 18 * s) + '" r="' + (9 * s) + '" fill="#40916C"/>';
+          svg += '<circle cx="' + (x - 6 * s) + '" cy="' + (y - 16 * s) + '" r="' + (6 * s) + '" fill="#52B788"/>';
+          svg += '<circle cx="' + (x + 6 * s) + '" cy="' + (y - 16 * s) + '" r="' + (6 * s) + '" fill="#52B788"/>';
+          // House platform
+          svg += '<rect x="' + (x - 12 * s) + '" y="' + (y - 6 * s) + '" width="' + (24 * s) + '" height="' + (2 * s) + '" fill="#8B5E3C"/>';
+          // House walls
+          svg += '<rect x="' + (x - 10 * s) + '" y="' + (y - 14 * s) + '" width="' + (20 * s) + '" height="' + (8 * s) + '" fill="#DAA520"/>';
+          // Roof
+          svg += '<polygon points="' + (x - 12 * s) + ',' + (y - 14 * s) + ' ' + x + ',' + (y - 20 * s) + ' ' + (x + 12 * s) + ',' + (y - 14 * s) + '" fill="#C1121F"/>';
+          // Window
+          svg += '<rect x="' + (x - 3 * s) + '" y="' + (y - 12 * s) + '" width="' + (4 * s) + '" height="' + (4 * s) + '" fill="#87CEEB" rx="' + (0.5 * s) + '"/>';
+          svg += '<line x1="' + (x - 1 * s) + '" y1="' + (y - 12 * s) + '" x2="' + (x - 1 * s) + '" y2="' + (y - 8 * s) + '" stroke="#6B3A2A" stroke-width="' + (0.5 * s) + '"/>';
+          svg += '<line x1="' + (x - 3 * s) + '" y1="' + (y - 10 * s) + '" x2="' + (x + 1 * s) + '" y2="' + (y - 10 * s) + '" stroke="#6B3A2A" stroke-width="' + (0.5 * s) + '"/>';
+          // Ladder
+          svg += '<line x1="' + (x + 8 * s) + '" y1="' + (y - 6 * s) + '" x2="' + (x + 10 * s) + '" y2="' + (y + 14 * s) + '" stroke="#6B3A2A" stroke-width="' + (1 * s) + '"/>';
+          svg += '<line x1="' + (x + 12 * s) + '" y1="' + (y - 6 * s) + '" x2="' + (x + 14 * s) + '" y2="' + (y + 14 * s) + '" stroke="#6B3A2A" stroke-width="' + (1 * s) + '"/>';
+          svg += '<line x1="' + (x + 8.5 * s) + '" y1="' + (y - 2 * s) + '" x2="' + (x + 12.5 * s) + '" y2="' + (y - 2 * s) + '" stroke="#6B3A2A" stroke-width="' + (0.8 * s) + '"/>';
+          svg += '<line x1="' + (x + 9 * s) + '" y1="' + (y + 2 * s) + '" x2="' + (x + 13 * s) + '" y2="' + (y + 2 * s) + '" stroke="#6B3A2A" stroke-width="' + (0.8 * s) + '"/>';
+          svg += '<line x1="' + (x + 9.5 * s) + '" y1="' + (y + 6 * s) + '" x2="' + (x + 13.5 * s) + '" y2="' + (y + 6 * s) + '" stroke="#6B3A2A" stroke-width="' + (0.8 * s) + '"/>';
+          svg += '<line x1="' + (x + 10 * s) + '" y1="' + (y + 10 * s) + '" x2="' + (x + 14 * s) + '" y2="' + (y + 10 * s) + '" stroke="#6B3A2A" stroke-width="' + (0.8 * s) + '"/>';
+          break;
+    
+        case 'house:spaceship':
+          // Hull body
+          svg += '<ellipse cx="' + x + '" cy="' + (y + 2 * s) + '" rx="' + (16 * s) + '" ry="' + (10 * s) + '" fill="#778899"/>';
+          // Upper hull
+          svg += '<ellipse cx="' + x + '" cy="' + (y - 2 * s) + '" rx="' + (14 * s) + '" ry="' + (8 * s) + '" fill="#A0ADB8"/>';
+          // Dome / bridge
+          svg += '<ellipse cx="' + x + '" cy="' + (y - 8 * s) + '" rx="' + (8 * s) + '" ry="' + (5 * s) + '" fill="#4CC9F0" opacity="0.5"/>';
+          svg += '<ellipse cx="' + x + '" cy="' + (y - 8 * s) + '" rx="' + (8 * s) + '" ry="' + (5 * s) + '" fill="none" stroke="#5DADE2" stroke-width="' + (0.8 * s) + '"/>';
+          // Dome highlight
+          svg += '<ellipse cx="' + (x - 2 * s) + '" cy="' + (y - 10 * s) + '" rx="' + (3 * s) + '" ry="' + (1.5 * s) + '" fill="white" opacity="0.3"/>';
+          // Side wings/fins
+          svg += '<path d="M ' + (x - 14 * s) + ' ' + (y + 2 * s) + ' L ' + (x - 20 * s) + ' ' + (y + 8 * s) + ' L ' + (x - 18 * s) + ' ' + (y + 10 * s) + ' L ' + (x - 12 * s) + ' ' + (y + 6 * s) + ' Z" fill="#5F7A8A"/>';
+          svg += '<path d="M ' + (x + 14 * s) + ' ' + (y + 2 * s) + ' L ' + (x + 20 * s) + ' ' + (y + 8 * s) + ' L ' + (x + 18 * s) + ' ' + (y + 10 * s) + ' L ' + (x + 12 * s) + ' ' + (y + 6 * s) + ' Z" fill="#5F7A8A"/>';
+          // Engine glow
+          svg += '<ellipse cx="' + (x - 6 * s) + '" cy="' + (y + 10 * s) + '" rx="' + (3 * s) + '" ry="' + (2 * s) + '" fill="#4CC9F0" opacity="0.5"/>';
+          svg += '<ellipse cx="' + (x + 6 * s) + '" cy="' + (y + 10 * s) + '" rx="' + (3 * s) + '" ry="' + (2 * s) + '" fill="#4CC9F0" opacity="0.5"/>';
+          // Port lights
+          svg += '<circle cx="' + (x - 8 * s) + '" cy="' + (y + 1 * s) + '" r="' + (1.5 * s) + '" fill="#FFD700"/>';
+          svg += '<circle cx="' + (x - 3 * s) + '" cy="' + (y + 3 * s) + '" r="' + (1.5 * s) + '" fill="#FFD700"/>';
+          svg += '<circle cx="' + (x + 3 * s) + '" cy="' + (y + 3 * s) + '" r="' + (1.5 * s) + '" fill="#FFD700"/>';
+          svg += '<circle cx="' + (x + 8 * s) + '" cy="' + (y + 1 * s) + '" r="' + (1.5 * s) + '" fill="#FFD700"/>';
+          // Antenna
+          svg += '<line x1="' + x + '" y1="' + (y - 12 * s) + '" x2="' + x + '" y2="' + (y - 18 * s) + '" stroke="#888" stroke-width="' + (0.8 * s) + '"/>';
+          svg += '<circle cx="' + x + '" cy="' + (y - 18 * s) + '" r="' + (1.5 * s) + '" fill="#FF6B6B"/>';
+          break;
+    
+        case 'house:cottage':
+          // Walls
+          svg += '<rect x="' + (x - 14 * s) + '" y="' + (y - 4 * s) + '" width="' + (28 * s) + '" height="' + (18 * s) + '" fill="#FFF8DC"/>';
+          // Roof
+          svg += '<polygon points="' + (x - 16 * s) + ',' + (y - 4 * s) + ' ' + x + ',' + (y - 18 * s) + ' ' + (x + 16 * s) + ',' + (y - 4 * s) + '" fill="#8B4513"/>';
+          // Roof shading
+          svg += '<polygon points="' + (x - 16 * s) + ',' + (y - 4 * s) + ' ' + x + ',' + (y - 18 * s) + ' ' + x + ',' + (y - 4 * s) + '" fill="#6B3A2A" opacity="0.2"/>';
+          // Door
+          svg += '<rect x="' + (x - 3 * s) + '" y="' + (y + 4 * s) + '" width="' + (6 * s) + '" height="' + (10 * s) + '" fill="#6B3A2A" rx="' + (3 * s) + '"/>';
+          svg += '<circle cx="' + (x + 1.5 * s) + '" cy="' + (y + 10 * s) + '" r="' + (0.8 * s) + '" fill="#DAA520"/>';
+          // Left window
+          svg += '<rect x="' + (x - 11 * s) + '" y="' + (y + 0 * s) + '" width="' + (5 * s) + '" height="' + (5 * s) + '" fill="#87CEEB" rx="' + (0.5 * s) + '"/>';
+          svg += '<line x1="' + (x - 8.5 * s) + '" y1="' + y + '" x2="' + (x - 8.5 * s) + '" y2="' + (y + 5 * s) + '" stroke="#6B3A2A" stroke-width="' + (0.5 * s) + '"/>';
+          svg += '<line x1="' + (x - 11 * s) + '" y1="' + (y + 2.5 * s) + '" x2="' + (x - 6 * s) + '" y2="' + (y + 2.5 * s) + '" stroke="#6B3A2A" stroke-width="' + (0.5 * s) + '"/>';
+          // Right window
+          svg += '<rect x="' + (x + 6 * s) + '" y="' + (y + 0 * s) + '" width="' + (5 * s) + '" height="' + (5 * s) + '" fill="#87CEEB" rx="' + (0.5 * s) + '"/>';
+          svg += '<line x1="' + (x + 8.5 * s) + '" y1="' + y + '" x2="' + (x + 8.5 * s) + '" y2="' + (y + 5 * s) + '" stroke="#6B3A2A" stroke-width="' + (0.5 * s) + '"/>';
+          svg += '<line x1="' + (x + 6 * s) + '" y1="' + (y + 2.5 * s) + '" x2="' + (x + 11 * s) + '" y2="' + (y + 2.5 * s) + '" stroke="#6B3A2A" stroke-width="' + (0.5 * s) + '"/>';
+          // Chimney
+          svg += '<rect x="' + (x + 6 * s) + '" y="' + (y - 16 * s) + '" width="' + (5 * s) + '" height="' + (10 * s) + '" fill="#C1121F"/>';
+          svg += '<rect x="' + (x + 5 * s) + '" y="' + (y - 17 * s) + '" width="' + (7 * s) + '" height="' + (2 * s) + '" fill="#A0100D"/>';
+          // Smoke
+          svg += '<circle cx="' + (x + 8 * s) + '" cy="' + (y - 20 * s) + '" r="' + (2 * s) + '" fill="#ddd" opacity="0.3"/>';
+          svg += '<circle cx="' + (x + 6 * s) + '" cy="' + (y - 22 * s) + '" r="' + (1.5 * s) + '" fill="#ddd" opacity="0.2"/>';
+          // Path
+          svg += '<path d="M ' + (x - 2 * s) + ' ' + (y + 14 * s) + ' Q ' + (x - 1 * s) + ' ' + (y + 16 * s) + ' ' + x + ' ' + (y + 18 * s) + ' Q ' + (x + 1 * s) + ' ' + (y + 16 * s) + ' ' + (x + 2 * s) + ' ' + (y + 14 * s) + '" fill="#C49A6C"/>';
+          break;
+    
+        case 'house:igloo':
+          // Snow ground
+          svg += '<ellipse cx="' + x + '" cy="' + (y + 10 * s) + '" rx="' + (20 * s) + '" ry="' + (4 * s) + '" fill="#E8F4FD"/>';
+          // Main dome
+          svg += '<path d="M ' + (x - 16 * s) + ' ' + (y + 8 * s) + ' Q ' + (x - 16 * s) + ' ' + (y - 14 * s) + ' ' + x + ' ' + (y - 14 * s) + ' Q ' + (x + 16 * s) + ' ' + (y - 14 * s) + ' ' + (x + 16 * s) + ' ' + (y + 8 * s) + ' Z" fill="white"/>';
+          // Dome outline
+          svg += '<path d="M ' + (x - 16 * s) + ' ' + (y + 8 * s) + ' Q ' + (x - 16 * s) + ' ' + (y - 14 * s) + ' ' + x + ' ' + (y - 14 * s) + ' Q ' + (x + 16 * s) + ' ' + (y - 14 * s) + ' ' + (x + 16 * s) + ' ' + (y + 8 * s) + '" fill="none" stroke="#B0C4DE" stroke-width="' + (1 * s) + '"/>';
+          // Ice block lines (horizontal)
+          svg += '<path d="M ' + (x - 14 * s) + ' ' + (y - 8 * s) + ' Q ' + x + ' ' + (y - 9 * s) + ' ' + (x + 14 * s) + ' ' + (y - 8 * s) + '" fill="none" stroke="#B0C4DE" stroke-width="' + (0.6 * s) + '"/>';
+          svg += '<path d="M ' + (x - 16 * s) + ' ' + (y - 2 * s) + ' Q ' + x + ' ' + (y - 3 * s) + ' ' + (x + 16 * s) + ' ' + (y - 2 * s) + '" fill="none" stroke="#B0C4DE" stroke-width="' + (0.6 * s) + '"/>';
+          svg += '<path d="M ' + (x - 16 * s) + ' ' + (y + 4 * s) + ' Q ' + x + ' ' + (y + 3 * s) + ' ' + (x + 16 * s) + ' ' + (y + 4 * s) + '" fill="none" stroke="#B0C4DE" stroke-width="' + (0.6 * s) + '"/>';
+          // Entrance tunnel
+          svg += '<path d="M ' + (x + 10 * s) + ' ' + (y + 8 * s) + ' Q ' + (x + 16 * s) + ' ' + (y + 2 * s) + ' ' + (x + 22 * s) + ' ' + (y + 2 * s) + ' L ' + (x + 22 * s) + ' ' + (y + 8 * s) + ' Z" fill="white" stroke="#B0C4DE" stroke-width="' + (1 * s) + '"/>';
+          // Entrance opening
+          svg += '<path d="M ' + (x + 18 * s) + ' ' + (y + 8 * s) + ' Q ' + (x + 18 * s) + ' ' + (y + 4 * s) + ' ' + (x + 22 * s) + ' ' + (y + 4 * s) + ' L ' + (x + 22 * s) + ' ' + (y + 8 * s) + ' Z" fill="#6B8CA8"/>';
+          // Shadow
+          svg += '<path d="M ' + (x - 16 * s) + ' ' + (y + 8 * s) + ' Q ' + x + ' ' + (y + 6 * s) + ' ' + (x + 16 * s) + ' ' + (y + 8 * s) + '" fill="#B0C4DE" opacity="0.2"/>';
+          break;
+    
+        case 'house:lighthouse':
+          // Base rocks
+          svg += '<ellipse cx="' + x + '" cy="' + (y + 14 * s) + '" rx="' + (14 * s) + '" ry="' + (4 * s) + '" fill="#888"/>';
+          // Tower (tapered)
+          svg += '<path d="M ' + (x - 6 * s) + ' ' + (y + 12 * s) + ' L ' + (x - 4 * s) + ' ' + (y - 10 * s) + ' L ' + (x + 4 * s) + ' ' + (y - 10 * s) + ' L ' + (x + 6 * s) + ' ' + (y + 12 * s) + ' Z" fill="white"/>';
+          // Red stripes
+          svg += '<path d="M ' + (x - 5.5 * s) + ' ' + (y + 8 * s) + ' L ' + (x + 5.5 * s) + ' ' + (y + 8 * s) + ' L ' + (x + 5 * s) + ' ' + (y + 4 * s) + ' L ' + (x - 5 * s) + ' ' + (y + 4 * s) + ' Z" fill="#E63946"/>';
+          svg += '<path d="M ' + (x - 4.8 * s) + ' ' + (y + 0 * s) + ' L ' + (x + 4.8 * s) + ' ' + (y + 0 * s) + ' L ' + (x + 4.5 * s) + ' ' + (y - 4 * s) + ' L ' + (x - 4.5 * s) + ' ' + (y - 4 * s) + ' Z" fill="#E63946"/>';
+          // Light housing
+          svg += '<rect x="' + (x - 5 * s) + '" y="' + (y - 14 * s) + '" width="' + (10 * s) + '" height="' + (5 * s) + '" fill="#333"/>';
+          // Light glass
+          svg += '<rect x="' + (x - 4 * s) + '" y="' + (y - 13 * s) + '" width="' + (8 * s) + '" height="' + (3 * s) + '" fill="#FFD700" opacity="0.7"/>';
+          // Light beam (subtle)
+          svg += '<path d="M ' + (x + 4 * s) + ' ' + (y - 12 * s) + ' L ' + (x + 20 * s) + ' ' + (y - 16 * s) + ' L ' + (x + 20 * s) + ' ' + (y - 10 * s) + ' Z" fill="#FFD700" opacity="0.15"/>';
+          // Dome top
+          svg += '<path d="M ' + (x - 5 * s) + ' ' + (y - 14 * s) + ' Q ' + x + ' ' + (y - 18 * s) + ' ' + (x + 5 * s) + ' ' + (y - 14 * s) + ' Z" fill="#333"/>';
+          // Railing
+          svg += '<line x1="' + (x - 5.5 * s) + '" y1="' + (y - 10 * s) + '" x2="' + (x + 5.5 * s) + '" y2="' + (y - 10 * s) + '" stroke="#333" stroke-width="' + (0.8 * s) + '"/>';
+          // Door
+          svg += '<rect x="' + (x - 2 * s) + '" y="' + (y + 8 * s) + '" width="' + (4 * s) + '" height="' + (5 * s) + '" fill="#6B3A2A" rx="' + (2 * s) + '"/>';
+          break;
+    
+        case 'house:mansion':
+          // Main building
+          svg += '<rect x="' + (x - 16 * s) + '" y="' + (y - 6 * s) + '" width="' + (32 * s) + '" height="' + (20 * s) + '" fill="#FFF8DC"/>';
+          // Roof
+          svg += '<polygon points="' + (x - 18 * s) + ',' + (y - 6 * s) + ' ' + x + ',' + (y - 18 * s) + ' ' + (x + 18 * s) + ',' + (y - 6 * s) + '" fill="#555"/>';
+          // Left wing
+          svg += '<rect x="' + (x - 22 * s) + '" y="' + (y - 2 * s) + '" width="' + (8 * s) + '" height="' + (16 * s) + '" fill="#EDE7D9"/>';
+          svg += '<polygon points="' + (x - 23 * s) + ',' + (y - 2 * s) + ' ' + (x - 18 * s) + ',' + (y - 8 * s) + ' ' + (x - 13 * s) + ',' + (y - 2 * s) + '" fill="#666"/>';
+          // Right wing
+          svg += '<rect x="' + (x + 14 * s) + '" y="' + (y - 2 * s) + '" width="' + (8 * s) + '" height="' + (16 * s) + '" fill="#EDE7D9"/>';
+          svg += '<polygon points="' + (x + 13 * s) + ',' + (y - 2 * s) + ' ' + (x + 18 * s) + ',' + (y - 8 * s) + ' ' + (x + 23 * s) + ',' + (y - 2 * s) + '" fill="#666"/>';
+          // Columns
+          svg += '<rect x="' + (x - 4 * s) + '" y="' + (y + 0 * s) + '" width="' + (2 * s) + '" height="' + (14 * s) + '" fill="#DDD"/>';
+          svg += '<rect x="' + (x + 2 * s) + '" y="' + (y + 0 * s) + '" width="' + (2 * s) + '" height="' + (14 * s) + '" fill="#DDD"/>';
+          // Grand door
+          svg += '<rect x="' + (x - 3 * s) + '" y="' + (y + 6 * s) + '" width="' + (6 * s) + '" height="' + (8 * s) + '" fill="#4A3728" rx="' + (3 * s) + '"/>';
+          // Windows (upper row)
+          svg += '<rect x="' + (x - 12 * s) + '" y="' + (y - 3 * s) + '" width="' + (4 * s) + '" height="' + (5 * s) + '" fill="#87CEEB" rx="' + (2 * s) + '"/>';
+          svg += '<rect x="' + (x + 8 * s) + '" y="' + (y - 3 * s) + '" width="' + (4 * s) + '" height="' + (5 * s) + '" fill="#87CEEB" rx="' + (2 * s) + '"/>';
+          // Windows (lower row)
+          svg += '<rect x="' + (x - 12 * s) + '" y="' + (y + 5 * s) + '" width="' + (4 * s) + '" height="' + (5 * s) + '" fill="#87CEEB" rx="' + (0.5 * s) + '"/>';
+          svg += '<rect x="' + (x + 8 * s) + '" y="' + (y + 5 * s) + '" width="' + (4 * s) + '" height="' + (5 * s) + '" fill="#87CEEB" rx="' + (0.5 * s) + '"/>';
+          // Wing windows
+          svg += '<rect x="' + (x - 20 * s) + '" y="' + (y + 2 * s) + '" width="' + (4 * s) + '" height="' + (5 * s) + '" fill="#87CEEB" rx="' + (0.5 * s) + '"/>';
+          svg += '<rect x="' + (x + 16 * s) + '" y="' + (y + 2 * s) + '" width="' + (4 * s) + '" height="' + (5 * s) + '" fill="#87CEEB" rx="' + (0.5 * s) + '"/>';
+          // Dormer window
+          svg += '<rect x="' + (x - 2 * s) + '" y="' + (y - 12 * s) + '" width="' + (4 * s) + '" height="' + (4 * s) + '" fill="#87CEEB" rx="' + (2 * s) + '"/>';
+          break;
+    
+        case 'house:firestation':
+          // Main building
+          svg += '<rect x="' + (x - 16 * s) + '" y="' + (y - 10 * s) + '" width="' + (32 * s) + '" height="' + (24 * s) + '" fill="#C1121F"/>';
+          // Roof
+          svg += '<rect x="' + (x - 18 * s) + '" y="' + (y - 12 * s) + '" width="' + (36 * s) + '" height="' + (3 * s) + '" fill="#8B0000" rx="' + (1 * s) + '"/>';
+          // Garage door
+          svg += '<rect x="' + (x - 10 * s) + '" y="' + (y + 0 * s) + '" width="' + (20 * s) + '" height="' + (14 * s) + '" fill="#FFF8DC" rx="' + (1 * s) + '"/>';
+          // Garage door panels
+          svg += '<line x1="' + (x - 10 * s) + '" y1="' + (y + 4 * s) + '" x2="' + (x + 10 * s) + '" y2="' + (y + 4 * s) + '" stroke="#ddd" stroke-width="' + (0.5 * s) + '"/>';
+          svg += '<line x1="' + (x - 10 * s) + '" y1="' + (y + 8 * s) + '" x2="' + (x + 10 * s) + '" y2="' + (y + 8 * s) + '" stroke="#ddd" stroke-width="' + (0.5 * s) + '"/>';
+          // Windows above door
+          svg += '<rect x="' + (x - 12 * s) + '" y="' + (y - 8 * s) + '" width="' + (5 * s) + '" height="' + (5 * s) + '" fill="#87CEEB" rx="' + (0.5 * s) + '"/>';
+          svg += '<rect x="' + (x - 2 * s) + '" y="' + (y - 8 * s) + '" width="' + (5 * s) + '" height="' + (5 * s) + '" fill="#87CEEB" rx="' + (0.5 * s) + '"/>';
+          svg += '<rect x="' + (x + 8 * s) + '" y="' + (y - 8 * s) + '" width="' + (5 * s) + '" height="' + (5 * s) + '" fill="#87CEEB" rx="' + (0.5 * s) + '"/>';
+          // Fire department emblem
+          svg += '<circle cx="' + x + '" cy="' + (y - 5 * s) + '" r="' + (2 * s) + '" fill="#FFD700"/>';
+          // Bell / alarm
+          svg += '<rect x="' + (x - 1 * s) + '" y="' + (y - 14 * s) + '" width="' + (2 * s) + '" height="' + (2.5 * s) + '" fill="#888"/>';
+          svg += '<circle cx="' + x + '" cy="' + (y - 15 * s) + '" r="' + (2 * s) + '" fill="#FF0000"/>';
+          // Light bar on top
+          svg += '<circle cx="' + (x - 8 * s) + '" cy="' + (y - 13 * s) + '" r="' + (1.5 * s) + '" fill="#FF0000" opacity="0.8"/>';
+          svg += '<circle cx="' + (x + 8 * s) + '" cy="' + (y - 13 * s) + '" r="' + (1.5 * s) + '" fill="#FF0000" opacity="0.8"/>';
+          break;
+    
+        case 'house:construction':
+          // Ground
+          svg += '<rect x="' + (x - 18 * s) + '" y="' + (y + 10 * s) + '" width="' + (36 * s) + '" height="' + (4 * s) + '" fill="#C49A6C" rx="' + (1 * s) + '"/>';
+          // Partial wall (under construction)
+          svg += '<rect x="' + (x - 14 * s) + '" y="' + (y + 0 * s) + '" width="' + (20 * s) + '" height="' + (10 * s) + '" fill="#B0A090"/>';
+          // Brick pattern
+          svg += '<line x1="' + (x - 14 * s) + '" y1="' + (y + 3 * s) + '" x2="' + (x + 6 * s) + '" y2="' + (y + 3 * s) + '" stroke="#9A8A7A" stroke-width="' + (0.5 * s) + '"/>';
+          svg += '<line x1="' + (x - 14 * s) + '" y1="' + (y + 6 * s) + '" x2="' + (x + 6 * s) + '" y2="' + (y + 6 * s) + '" stroke="#9A8A7A" stroke-width="' + (0.5 * s) + '"/>';
+          svg += '<line x1="' + (x - 7 * s) + '" y1="' + (y + 0 * s) + '" x2="' + (x - 7 * s) + '" y2="' + (y + 3 * s) + '" stroke="#9A8A7A" stroke-width="' + (0.5 * s) + '"/>';
+          svg += '<line x1="' + (x - 4 * s) + '" y1="' + (y + 3 * s) + '" x2="' + (x - 4 * s) + '" y2="' + (y + 6 * s) + '" stroke="#9A8A7A" stroke-width="' + (0.5 * s) + '"/>';
+          svg += '<line x1="' + (x + 0 * s) + '" y1="' + (y + 0 * s) + '" x2="' + (x + 0 * s) + '" y2="' + (y + 3 * s) + '" stroke="#9A8A7A" stroke-width="' + (0.5 * s) + '"/>';
+          // Crane tower (vertical)
+          svg += '<rect x="' + (x + 8 * s) + '" y="' + (y - 20 * s) + '" width="' + (3 * s) + '" height="' + (30 * s) + '" fill="#F4D03F"/>';
+          // Crane cross-bracing
+          svg += '<line x1="' + (x + 8 * s) + '" y1="' + (y - 16 * s) + '" x2="' + (x + 11 * s) + '" y2="' + (y - 10 * s) + '" stroke="#DAA520" stroke-width="' + (0.8 * s) + '"/>';
+          svg += '<line x1="' + (x + 11 * s) + '" y1="' + (y - 16 * s) + '" x2="' + (x + 8 * s) + '" y2="' + (y - 10 * s) + '" stroke="#DAA520" stroke-width="' + (0.8 * s) + '"/>';
+          svg += '<line x1="' + (x + 8 * s) + '" y1="' + (y - 6 * s) + '" x2="' + (x + 11 * s) + '" y2="' + y + '" stroke="#DAA520" stroke-width="' + (0.8 * s) + '"/>';
+          svg += '<line x1="' + (x + 11 * s) + '" y1="' + (y - 6 * s) + '" x2="' + (x + 8 * s) + '" y2="' + y + '" stroke="#DAA520" stroke-width="' + (0.8 * s) + '"/>';
+          // Crane arm (horizontal)
+          svg += '<rect x="' + (x - 10 * s) + '" y="' + (y - 22 * s) + '" width="' + (28 * s) + '" height="' + (2 * s) + '" fill="#F4D03F"/>';
+          // Crane cable
+          svg += '<line x1="' + (x - 6 * s) + '" y1="' + (y - 20 * s) + '" x2="' + (x - 6 * s) + '" y2="' + (y - 12 * s) + '" stroke="#333" stroke-width="' + (0.5 * s) + '"/>';
+          // Hook
+          svg += '<path d="M ' + (x - 7 * s) + ' ' + (y - 12 * s) + ' Q ' + (x - 8 * s) + ' ' + (y - 10 * s) + ' ' + (x - 6 * s) + ' ' + (y - 10 * s) + ' Q ' + (x - 4 * s) + ' ' + (y - 10 * s) + ' ' + (x - 5 * s) + ' ' + (y - 12 * s) + '" fill="none" stroke="#888" stroke-width="' + (1.2 * s) + '"/>';
+          // Counterweight
+          svg += '<rect x="' + (x + 14 * s) + '" y="' + (y - 22 * s) + '" width="' + (4 * s) + '" height="' + (4 * s) + '" fill="#888"/>';
+          // Scaffolding
+          svg += '<line x1="' + (x - 14 * s) + '" y1="' + (y + 0 * s) + '" x2="' + (x - 14 * s) + '" y2="' + (y - 8 * s) + '" stroke="#DAA520" stroke-width="' + (1 * s) + '"/>';
+          svg += '<line x1="' + (x - 8 * s) + '" y1="' + (y + 0 * s) + '" x2="' + (x - 8 * s) + '" y2="' + (y - 8 * s) + '" stroke="#DAA520" stroke-width="' + (1 * s) + '"/>';
+          svg += '<line x1="' + (x - 14 * s) + '" y1="' + (y - 4 * s) + '" x2="' + (x - 8 * s) + '" y2="' + (y - 4 * s) + '" stroke="#DAA520" stroke-width="' + (1 * s) + '"/>';
+          // Safety cones
+          svg += '<polygon points="' + (x - 16 * s) + ',' + (y + 10 * s) + ' ' + (x - 15 * s) + ',' + (y + 6 * s) + ' ' + (x - 14 * s) + ',' + (y + 10 * s) + '" fill="#FF6B00"/>';
+          svg += '<polygon points="' + (x + 14 * s) + ',' + (y + 10 * s) + ' ' + (x + 15 * s) + ',' + (y + 6 * s) + ' ' + (x + 16 * s) + ',' + (y + 10 * s) + '" fill="#FF6B00"/>';
+          break;
+    
+        default:
+          // Fallback: question mark in a circle
+          svg += '<circle cx="' + x + '" cy="' + y + '" r="' + (12 * s) + '" fill="#ddd" stroke="#999" stroke-width="' + (1 * s) + '"/>';
+          svg += '<text x="' + x + '" y="' + (y + 4 * s) + '" text-anchor="middle" font-size="' + (14 * s) + '" fill="#666">?</text>';
+          break;
+      }
+    
+      return svg;
     }
 
     function buildAvatarSVG(av) {
@@ -4753,31 +6156,9 @@
         });
       }
 
-      var houseEmoji = '';
-      if (p.avatar.house) {
-        var hKey = p.avatar.house.replace('house:', '');
-        for (var h = 0; h < AVATAR_HOUSES.length; h++) {
-          if (AVATAR_HOUSES[h].key === hKey) { houseEmoji = AVATAR_HOUSES[h].icon; break; }
-        }
-      }
-      var vehEmojis = [];
-      if (p.avatar.vehicles && p.avatar.vehicles.length) {
-        p.avatar.vehicles.forEach(function(vk) {
-          var vKey = vk.replace('veh:', '');
-          for (var v = 0; v < AVATAR_VEHICLES.length; v++) {
-            if (AVATAR_VEHICLES[v].key === vKey) { vehEmojis.push(AVATAR_VEHICLES[v].icon); break; }
-          }
-        });
-      }
-      var toyEmojis = [];
-      if (p.avatar.toys && p.avatar.toys.length) {
-        p.avatar.toys.forEach(function(tk) {
-          var tKey = tk.replace('toy:', '');
-          for (var t = 0; t < AVATAR_TOYS.length; t++) {
-            if (AVATAR_TOYS[t].key === tKey) { toyEmojis.push(AVATAR_TOYS[t].icon); break; }
-          }
-        });
-      }
+      var houseKey = p.avatar.house || null;
+      var vehKeys = (p.avatar.vehicles || []).slice();
+      var toyKeys = (p.avatar.toys || []).slice();
 
       var charSvg = buildFullBodySVG(p.avatar, { platform: false });
       var petHtml = '';
@@ -4793,28 +6174,28 @@
           '<div class="av-display-bg" style="' + bgStyle + '"></div>' +
           '<div class="av-display-ground" style="' + groundStyle + ';border-radius:50% 50% 0 0 / 20% 20% 0 0;"></div>' +
           decorHtml +
-          (houseEmoji ? '<div class="av-display-house">' + houseEmoji + '</div>' : '') +
+          (houseKey ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-30 -30 60 60" class="av-display-house" style="width:90px;height:90px;font-size:0;">' + drawSceneItem(houseKey, 0, 0, 1) + '</svg>' : '') +
           '<div class="av-display-char">' + charSvg + '</div>' +
           petHtml +
           (function() {
             var vehPos = [
-              { bottom: '6%', left: '1%', size: '72px' },
-              { bottom: '10%', left: '22%', size: '60px' }
+              { bottom: '4%', left: '1%', size: '80' },
+              { bottom: '8%', left: '24%', size: '65' }
             ];
-            return vehEmojis.map(function(e, i) {
-              var p = vehPos[i] || vehPos[0];
-              return '<div style="position:absolute;bottom:' + p.bottom + ';left:' + p.left + ';font-size:' + p.size + ';filter:drop-shadow(0 4px 8px rgba(0,0,0,0.25));">' + e + '</div>';
+            return vehKeys.map(function(k, i) {
+              var vp = vehPos[i] || vehPos[0];
+              return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-30 -20 60 40" style="position:absolute;bottom:' + vp.bottom + ';left:' + vp.left + ';width:' + vp.size + 'px;height:auto;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.25));">' + drawSceneItem(k, 0, 0, 1) + '</svg>';
             }).join('');
           })() +
           (function() {
             var toyPos = [
-              { bottom: '28%', right: '2%', size: '64px' },
-              { bottom: '22%', right: '20%', size: '56px' },
-              { bottom: '34%', right: '8%', size: '50px' }
+              { bottom: '28%', right: '2%', size: '60' },
+              { bottom: '20%', right: '22%', size: '52' },
+              { bottom: '36%', right: '10%', size: '46' }
             ];
-            return toyEmojis.map(function(e, i) {
-              var p = toyPos[i] || toyPos[0];
-              return '<div style="position:absolute;bottom:' + p.bottom + ';right:' + p.right + ';font-size:' + p.size + ';filter:drop-shadow(0 3px 6px rgba(0,0,0,0.2));">' + e + '</div>';
+            return toyKeys.map(function(k, i) {
+              var tp = toyPos[i] || toyPos[0];
+              return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-25 -25 50 50" style="position:absolute;bottom:' + tp.bottom + ';right:' + tp.right + ';width:' + tp.size + 'px;height:auto;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.2));">' + drawSceneItem(k, 0, 0, 1) + '</svg>';
             }).join('');
           })() +
           '<div class="av-display-name">' + escapeHtml(p.name) + '</div>' +
@@ -5124,6 +6505,64 @@
           });
           panelHtml += '</div>';
         });
+
+        panelHtml += '<div class="ar-section-title" style="margin-top:16px;">Scenes</div>' +
+          '<div class="ar-item-grid" style="margin-top:4px;">';
+        AVATAR_BACKGROUNDS.forEach(function(bg) {
+          var fullKey = 'bg:' + bg.key;
+          var isUnlocked = p.avatar.unlocked.indexOf(fullKey) !== -1;
+          var isSelected = p.avatar.background === fullKey;
+          var btnCls = 'ar-item-btn' + (isSelected ? ' selected' : '') + (isUnlocked ? '' : ' locked');
+          panelHtml += '<button class="' + btnCls + '" data-scene="' + fullKey +
+            '" data-unlocked="' + (isUnlocked ? '1' : '0') + '" style="flex-direction:column;font-size:22px;">' +
+            bg.icon + '<div style="font-size:9px;line-height:1;">' + bg.label + '</div>' +
+            (isUnlocked ? '' : '<span class="ar-lock">🔒</span>') + '</button>';
+        });
+        panelHtml += '</div>';
+
+        panelHtml += '<div class="ar-section-title">Toys <span style="font-size:10px;color:#999;">(pick up to 3)</span></div>' +
+          '<div class="ar-item-grid" style="margin-top:4px;">';
+        AVATAR_TOYS.forEach(function(t) {
+          var fullKey = 'toy:' + t.key;
+          var isUnlocked = p.avatar.unlocked.indexOf(fullKey) !== -1;
+          var isSelected = (p.avatar.toys || []).indexOf(fullKey) !== -1;
+          var btnCls = 'ar-item-btn' + (isSelected ? ' selected' : '') + (isUnlocked ? '' : ' locked');
+          panelHtml += '<button class="' + btnCls + '" data-mtoggle="' + fullKey +
+            '" data-mfield="toys" data-mmax="3" data-unlocked="' + (isUnlocked ? '1' : '0') +
+            '" style="flex-direction:column;font-size:22px;">' +
+            t.icon + '<div style="font-size:9px;line-height:1;">' + t.label + '</div>' +
+            (isUnlocked ? '' : '<span class="ar-lock">🔒</span>') + '</button>';
+        });
+        panelHtml += '</div>';
+
+        panelHtml += '<div class="ar-section-title">Vehicles <span style="font-size:10px;color:#999;">(pick up to 2)</span></div>' +
+          '<div class="ar-item-grid" style="margin-top:4px;">';
+        AVATAR_VEHICLES.forEach(function(v) {
+          var fullKey = 'veh:' + v.key;
+          var isUnlocked = p.avatar.unlocked.indexOf(fullKey) !== -1;
+          var isSelected = (p.avatar.vehicles || []).indexOf(fullKey) !== -1;
+          var btnCls = 'ar-item-btn' + (isSelected ? ' selected' : '') + (isUnlocked ? '' : ' locked');
+          panelHtml += '<button class="' + btnCls + '" data-mtoggle="' + fullKey +
+            '" data-mfield="vehicles" data-mmax="2" data-unlocked="' + (isUnlocked ? '1' : '0') +
+            '" style="flex-direction:column;font-size:22px;">' +
+            v.icon + '<div style="font-size:9px;line-height:1;">' + v.label + '</div>' +
+            (isUnlocked ? '' : '<span class="ar-lock">🔒</span>') + '</button>';
+        });
+        panelHtml += '</div>';
+
+        panelHtml += '<div class="ar-section-title">Houses</div>' +
+          '<div class="ar-item-grid" style="margin-top:4px;">';
+        AVATAR_HOUSES.forEach(function(h) {
+          var fullKey = 'house:' + h.key;
+          var isUnlocked = p.avatar.unlocked.indexOf(fullKey) !== -1;
+          var isSelected = p.avatar.house === fullKey;
+          var btnCls = 'ar-item-btn' + (isSelected ? ' selected' : '') + (isUnlocked ? '' : ' locked');
+          panelHtml += '<button class="' + btnCls + '" data-scene="' + fullKey +
+            '" data-unlocked="' + (isUnlocked ? '1' : '0') + '" style="flex-direction:column;font-size:22px;">' +
+            h.icon + '<div style="font-size:9px;line-height:1;">' + h.label + '</div>' +
+            (isUnlocked ? '' : '<span class="ar-lock">🔒</span>') + '</button>';
+        });
+        panelHtml += '</div>';
       }
 
       var petDisplay = '';
@@ -5226,6 +6665,38 @@
           renderAvatarRoom();
         });
       }
+
+      container.querySelectorAll('[data-scene]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          if (btn.getAttribute('data-unlocked') === '0') {
+            alert('Play games to earn drops and unlock this item!');
+            return;
+          }
+          var key = btn.getAttribute('data-scene');
+          if (key.indexOf('bg:') === 0) {
+            p.avatar.background = (p.avatar.background === key) ? null : key;
+          } else if (key.indexOf('house:') === 0) {
+            p.avatar.house = (p.avatar.house === key) ? null : key;
+          }
+          saveActiveProfile();
+          renderAvatarRoom();
+        });
+      });
+
+      container.querySelectorAll('[data-mtoggle]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          if (btn.getAttribute('data-unlocked') === '0') {
+            alert('Play games to earn drops and unlock this item!');
+            return;
+          }
+          var key = btn.getAttribute('data-mtoggle');
+          var field = btn.getAttribute('data-mfield');
+          var max = parseInt(btn.getAttribute('data-mmax'), 10);
+          toggleArraySlot(p.avatar, field, key, max);
+          saveActiveProfile();
+          renderAvatarRoom();
+        });
+      });
 
       var viewWorldBtn = $('ar-view-world');
       if (viewWorldBtn) {
