@@ -5915,6 +5915,7 @@
         settingsAusNoteHtml() +
         settingsVoiceHtml() +
         settingsHistoryHtml(p) +
+        settingsBackupHtml() +
         settingsDangerHtml();
 
       wireSettingsEvents(p);
@@ -6113,6 +6114,24 @@
           ? '<button class="btn btn-secondary" id="sett-change-pin" style="width:100%;">Change PIN</button>' +
             '<button class="btn btn-ghost" id="sett-remove-pin" style="width:100%;margin-top:8px;color:var(--pk3);">Remove PIN</button>'
           : '<button class="btn btn-secondary" id="sett-set-pin" style="width:100%;">Set a PIN</button>') +
+        '</div>';
+    }
+
+    function settingsBackupHtml() {
+      return '<div class="settings-section">' +
+        '<h3>💾 Backup &amp; Restore</h3>' +
+        '<p style="font-size:13px;color:#888;margin:0 0 12px;">Save your family\'s progress so you can restore it on another device or if data is lost.</p>' +
+        '<button class="btn btn-secondary" id="sett-backup" style="width:100%;">📤 Create Backup Code</button>' +
+        '<div id="backup-output" style="display:none;margin-top:12px;">' +
+          '<textarea id="backup-code" readonly style="width:100%;height:80px;font-size:11px;font-family:monospace;border:2px solid rgba(107,63,160,0.2);border-radius:10px;padding:8px;resize:none;word-break:break-all;"></textarea>' +
+          '<button class="btn" id="sett-copy-backup" style="width:100%;margin-top:8px;">📋 Copy Code</button>' +
+          '<p style="font-size:12px;color:#6B3FA0;margin:6px 0 0;text-align:center;">Paste this code somewhere safe (Notes, email to yourself)</p>' +
+        '</div>' +
+        '<div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(107,63,160,0.1);">' +
+          '<p style="font-size:13px;color:#888;margin:0 0 10px;">Restore from a backup code:</p>' +
+          '<textarea id="restore-code" placeholder="Paste your backup code here..." style="width:100%;height:60px;font-size:11px;font-family:monospace;border:2px solid rgba(107,63,160,0.2);border-radius:10px;padding:8px;resize:none;"></textarea>' +
+          '<button class="btn btn-secondary" id="sett-restore" style="width:100%;margin-top:8px;border-color:var(--pu);color:var(--pu);">📥 Restore from Code</button>' +
+        '</div>' +
         '</div>';
     }
 
@@ -6323,6 +6342,68 @@
       });
 
       // Clear mistakes
+      // Backup
+      var backupBtn = $('sett-backup');
+      if (backupBtn) backupBtn.addEventListener('click', function() {
+        try {
+          var raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) { alert('No data to back up yet.'); return; }
+          var code = btoa(unescape(encodeURIComponent(raw)));
+          var output = $('backup-output');
+          var codeEl = $('backup-code');
+          if (output && codeEl) {
+            codeEl.value = code;
+            output.style.display = 'block';
+          }
+        } catch (err) {
+          alert('Backup failed: ' + err.message);
+        }
+      });
+
+      var copyBtn = $('sett-copy-backup');
+      if (copyBtn) copyBtn.addEventListener('click', function() {
+        var codeEl = $('backup-code');
+        if (!codeEl) return;
+        codeEl.select();
+        codeEl.setSelectionRange(0, 99999);
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(codeEl.value).then(function() {
+              copyBtn.textContent = '✅ Copied!';
+              setTimeout(function() { copyBtn.textContent = '📋 Copy Code'; }, 2000);
+            });
+          } else {
+            document.execCommand('copy');
+            copyBtn.textContent = '✅ Copied!';
+            setTimeout(function() { copyBtn.textContent = '📋 Copy Code'; }, 2000);
+          }
+        } catch (err) {
+          alert('Tap and hold the code above to copy manually.');
+        }
+      });
+
+      // Restore
+      var restoreBtn = $('sett-restore');
+      if (restoreBtn) restoreBtn.addEventListener('click', function() {
+        var codeEl = $('restore-code');
+        if (!codeEl) return;
+        var code = (codeEl.value || '').trim();
+        if (!code) { alert('Please paste a backup code first.'); return; }
+        try {
+          var raw = decodeURIComponent(escape(atob(code)));
+          var data = JSON.parse(raw);
+          if (!Array.isArray(data)) { alert('Invalid backup code.'); return; }
+          if (!confirm('This will replace ALL current data with the backup. Continue?')) return;
+          localStorage.setItem(STORAGE_KEY, raw);
+          state.profiles = loadProfiles();
+          state.activeIndex = null;
+          alert('Backup restored! Returning to player select.');
+          showScreen('s-profiles');
+        } catch (err) {
+          alert('Invalid backup code. Please check and try again.');
+        }
+      });
+
       var clearMistakes = $('sett-clear-mistakes');
       if (clearMistakes) clearMistakes.addEventListener('click', function() {
         if (!confirm('Clear ' + p.name + '\'s problem words list?')) return;
