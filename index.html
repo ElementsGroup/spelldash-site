@@ -382,6 +382,14 @@
       box-shadow: var(--shadow-soft);
     }
     .week-track h3 { margin-bottom: 8px; }
+    .gifts-area {
+      margin-top: 16px;
+      background: rgba(255,255,255,0.7);
+      border-radius: var(--radius-lg);
+      padding: 14px;
+      box-shadow: var(--shadow-soft);
+      text-align: center;
+    }
     .dot-row {
       display: flex;
       gap: 8px;
@@ -922,10 +930,18 @@
     .prep-coins-msg { font-size: 18px; font-weight: 800; color: var(--ye3); margin: 12px 0; }
 
     /* ---- Avatar Display Screen ---- */
-    .av-display { position: relative; width: 100%; max-width: 360px; margin: 0 auto; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-pop); aspect-ratio: 3/4; }
+    .av-display { position: relative; width: 100%; max-width: 400px; margin: 0 auto; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-pop); aspect-ratio: 3/4; }
     .av-display-bg { position: absolute; inset: 0; z-index: 0; }
-    .av-display-ground { position: absolute; bottom: 0; left: 0; right: 0; height: 30%; z-index: 1; }
-    .av-display-char { position: absolute; bottom: 12%; left: 50%; transform: translateX(-50%); width: 45%; z-index: 3; }
+    .av-display-ground { position: absolute; bottom: 0; left: 0; right: 0; height: 22%; z-index: 1; }
+    .av-display-char { position: absolute; bottom: 8%; left: 50%; transform: translateX(-50%); width: 38%; z-index: 3; }
+    .paper-doll { position: relative; width: 100%; }
+    .pd-full { display: block; width: 100%; height: auto; }
+    .house-room { position: relative; width: 100%; max-width: 400px; margin: 0 auto; border-radius: var(--radius-lg); overflow: hidden; aspect-ratio: 4/3; }
+    .house-wall { position: absolute; inset: 0; }
+    .house-floor { position: absolute; bottom: 0; left: 0; right: 0; height: 25%; }
+    .house-shelf { display: flex; align-items: flex-end; justify-content: center; gap: 6px; padding: 6px 8px; }
+    .house-shelf-item { width: 48px; height: 48px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15)); }
+    .house-char { position: absolute; bottom: 8%; right: 6%; width: 30%; z-index: 3; }
     .av-display-house { position: absolute; top: 2%; right: 2%; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25)); }
     .av-display-vehicle { position: absolute; bottom: 8%; left: 2%; font-size: 72px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25)); }
     .av-display-toy { position: absolute; bottom: 28%; right: 2%; font-size: 64px; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.2)); }
@@ -963,37 +979,16 @@
     <section class="screen" id="s-home">
       <button class="btn-back" data-back="s-profiles">← Switch player</button>
 
-      <div class="home-header">
+      <div class="home-header" id="avatar-room-btn" style="cursor:pointer;">
         <div id="home-avatar" class="avatar-circle avatar-pink">??</div>
         <div class="who">
           <div id="home-name" class="profile-name">—</div>
-          <div class="profile-sub">Avatar coming soon ✨</div>
-        </div>
-      </div>
-
-      <div class="stat-row">
-        <div class="coin-card">
-          <div class="coin-amount">🪙 <span id="home-coins">0</span></div>
-          <div class="progress-track">
-            <div id="home-progress" class="progress-fill"></div>
-          </div>
-          <div class="progress-label">
-            Today: <span id="home-daily-coins">0</span> / 20 coins
-          </div>
-        </div>
-        <div class="gem-card">
-          <div class="gem-amount">💎 <span id="home-gems">0</span></div>
-          <div class="streak">🎮 <span id="home-streak">0</span> sessions</div>
+          <div class="profile-sub" id="avatar-room-msg">Choose your character</div>
         </div>
       </div>
 
       <div class="tile-grid">
-        <button class="tile t-play"  data-go="s-play">
-          <span class="icon">🎮</span>
-          <span class="label">Play</span>
-          <span class="desc">Spelling round</span>
-        </button>
-        <button class="tile t-read"  data-go="s-reading">
+        <button class="tile t-read" data-go="s-reading">
           <span class="icon">📖</span>
           <span class="label">Reading</span>
           <span class="desc">Log a book</span>
@@ -1001,26 +996,28 @@
         <button class="tile t-coins" data-go="s-coins">
           <span class="icon">🪙</span>
           <span class="label">Coins</span>
-          <span class="desc">Wallet & shop</span>
-        </button>
-        <button class="tile t-prep" data-go="s-prep" style="background:linear-gradient(135deg,#FFE0F0,#E0F0FF);border:2px solid #D4AAEE;">
-          <span class="icon">🧸</span>
-          <span class="label">Prep Games</span>
-          <span class="desc">Letters & numbers</span>
+          <span class="desc">🪙 Coins  💎 Gems</span>
         </button>
       </div>
 
-      <button class="avatar-room" id="avatar-room-btn" type="button">
-        <span class="icon">🎀</span>
-        <span style="flex:1;">
-          <span class="label">Avatar Room</span><br />
-          <span class="desc" id="avatar-room-msg">Customise your look</span>
-        </span>
-      </button>
+      <div id="affirmation-area" style="text-align:center;padding:12px 18px;margin:8px 14px 12px;background:linear-gradient(135deg,rgba(255,220,240,0.5),rgba(200,220,255,0.5));border-radius:18px;border:1px solid rgba(107,63,160,0.12);">
+        <div style="font-size:18px;margin-bottom:4px;">💜</div>
+        <div id="affirmation-text" style="font-family:'Fredoka One',sans-serif;font-size:15px;color:#6B3FA0;line-height:1.4;"></div>
+      </div>
 
-      <div class="week-track">
-        <h3>This week's journey</h3>
-        <div id="week-dots" class="dot-row"></div>
+      <div id="gifts-area" class="gifts-area" style="margin:0 14px 12px;">
+        <h3 style="margin:0 0 8px;color:#6B3FA0;font-size:15px;">Surprise Gifts</h3>
+        <div id="gifts-display" style="min-height:48px;display:flex;align-items:center;justify-content:center;color:#999;font-size:13px;">Keep playing to earn surprise gifts!</div>
+      </div>
+
+      <div id="gratitude-area" style="margin:0 14px 12px;padding:14px 18px;background:linear-gradient(135deg,rgba(184,238,216,0.4),rgba(168,216,240,0.4));border-radius:18px;border:1px solid rgba(107,63,160,0.12);">
+        <h3 style="margin:0 0 10px;color:#6B3FA0;font-size:15px;">🙏 What am I grateful for?</h3>
+        <div id="gratitude-entries" style="margin-bottom:10px;"></div>
+        <div style="display:flex;gap:8px;">
+          <input id="gratitude-input" type="text" placeholder="e.g. my family because..." style="flex:1;padding:10px 12px;border:2px solid rgba(107,63,160,0.2);border-radius:12px;font-size:14px;font-family:inherit;outline:none;" maxlength="150" />
+          <button id="gratitude-submit" style="padding:10px 14px;border:none;border-radius:12px;background:#6B3FA0;color:#fff;font-family:'Fredoka One',sans-serif;font-size:13px;cursor:pointer;white-space:nowrap;">Add 🪙</button>
+        </div>
+        <div id="gratitude-reward-msg" style="text-align:center;font-size:12px;color:#6B3FA0;margin-top:6px;min-height:16px;"></div>
       </div>
 
       <div class="drops-area" id="drops-area"></div>
@@ -1041,7 +1038,7 @@
          Stub screens — content lands in later stages.
          ============================================================ -->
     <section class="screen" id="s-play">
-      <button class="btn-back" data-back="s-home">← Back</button>
+      <button class="btn-back" data-back="s-avdisplay">← Back</button>
       <h2>Choose your game</h2>
       <div class="play-grid">
         <button class="play-tile pt-week" id="pt-thisweek" data-mode="thisweek">
@@ -1102,9 +1099,11 @@
     <!-- s-wall and s-settings are fully JS-rendered (Stage 5). -->
     <section class="screen" id="s-wall"></section>
     <section class="screen" id="s-settings"></section>
+    <section class="screen" id="s-charselect"></section>
     <section class="screen" id="s-avatarroom"></section>
     <section class="screen" id="s-dadwrong"></section>
     <section class="screen" id="s-avdisplay"></section>
+    <section class="screen" id="s-houseinterior"></section>
     <section class="screen" id="s-prep"></section>
     <section class="screen" id="s-prep-game"></section>
   </div>
@@ -1266,6 +1265,15 @@
       return (first + second).toUpperCase();
     }
 
+    // ---- Asset base path (auto-detect local dev vs deployed) ----
+    var ASSET_BASE = (function() {
+      var loc = window.location.pathname;
+      if (loc.indexOf('/spelldash-site/') !== -1 || loc === '/index.html' || loc === '/') {
+        return 'assets/';
+      }
+      return 'spelldash-site/assets/';
+    })();
+
     // ---- Avatar character customisation constants ----
     var SKIN_TONES = [
       { key: 'porcelain', hex: '#FDE8D5', hi: '#FFF3EC', sh: '#E8C4AA', label: 'Porcelain' },
@@ -1351,54 +1359,153 @@
       { key: 'dragon', label: 'Dragon', icon: '🐲' }
     ];
     var AVATAR_BACKGROUNDS = [
-      { key: 'beach',     label: 'Beach',      icon: '🏖️', colors: ['#87CEEB', '#F5DEB3', '#00B4D8'], ground: '#F5DEB3', decor: ['🌴','⛱️','🐚','🌊'] },
-      { key: 'city',      label: 'City',       icon: '🏙️', colors: ['#4A5568', '#CBD5E0', '#F6AD55'], ground: '#555', decor: ['🏢','🏬','🚦','💡'] },
-      { key: 'jungle',    label: 'Jungle',     icon: '🌴', colors: ['#2D6A4F', '#95D5B2', '#40916C'], ground: '#2D6A4F', decor: ['🌿','🌴','🍃','🦜'] },
-      { key: 'waterpark', label: 'Water Park',  icon: '🎢', colors: ['#48CAE4', '#00B4D8', '#FFD166'], ground: '#48CAE4', decor: ['🎢','🌊','💦','🏊'] },
-      { key: 'space',     label: 'Space',       icon: '🚀', colors: ['#1B1B3A', '#3D2C8D', '#8338EC'], ground: '#1B1B3A', decor: ['⭐','🌙','🪐','✨'] },
-      { key: 'farm',      label: 'Farm',        icon: '🌾', colors: ['#7CB518', '#F4D35E', '#A3C9A8'], ground: '#7CB518', decor: ['🌻','🐔','🌾','🐑'] },
-      { key: 'snow',      label: 'Snow',        icon: '❄️', colors: ['#D6E4F0', '#EEF2F7', '#A8DADC'], ground: '#EEF2F7', decor: ['❄️','⛄','🎿','🌲'] },
-      { key: 'candy',     label: 'Candy Land',  icon: '🍭', colors: ['#FF85A1', '#FFC2D1', '#FFD166'], ground: '#FFC2D1', decor: ['🍭','🍬','🧁','🍩'] }
+      { key: 'beach',     label: 'Beach',      icon: '🏖️', img: 'backgrounds/beach.jpg' },
+      { key: 'city',      label: 'City',       icon: '🏙️', img: 'backgrounds/city.jpg' },
+      { key: 'jungle',    label: 'Jungle',     icon: '🌴', img: 'backgrounds/jungle.jpg' },
+      { key: 'waterpark', label: 'Water Park',  icon: '🎢', img: 'backgrounds/waterpark.jpg' },
+      { key: 'space',     label: 'Space',       icon: '🚀', img: 'backgrounds/space.jpg' },
+      { key: 'farm',      label: 'Farm',        icon: '🌾', img: 'backgrounds/farm.jpg' },
+      { key: 'snow',      label: 'Snow',        icon: '❄️', img: 'backgrounds/snow.jpg' },
+      { key: 'candy',     label: 'Candy Land',  icon: '🍭', img: 'backgrounds/candy.jpg' }
     ];
     var AVATAR_TOYS = [
-      { key: 'teddy',     label: 'Teddy Bear',   icon: '🧸' },
-      { key: 'ball',      label: 'Soccer Ball',  icon: '⚽' },
-      { key: 'basketball',label: 'Basketball',   icon: '🏀' },
-      { key: 'skateboard',label: 'Skateboard',   icon: '🛹' },
-      { key: 'surfboard', label: 'Surfboard',    icon: '🏄' },
-      { key: 'guitar',    label: 'Guitar',       icon: '🎸' },
-      { key: 'trophy',    label: 'Trophy',       icon: '🏆' },
-      { key: 'rocket',    label: 'Rocket',       icon: '🚀' },
-      { key: 'sword',     label: 'Sword',        icon: '⚔️' },
-      { key: 'wand',      label: 'Magic Wand',   icon: '🪄' },
-      { key: 'kite',      label: 'Kite',         icon: '🪁' },
-      { key: 'balloon',   label: 'Balloon',      icon: '🎈' }
+      { key: 'teddy',     label: 'Teddy Bear',   icon: '🧸', img: 'toys/teddy-bear.png' },
+      { key: 'ball',      label: 'Soccer Ball',  icon: '⚽', img: 'toys/soccer-ball.png' },
+      { key: 'basketball',label: 'Basketball',   icon: '🏀', img: 'toys/basketball.png' },
+      { key: 'skateboard',label: 'Skateboard',   icon: '🛹', img: 'toys/skateboard.png' },
+      { key: 'surfboard', label: 'Surfboard',    icon: '🏄', img: 'toys/surfboard.png' },
+      { key: 'guitar',    label: 'Guitar',       icon: '🎸', img: 'toys/guitar.png' },
+      { key: 'trophy',    label: 'Trophy',       icon: '🏆', img: 'toys/trophy.png' },
+      { key: 'rocket',    label: 'Rocket',       icon: '🚀', img: 'toys/rocket.png' },
+      { key: 'sword',     label: 'Sword',        icon: '⚔️', img: 'toys/sword.png' },
+      { key: 'wand',      label: 'Magic Wand',   icon: '🪄', img: 'toys/magic-wand.png' },
+      { key: 'kite',      label: 'Kite',         icon: '🪁', img: 'toys/kite.png' },
+      { key: 'balloon',   label: 'Balloon',      icon: '🎈', img: 'toys/balloon.png' }
     ];
     var AVATAR_VEHICLES = [
-      { key: 'car',       label: 'Race Car',     icon: '🏎️' },
-      { key: 'truck',     label: 'Monster Truck', icon: '🛻' },
-      { key: 'bike',      label: 'Bicycle',      icon: '🚲' },
-      { key: 'plane',     label: 'Aeroplane',    icon: '✈️' },
-      { key: 'boat',      label: 'Speed Boat',   icon: '🚤' },
-      { key: 'helicopter',label: 'Helicopter',   icon: '🚁' },
-      { key: 'train',     label: 'Train',        icon: '🚂' },
-      { key: 'ufo',       label: 'UFO',          icon: '🛸' },
-      { key: 'fireengine',label: 'Fire Engine',  icon: '🚒' },
-      { key: 'digger',    label: 'Digger',       icon: '🚜' },
-      { key: 'jetski',    label: 'Jet Ski',      icon: '🚤' },
-      { key: 'motorbike', label: 'Motorbike',    icon: '🏍️' },
-      { key: 'scooter',   label: 'Scooter',      icon: '🛴' },
-      { key: 'rollerblades',label:'Rollerblades',icon: '⛸️' }
+      { key: 'car',       label: 'Race Car',     icon: '🏎️', img: 'vehicles/race-car.png' },
+      { key: 'truck',     label: 'Monster Truck', icon: '🛻', img: 'vehicles/monster-truck.png' },
+      { key: 'bike',      label: 'Bicycle',      icon: '🚲', img: 'vehicles/bicycle.png' },
+      { key: 'plane',     label: 'Aeroplane',    icon: '✈️', img: 'vehicles/airplane.png' },
+      { key: 'boat',      label: 'Speed Boat',   icon: '🚤', img: 'vehicles/boat.png' },
+      { key: 'helicopter',label: 'Helicopter',   icon: '🚁', img: 'vehicles/helicopter.png' },
+      { key: 'train',     label: 'Train',        icon: '🚂', img: 'vehicles/train.png' },
+      { key: 'ufo',       label: 'UFO',          icon: '🛸', img: 'vehicles/ufo.png' },
+      { key: 'fireengine',label: 'Fire Engine',  icon: '🚒', img: 'vehicles/fire-truck.png' },
+      { key: 'digger',    label: 'Digger',       icon: '🚜', img: 'vehicles/excavator.png' },
+      { key: 'jetski',    label: 'Jet Ski',      icon: '🚤', img: 'vehicles/jet-ski.png' },
+      { key: 'motorbike', label: 'Motorbike',    icon: '🏍️', img: 'vehicles/motorcycle.png' },
+      { key: 'scooter',   label: 'Scooter',      icon: '🛴', img: 'vehicles/scooter.png' },
+      { key: 'rollerblades',label:'Rollerblades',icon: '⛸️', img: 'vehicles/roller-blades.png' }
     ];
     var AVATAR_HOUSES = [
-      { key: 'castle',    label: 'Castle',       icon: '🏰' },
-      { key: 'treehouse', label: 'Tree House',   icon: '🌳' },
-      { key: 'cottage',   label: 'Cottage',      icon: '🏡' },
-      { key: 'igloo',     label: 'Igloo',        icon: '🏠' },
-      { key: 'pirate',    label: 'Pirate Ship',  icon: '🏴‍☠️' },
-      { key: 'spaceship', label: 'Space Station', icon: '🛸' },
-      { key: 'firestation',label:'Fire Station', icon: '🚒' },
-      { key: 'construction',label:'Construction Site',icon: '🏗️' }
+      { key: 'castle',    label: 'Castle',       icon: '🏰', img: 'houses/castle.png' },
+      { key: 'treehouse', label: 'Tree House',   icon: '🌳', img: 'houses/treehouse.png' },
+      { key: 'cottage',   label: 'Cottage',      icon: '🏡', img: 'houses/cottage.png' },
+      { key: 'igloo',     label: 'Igloo',        icon: '🏠', img: 'houses/igloo.png' },
+      { key: 'pirate',    label: 'Pirate Ship',  icon: '🏴‍☠️', img: 'houses/pirate-ship.png' },
+      { key: 'spaceship', label: 'Space Station', icon: '🛸', img: 'houses/observatory.png' },
+      { key: 'firestation',label:'Fire Station', icon: '🚒', img: 'houses/fire-station.png' },
+      { key: 'construction',label:'Construction Site',icon: '🏗️', img: 'houses/construction.png' }
+    ];
+    var RASTER_HAIRSTYLES = {
+      girl: [
+        { key: 'girl-long',       label: 'Long',       img: 'hairstyles/girl-long.png' },
+        { key: 'girl-bob',        label: 'Bob',        img: 'hairstyles/girl-bob.png' },
+        { key: 'girl-curly',      label: 'Curly',      img: 'hairstyles/girl-curly.png' },
+        { key: 'girl-bun',        label: 'Bun',        img: 'hairstyles/girl-bun.png' },
+        { key: 'girl-pigtails',   label: 'Pigtails',   img: 'hairstyles/girl-pigtails.png' },
+        { key: 'girl-side-part',  label: 'Side Part',  img: 'hairstyles/girl-side-part.png' },
+        { key: 'girl-space-buns', label: 'Space Buns', img: 'hairstyles/girl-space-buns.png' },
+        { key: 'girl-wavy',       label: 'Wavy',       img: 'hairstyles/girl-wavy.png' }
+      ],
+      boy: [
+        { key: 'boy-short',  label: 'Short',  img: 'hairstyles/boy-short.png' },
+        { key: 'boy-spiky',  label: 'Spiky',  img: 'hairstyles/boy-spiky.png' },
+        { key: 'boy-side',   label: 'Side',   img: 'hairstyles/boy-side.png' },
+        { key: 'boy-messy',  label: 'Messy',  img: 'hairstyles/boy-messy.png' },
+        { key: 'boy-swoosh', label: 'Swoosh', img: 'hairstyles/boy-swoosh.png' },
+        { key: 'boy-curly',  label: 'Curly',  img: 'hairstyles/boy-curly.png' }
+      ]
+    };
+    var WORLD_OUTFITS = [
+      { key: 'beach',     label: 'Beach',      icon: '🏖️' },
+      { key: 'jungle',    label: 'Jungle',     icon: '🌴' },
+      { key: 'candy',     label: 'Candy',      icon: '🍭' },
+      { key: 'farm',      label: 'Farm',       icon: '🌾' },
+      { key: 'city',      label: 'City',       icon: '🏙️' },
+      { key: 'waterpark', label: 'Water Park', icon: '🎢' },
+      { key: 'space',     label: 'Space',      icon: '🚀' },
+      { key: 'snow',      label: 'Snow',       icon: '❄️' }
+    ];
+    var SKIN_CHAR_MAP = {
+      girl: { porcelain: 'girl-light', light: 'girl-light', warm: 'girl-medium-light', medium: 'girl-medium', tan: 'girl-medium-dark', dark: 'girl-dark' },
+      boy:  { porcelain: 'boy-light',  light: 'boy-light',  warm: 'boy-medium-light',  medium: 'boy-medium',  tan: 'boy-medium-dark',  dark: 'boy-dark' }
+    };
+    var CHARACTERS = [
+      { key: 'beach-girl',     label: 'Luna',    world: 'beach',     gender: 'girl', img: 'characters/beach-girl.png' },
+      { key: 'beach-boy',      label: 'Kai',     world: 'beach',     gender: 'boy',  img: 'characters/beach-boy.png' },
+      { key: 'jungle-girl',    label: 'Maya',    world: 'jungle',    gender: 'girl', img: 'characters/jungle-girl.png' },
+      { key: 'jungle-boy',     label: 'Leo',     world: 'jungle',    gender: 'boy',  img: 'characters/jungle-boy.png' },
+      { key: 'candy-girl',     label: 'Rosie',   world: 'candy',     gender: 'girl', img: 'characters/candy-girl.png' },
+      { key: 'candy-boy',      label: 'Charlie', world: 'candy',     gender: 'boy',  img: 'characters/candy-boy.png' },
+      { key: 'farm-girl',      label: 'Daisy',   world: 'farm',      gender: 'girl', img: 'characters/farm-girl.png' },
+      { key: 'farm-boy',       label: 'Jack',    world: 'farm',      gender: 'boy',  img: 'characters/farm-boy.png' },
+      { key: 'city-girl',      label: 'Zara',    world: 'city',      gender: 'girl', img: 'characters/city-girl.png' },
+      { key: 'city-boy',       label: 'Max',     world: 'city',      gender: 'boy',  img: 'characters/city-boy.png' },
+      { key: 'waterpark-girl', label: 'Coral',   world: 'waterpark', gender: 'girl', img: 'characters/waterpark-girl.png' },
+      { key: 'waterpark-boy',  label: 'Finn',    world: 'waterpark', gender: 'boy',  img: 'characters/waterpark-boy.png' },
+      { key: 'space-girl',     label: 'Nova',    world: 'space',     gender: 'girl', img: 'characters/space-girl.png' },
+      { key: 'space-boy',      label: 'Astro',   world: 'space',     gender: 'boy',  img: 'characters/space-boy.png' },
+      { key: 'snow-girl',      label: 'Elsa',    world: 'snow',      gender: 'girl', img: 'characters/snow-girl.png' },
+      { key: 'snow-boy',       label: 'Frost',   world: 'snow',      gender: 'boy',  img: 'characters/snow-boy.png' }
+    ];
+    function findCharacter(key) {
+      for (var i = 0; i < CHARACTERS.length; i++) {
+        if (CHARACTERS[i].key === key) return CHARACTERS[i];
+      }
+      return null;
+    }
+
+    // World-specific game mapping — each world has 1 Year 2 game and 1 Kindy game
+    var WORLD_GAMES = {
+      beach:     { year2: { mode: 'thisweek',  label: 'This Week' },           kindy: { mode: 'letters',  label: 'Letter Match' } },
+      jungle:    { year2: { mode: 'surprise',  label: 'Surprise Me' },         kindy: { mode: 'numbers',  label: 'Number Match' } },
+      candy:     { year2: { mode: 'sentences', label: 'Sentences' },           kindy: { mode: 'spelling', label: 'Spell It' } },
+      farm:      { year2: { mode: 'dadwrong',  label: 'Daddy Got It Wrong' },  kindy: { mode: 'counting', label: 'Counting' } },
+      city:      { year2: { mode: 'problems',  label: 'Problem Words' },       kindy: { mode: 'sounds',   label: 'First Sound' } },
+      waterpark: { year2: { mode: 'choose',    label: 'Choose Your Sound' },   kindy: { mode: 'numtap',   label: 'Number Tap' } },
+      space:     { year2: { mode: 'boss',      label: "I'm the Boss" },        kindy: { mode: 'abcorder', label: 'ABC Order' } },
+      snow:      { year2: { mode: 'surprise',  label: 'Surprise Me' },         kindy: { mode: 'pairs',    label: 'Matching Pairs' } }
+    };
+
+    // Affirmations — age-appropriate positive messages
+    var AFFIRMATIONS = [
+      'I am strong, brave and clever',
+      'People like me',
+      'I am a good friend',
+      'My daddy loves me always',
+      'I am loved for who I am',
+      'My thoughts and words matter',
+      'I am a valuable family member',
+      'I grow by trying and effort',
+      'Mistakes mean I am learning',
+      'I can do hard things',
+      'My smile makes the world brighter',
+      'I am kind and helpful',
+      'I believe in myself',
+      'Today is going to be a great day',
+      'I am proud of who I am',
+      'I make good choices',
+      'My family loves me no matter what',
+      'I am creative and full of ideas',
+      'I am enough just as I am',
+      'Every day I get a little better',
+      'I have so much to be thankful for',
+      'I treat others the way I want to be treated',
+      'My best is always good enough',
+      'I choose to be happy',
+      'I am safe and loved'
     ];
     // Wearable items — SVG-drawn on the character
     var AVATAR_WEARABLES = [
@@ -1489,7 +1596,14 @@
       if (a.vehicles === undefined) a.vehicles = a.vehicle ? [a.vehicle] : [];
       delete a.toy; delete a.vehicle;
       if (a.house        === undefined) a.house        = null;
+      if (a.rasterHair   === undefined) a.rasterHair   = a.gender === 'boy' ? 'boy-short' : 'girl-long';
+      if (a.worldOutfit  === undefined) a.worldOutfit  = null;
+      if (a.characterKey === undefined) a.characterKey = null;
       delete a.colour; delete a.character; delete a.emoji;
+      // World prizes — per-world per-player item collection
+      if (!p.worldPrizes) p.worldPrizes = {};
+      // Gratitude journal
+      if (!p.gratitude) p.gratitude = [];
     }
 
     function itemIcon(itemKey) {
@@ -3214,6 +3328,22 @@
         defs + '<g clip-path="url(#' + uid + ')">' + h.hairBack + sp + nk + h.ears + h.face + h.cheeks + h.eyes + h.brows + h.nose + h.mouth + h.hairFront + wear + '</g></svg>';
     }
 
+    function buildPaperDollHtml(av) {
+      var ch = av.characterKey ? findCharacter(av.characterKey) : null;
+      if (ch) {
+        return '<div class="paper-doll">' +
+          '<img class="pd-full" src="' + ASSET_BASE + ch.img + '" alt="" />' +
+          '</div>';
+      }
+      var gender = av.gender || 'girl';
+      var skinKey = av.skinKey || 'light';
+      var charFile = (SKIN_CHAR_MAP[gender] || {})[skinKey] || (gender + '-default');
+      var charImg = 'characters/' + charFile + '.png';
+      return '<div class="paper-doll">' +
+        '<img class="pd-full" src="' + ASSET_BASE + charImg + '" alt="" />' +
+        '</div>';
+    }
+
     function buildFullBodySVG(av, opts) {
       opts = opts || {};
       var uid = 'av' + (++_avId);
@@ -3476,13 +3606,21 @@
       migrateAvatar(p);
       var cls  = 'avatar-circle ' + avatarBgClass(p);
       var extra = sizeStyle ? ' style="' + sizeStyle + '"' : '';
-      return '<div class="' + cls + '"' + extra + '>' + buildAvatarSVG(p.avatar) + avatarPetBadge(p.avatar) + '</div>';
+      var ch = p.avatar.characterKey ? findCharacter(p.avatar.characterKey) : null;
+      var inner = ch
+        ? '<img src="' + ASSET_BASE + ch.img + '" alt="" style="width:90%;height:90%;object-fit:contain;" />'
+        : buildAvatarSVG(p.avatar);
+      return '<div class="' + cls + '"' + extra + '>' + inner + avatarPetBadge(p.avatar) + '</div>';
     }
 
     function fillAvatarCircle(el, p) {
       migrateAvatar(p);
       el.className = 'avatar-circle ' + avatarBgClass(p);
-      el.innerHTML = buildAvatarSVG(p.avatar) + avatarPetBadge(p.avatar);
+      var ch = p.avatar.characterKey ? findCharacter(p.avatar.characterKey) : null;
+      var inner = ch
+        ? '<img src="' + ASSET_BASE + ch.img + '" alt="" style="width:90%;height:90%;object-fit:contain;" />'
+        : buildAvatarSVG(p.avatar);
+      el.innerHTML = inner + avatarPetBadge(p.avatar);
     }
 
     // -----------------------------------
@@ -3502,9 +3640,11 @@
       if (id === 's-askdad')    renderAskDadScreen();
       if (id === 's-wall')       renderWallScreen();
       if (id === 's-settings')   renderSettingsScreen();
+      if (id === 's-charselect') renderCharSelect();
       if (id === 's-avatarroom') renderAvatarRoom();
       if (id === 's-dadwrong')   renderDadWrongCard();
       if (id === 's-avdisplay') renderAvatarDisplay();
+      if (id === 's-houseinterior') renderHouseInterior();
       if (id === 's-prep')       renderPrepHub();
       window.scrollTo(0, 0);
     }
@@ -3522,7 +3662,7 @@
         return;
       }
       if (ev.target.closest('#avatar-room-btn')) {
-        showScreen('s-avatarroom');
+        showScreen('s-charselect');
       }
     });
 
@@ -3672,22 +3812,20 @@
       $('home-name').textContent = p.name;
       fillAvatarCircle($('home-avatar'), p);
 
-      var econ = p.economy || {};
-      $('home-coins').textContent = econ.coins || 0;
-      $('home-gems').textContent  = econ.gems  || 0;
+      migrateAvatar(p);
+      var chosenChar = p.avatar.characterKey ? findCharacter(p.avatar.characterKey) : null;
+      $('avatar-room-msg').textContent = chosenChar
+        ? 'Playing as ' + chosenChar.label
+        : 'Choose your character';
 
-      var daily = econ.dailyCoins || 0;
-      $('home-daily-coins').textContent = daily;
-      var pct = Math.min(100, (daily / 20) * 100);
-      $('home-progress').style.width = pct + '%';
+      var isAmos = (p.name || '').toLowerCase().indexOf('amos') !== -1;
+      var homeEl = $('s-home');
+      if (isAmos) {
+        homeEl.style.background = 'linear-gradient(180deg, #B8D4F0 0%, #D0E8FF 30%, #E8F0FF 100%)';
+      } else {
+        homeEl.style.background = '';
+      }
 
-      $('home-streak').textContent = p.totalSessions || 0;
-
-      // Week dots populated from WEEKS array (Stage 2+).
-      renderWeekDots();
-      renderWeekBadge();
-
-      // Drops area — stub. Real drop rendering arrives later.
       var dropsArea = $('drops-area');
       dropsArea.innerHTML = '';
       if (p.drops && p.drops.length > 0) {
@@ -3697,12 +3835,134 @@
         dropsArea.appendChild(badge);
       }
 
-      migrateAvatar(p);
-      var unlockCount = p.avatar.unlocked.length;
-      $('avatar-room-msg').textContent = unlockCount > 0
-        ? unlockCount + ' item' + (unlockCount !== 1 ? 's' : '') + ' unlocked!'
-        : 'Customise your look';
+      renderGiftsArea(p);
+
+      // Affirmation — pick one based on day + profile index for variety
+      var affText = $('affirmation-text');
+      if (affText) {
+        var dayHash = new Date().getDate() + (state.activeIndex * 7);
+        affText.textContent = '"' + AFFIRMATIONS[dayHash % AFFIRMATIONS.length] + '"';
+      }
+
+      // Gratitude entries
+      renderGratitudeArea(p);
     }
+
+    function renderGratitudeArea(p) {
+      var entries = $('gratitude-entries');
+      if (!entries) return;
+      migrateAvatar(p);
+      var gList = p.gratitude || [];
+      if (gList.length === 0) {
+        entries.innerHTML = '<div style="font-size:13px;color:#888;text-align:center;padding:4px 0;">Tell us what you\'re grateful for and why — earn up to 3 coins!</div>';
+      } else {
+        var html = '';
+        var recent = gList.slice(-5).reverse();
+        for (var gi = 0; gi < recent.length; gi++) {
+          html += '<div style="padding:4px 8px;margin:3px 0;background:rgba(255,255,255,0.7);border-radius:8px;font-size:13px;color:#555;">' +
+            '✨ ' + escapeHtml(recent[gi].text) +
+            '<span style="float:right;font-size:11px;color:#999;">' + (recent[gi].date || '') + '</span>' +
+            '</div>';
+        }
+        if (gList.length > 5) {
+          html += '<div style="text-align:center;font-size:11px;color:#888;">+' + (gList.length - 5) + ' more entries</div>';
+        }
+        entries.innerHTML = html;
+      }
+    }
+
+    function renderGiftsArea(p) {
+      var display = $('gifts-display');
+      if (!display) return;
+      migrateAvatar(p);
+      // Collect all prizes across all worlds
+      var wp = p.worldPrizes || {};
+      var allPrizes = [];
+      var worlds = ['beach','jungle','candy','farm','city','waterpark','space','snow'];
+      for (var wi = 0; wi < worlds.length; wi++) {
+        var items = wp[worlds[wi]] || [];
+        for (var ii = 0; ii < items.length; ii++) {
+          if (allPrizes.indexOf(items[ii]) === -1) allPrizes.push(items[ii]);
+        }
+      }
+      if (allPrizes.length === 0) {
+        display.innerHTML = '<span style="color:#999;font-size:13px;">Play games to win surprise prizes!</span>';
+        return;
+      }
+      var html = '';
+      for (var i = 0; i < Math.min(allPrizes.length, 8); i++) {
+        var icon = itemIcon(allPrizes[i]);
+        html += '<span style="font-size:28px;margin:0 4px;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.15));">' + icon + '</span>';
+      }
+      if (allPrizes.length > 8) html += '<span style="font-size:13px;color:#888;">+' + (allPrizes.length - 8) + ' more</span>';
+      display.innerHTML = html;
+    }
+
+    // ---- Gratitude submit handler (delegated) ----
+    document.addEventListener('click', function(ev) {
+      if (ev.target.id !== 'gratitude-submit') return;
+      var input = $('gratitude-input');
+      if (!input) return;
+      var text = input.value.trim();
+      if (!text || text.length < 3) {
+        var msg = $('gratitude-reward-msg');
+        if (msg) msg.textContent = 'Write a bit more about what you\'re grateful for!';
+        return;
+      }
+      var p = activeProfile();
+      if (!p) return;
+      migrateAvatar(p);
+
+      // Check daily gratitude limit (max 3 per day for coins)
+      var today = todayKey();
+      var todayCount = 0;
+      for (var i = 0; i < (p.gratitude || []).length; i++) {
+        if (p.gratitude[i].date === today) todayCount++;
+      }
+
+      // Score sentence quality: 1-3 coins based on length and depth
+      var words = text.split(/\s+/).length;
+      var hasBecause = /because|since|as\s/i.test(text);
+      var hasFeelings = /feel|love|happy|safe|kind|proud|thankful|grateful|blessed|special|warm|joy/i.test(text);
+      var qualityCoins = 1;
+      if (words >= 8 && (hasBecause || hasFeelings)) qualityCoins = 3;
+      else if (words >= 5 || hasBecause || hasFeelings) qualityCoins = 2;
+
+      p.gratitude.push({ text: text, date: today, coins: qualityCoins });
+
+      // Award coins (1 entry per day, scored 1-3)
+      var coinsEarned = 0;
+      if (todayCount < 1) {
+        coinsEarned = qualityCoins;
+        if (!p.economy) p.economy = { coins: 0, gems: 0, dailyCoins: 0, lastCoinDate: '' };
+        p.economy.coins = (p.economy.coins || 0) + coinsEarned;
+      }
+      saveActiveProfile();
+
+      input.value = '';
+      renderGratitudeArea(p);
+      var msg2 = $('gratitude-reward-msg');
+      if (msg2) {
+        if (coinsEarned > 0) {
+          var starStr = coinsEarned === 3 ? '⭐⭐⭐ Amazing!' : (coinsEarned === 2 ? '⭐⭐ Great!' : '⭐ Good!');
+          msg2.textContent = '🪙 +' + coinsEarned + ' coin' + (coinsEarned > 1 ? 's' : '') + '! ' + starStr;
+          msg2.style.color = '#2d8a4e';
+        } else {
+          msg2.textContent = 'Beautiful thought! Come back tomorrow for more coins 🌟';
+          msg2.style.color = '#6B3FA0';
+        }
+        setTimeout(function() { if (msg2) msg2.textContent = ''; }, 4000);
+      }
+    });
+
+    // Allow Enter key to submit gratitude
+    document.addEventListener('keydown', function(ev) {
+      if (ev.target.id === 'gratitude-input' && ev.key === 'Enter') {
+        ev.preventDefault();
+        var btn = $('gratitude-submit');
+        if (btn) btn.click();
+      }
+    });
 
     // -----------------------------------
     // Tiny HTML escaper for user-entered names.
@@ -4634,6 +4894,51 @@
 
     // ---- Surprise drop ------------------------------------------
 
+    // World-specific prize pools — items relevant to each world
+    var WORLD_PRIZE_POOLS = {
+      beach: [
+        'toy:surfboard', 'toy:ball', 'toy:kite', 'toy:trophy',
+        'veh:boat', 'veh:jetski', 'house:cottage'
+      ],
+      jungle: [
+        'toy:teddy', 'toy:sword', 'toy:rocket', 'toy:trophy',
+        'veh:bike', 'veh:helicopter', 'house:treehouse'
+      ],
+      candy: [
+        'toy:balloon', 'toy:wand', 'toy:guitar', 'toy:trophy',
+        'veh:scooter', 'veh:car', 'house:cottage'
+      ],
+      farm: [
+        'toy:teddy', 'toy:basketball', 'toy:guitar', 'toy:trophy',
+        'veh:truck', 'veh:digger', 'veh:bike', 'house:construction'
+      ],
+      city: [
+        'toy:skateboard', 'toy:basketball', 'toy:guitar', 'toy:trophy',
+        'veh:car', 'veh:scooter', 'veh:motorbike', 'house:firestation'
+      ],
+      waterpark: [
+        'toy:surfboard', 'toy:ball', 'toy:balloon', 'toy:trophy',
+        'veh:jetski', 'veh:boat', 'house:pirate'
+      ],
+      space: [
+        'toy:rocket', 'toy:wand', 'toy:sword', 'toy:trophy',
+        'veh:ufo', 'veh:helicopter', 'veh:plane', 'house:spaceship'
+      ],
+      snow: [
+        'toy:teddy', 'toy:kite', 'toy:balloon', 'toy:trophy',
+        'veh:rollerblades', 'veh:train', 'house:igloo'
+      ]
+    };
+
+    // Flat gift pool for fallback
+    var GIFT_POOL = (function() {
+      var items = [];
+      AVATAR_TOYS.forEach(function(t) { items.push('toy:' + t.key); });
+      AVATAR_VEHICLES.forEach(function(v) { items.push('veh:' + v.key); });
+      AVATAR_HOUSES.forEach(function(h) { items.push('house:' + h.key); });
+      return items;
+    })();
+
     function checkAndTriggerDrop(p) {
       var today = todayKey();
       var dropsToday = (p.drops || []).filter(function(d) { return d.date === today; }).length;
@@ -4642,9 +4947,20 @@
       var chance = dropsToday === 0 ? 1 : (isPerfect ? 0.5 : 0.33);
       if (Math.random() >= chance) return null;
       migrateAvatar(p);
-      var locked = ALL_AVATAR_ITEMS.filter(function(item) {
+      // Use world-specific prize pool — derive from selected background scene
+      var ch = p.avatar.characterKey ? findCharacter(p.avatar.characterKey) : null;
+      var bgKey = p.avatar.background ? p.avatar.background.replace('bg:', '') : null;
+      var world = bgKey || (ch ? ch.world : 'beach');
+      var pool = WORLD_PRIZE_POOLS[world] || GIFT_POOL;
+      var locked = pool.filter(function(item) {
         return p.avatar.unlocked.indexOf(item) === -1;
       });
+      // Fall back to full pool if world pool exhausted
+      if (locked.length === 0) {
+        locked = GIFT_POOL.filter(function(item) {
+          return p.avatar.unlocked.indexOf(item) === -1;
+        });
+      }
       if (locked.length === 0) return null;
       if (!p.drops) p.drops = [];
       p.drops.push({ date: today, seen: false });
@@ -4750,11 +5066,24 @@
               if (pp.avatar.unlocked.indexOf(chosen) === -1) {
                 pp.avatar.unlocked.push(chosen);
               }
+              // Store in worldPrizes for the current world (from selected scene)
+              var ch = pp.avatar.characterKey ? findCharacter(pp.avatar.characterKey) : null;
+              var bgK = pp.avatar.background ? pp.avatar.background.replace('bg:', '') : null;
+              var world = bgK || (ch ? ch.world : 'beach');
+              if (!pp.worldPrizes) pp.worldPrizes = {};
+              if (!pp.worldPrizes[world]) pp.worldPrizes[world] = [];
+              if (pp.worldPrizes[world].indexOf(chosen) === -1) {
+                pp.worldPrizes[world].push(chosen);
+              }
               equipItem(pp, chosen);
               saveActiveProfile();
             }
+            var ch2 = pp ? (pp.avatar.characterKey ? findCharacter(pp.avatar.characterKey) : null) : null;
+            var bgK2 = pp && pp.avatar.background ? pp.avatar.background.replace('bg:', '') : null;
+            var worldLabel = bgK2 || (ch2 ? ch2.world : '');
             $('drop-modal').innerHTML = '<span style="font-size:46px;">' + itemIcon(chosen) + '</span>' +
-              '<p style="margin:6px 0 0;font-weight:800;">Unlocked and equipped! 🎉</p>';
+              '<p style="margin:6px 0 0;font-weight:800;">Prize unlocked! 🎉</p>' +
+              '<p style="font-size:12px;color:#888;margin:4px 0 0;">Added to your ' + worldLabel + ' house</p>';
           });
         });
       }
@@ -5576,6 +5905,7 @@
         '<button class="btn-back" data-back="s-home">← Back</button>' +
         '<h2>Settings ⚙️</h2>' +
         settingsProfileHtml(p) +
+        settingsCatalogueHtml(p) +
         settingsWeekHtml(p) +
         settingsLevelHtml(p) +
         settingsReadingHtml(p) +
@@ -5604,6 +5934,62 @@
         '<button class="btn btn-secondary" id="sett-go-avatar" style="width:100%;margin-top:10px;">✏️ Customise avatar</button>' +
         '<button class="btn btn-secondary" id="sett-reset-profile" style="width:100%;margin-top:10px;border-color:var(--pk2);color:var(--pk3);">Reset this profile</button>' +
         '</div>';
+    }
+
+    function settingsCatalogueHtml(p) {
+      migrateAvatar(p);
+      var unlocked = p.avatar.unlocked || [];
+      var cats = [
+        { title: 'Toys', arr: AVATAR_TOYS, prefix: 'toy:' },
+        { title: 'Vehicles', arr: AVATAR_VEHICLES, prefix: 'veh:' },
+        { title: 'Houses', arr: AVATAR_HOUSES, prefix: 'house:' }
+      ];
+      var html = '<div class="settings-section">' +
+        '<h3>🎁 Prize Catalogue</h3>' +
+        '<p style="font-size:12px;color:#888;margin:0 0 8px;">Win prizes by playing games! Prizes appear in the world house where they were won.</p>';
+
+      // Show prizes per world
+      var worlds = ['beach','jungle','candy','farm','city','waterpark','space','snow'];
+      var worldLabels = { beach:'Beach', jungle:'Jungle', candy:'Candy Land', farm:'Farm', city:'City', waterpark:'Water Park', space:'Space', snow:'Snow' };
+      var wp = p.worldPrizes || {};
+      html += '<div style="margin-bottom:12px;">';
+      for (var wi = 0; wi < worlds.length; wi++) {
+        var wk = worlds[wi];
+        var items = wp[wk] || [];
+        html += '<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid rgba(0,0,0,0.06);">';
+        html += '<span style="font-size:12px;font-weight:700;color:#6B3FA0;min-width:70px;">' + worldLabels[wk] + '</span>';
+        if (items.length === 0) {
+          html += '<span style="font-size:11px;color:#ccc;">No prizes yet</span>';
+        } else {
+          for (var ii = 0; ii < items.length; ii++) {
+            html += '<span style="font-size:18px;">' + itemIcon(items[ii]) + '</span>';
+          }
+        }
+        html += '</div>';
+      }
+      html += '</div>';
+
+      // Full catalogue
+      for (var ci = 0; ci < cats.length; ci++) {
+        var cat = cats[ci];
+        html += '<div style="margin-bottom:8px;"><span style="font-size:13px;font-weight:700;color:#555;">' + cat.title + '</span>';
+        html += '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;">';
+        for (var j = 0; j < cat.arr.length; j++) {
+          var item = cat.arr[j];
+          var fullKey = cat.prefix + item.key;
+          var isOwned = unlocked.indexOf(fullKey) !== -1;
+          html += '<span style="font-size:22px;padding:2px;border-radius:6px;' +
+            (isOwned ? 'opacity:1;' : 'opacity:0.3;filter:grayscale(1);') +
+            '" title="' + item.label + (isOwned ? ' (owned)' : ' (locked)') + '">' +
+            item.icon + '</span>';
+        }
+        html += '</div></div>';
+      }
+      var totalOwned = unlocked.filter(function(k) { return k.indexOf('toy:') === 0 || k.indexOf('veh:') === 0 || k.indexOf('house:') === 0; }).length;
+      var totalItems = AVATAR_TOYS.length + AVATAR_VEHICLES.length + AVATAR_HOUSES.length;
+      html += '<div style="font-size:12px;color:#888;text-align:center;margin-top:6px;">' + totalOwned + ' / ' + totalItems + ' prizes collected</div>';
+      html += '</div>';
+      return html;
     }
 
     function settingsWeekHtml(p) {
@@ -6730,36 +7116,18 @@
         }
       }
 
-      var svgBgContent = bgKey ? drawSceneBg(bgKey, 400, 300) : '';
-      var bgStyle = '';
-      var groundStyle = '';
-      if (bgObj) {
-        bgStyle = 'background:linear-gradient(180deg,' + bgObj.colors[0] + ' 0%,' + bgObj.colors[1] + ' 50%,' + bgObj.colors[2] + ' 100%);';
-        groundStyle = 'background:' + (bgObj.ground || bgObj.colors[1]) + ';';
-      } else {
-        bgStyle = 'background:linear-gradient(180deg,#B8EED8 0%,#A8D8F0 40%,#D4AAEE 100%);';
-        groundStyle = 'background:#90C695;';
+      var bgImgHtml = '';
+      if (bgObj && bgObj.img) {
+        bgImgHtml = '<img src="' + ASSET_BASE + bgObj.img + '" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;" />';
       }
-
-      var decorHtml = '';
-      if (bgObj && bgObj.decor) {
-        var decorPositions = [
-          { top: '5%', left: '3%', size: '36px', opacity: '0.7' },
-          { top: '12%', left: '72%', size: '32px', opacity: '0.6' },
-          { top: '35%', left: '85%', size: '28px', opacity: '0.5' },
-          { top: '30%', left: '2%', size: '30px', opacity: '0.55' }
-        ];
-        bgObj.decor.forEach(function(emoji, idx) {
-          var pos = decorPositions[idx];
-          decorHtml += '<div class="av-display-decor" style="top:' + pos.top + ';left:' + pos.left + ';font-size:' + pos.size + ';opacity:' + pos.opacity + ';">' + emoji + '</div>';
-        });
-      }
+      var bgStyle = 'background:linear-gradient(180deg,#B8EED8 0%,#A8D8F0 40%,#D4AAEE 100%);';
+      var groundStyle = 'background:#90C695;';
 
       var houseKey = p.avatar.house || null;
       var vehKeys = (p.avatar.vehicles || []).slice();
       var toyKeys = (p.avatar.toys || []).slice();
 
-      var charSvg = buildFullBodySVG(p.avatar, { platform: false });
+      var charHtml = buildPaperDollHtml(p.avatar);
       var petHtml = '';
       if (p.avatar.svgPet && p.avatar.svgPet !== 'none') {
         petHtml = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-25 -30 50 35" class="av-display-pet" style="position:absolute;bottom:18%;right:14%;width:22%;height:auto;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.2));">' +
@@ -6780,6 +7148,11 @@
         'toy:sword': 16, 'toy:wand': 14, 'toy:kite': 16, 'toy:balloon': 14
       };
 
+      var itemImgLookup = {};
+      AVATAR_VEHICLES.forEach(function(v) { itemImgLookup['veh:' + v.key] = v.img; });
+      AVATAR_TOYS.forEach(function(t) { itemImgLookup['toy:' + t.key] = t.img; });
+      AVATAR_HOUSES.forEach(function(h) { itemImgLookup['house:' + h.key] = h.img; });
+
       var vehHtml = (function() {
         var slots = [];
         var leftPct = 1;
@@ -6789,7 +7162,10 @@
           var vpct = vehSizes[vk] || 26;
           if (leftPct + vpct > 95) { row++; leftPct = 4; }
           var btm = 4 + row * 12;
-          slots.push('<svg xmlns="http://www.w3.org/2000/svg" viewBox="-30 -20 60 40" style="position:absolute;bottom:' + btm + '%;left:' + leftPct + '%;width:' + vpct + '%;height:auto;z-index:4;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.25));">' + drawSceneItem(vk, 0, 0, 1) + '</svg>');
+          var vImg = itemImgLookup[vk];
+          if (vImg) {
+            slots.push('<img src="' + ASSET_BASE + vImg + '" alt="" style="position:absolute;bottom:' + btm + '%;left:' + leftPct + '%;width:' + vpct + '%;height:auto;z-index:4;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.25));" />');
+          }
           leftPct += vpct + 1;
         }
         return slots.join('');
@@ -6807,39 +7183,70 @@
         if (handToys.length > 0) {
           var hk = handToys[0];
           var hpct = toySizes[hk] || 14;
-          slots.push('<svg xmlns="http://www.w3.org/2000/svg" viewBox="-25 -25 50 50" style="position:absolute;bottom:30%;left:60%;width:' + hpct + '%;height:auto;z-index:4;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.15));">' + drawSceneItem(hk, 0, 0, 1) + '</svg>');
+          var hImg = itemImgLookup[hk];
+          if (hImg) {
+            slots.push('<img src="' + ASSET_BASE + hImg + '" alt="" style="position:absolute;bottom:30%;left:60%;width:' + hpct + '%;height:auto;z-index:4;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.15));" />');
+          }
         }
         var rightPct = 1;
         for (var gi = 0; gi < groundToys.length; gi++) {
           var gk = groundToys[gi];
           var gpct = toySizes[gk] || 14;
-          slots.push('<svg xmlns="http://www.w3.org/2000/svg" viewBox="-25 -25 50 50" style="position:absolute;bottom:14%;right:' + rightPct + '%;width:' + gpct + '%;height:auto;z-index:4;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.2));">' + drawSceneItem(gk, 0, 0, 1) + '</svg>');
+          var gImg = itemImgLookup[gk];
+          if (gImg) {
+            slots.push('<img src="' + ASSET_BASE + gImg + '" alt="" style="position:absolute;bottom:14%;right:' + rightPct + '%;width:' + gpct + '%;height:auto;z-index:4;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.2));" />');
+          }
           rightPct += gpct + 2;
           if (rightPct > 50) rightPct = 3;
         }
         return slots.join('');
       })();
 
+      var houseImg = houseKey ? itemImgLookup[houseKey] : null;
+
+      var chosenChar = p.avatar.characterKey ? findCharacter(p.avatar.characterKey) : null;
+      var displayName = chosenChar ? chosenChar.label : p.name;
+
+      var gameBtnStyle = 'position:absolute;bottom:4%;z-index:6;cursor:pointer;background:rgba(255,255,255,0.9);border:2px solid rgba(107,63,160,0.3);border-radius:14px;padding:6px 12px;font-family:\'Fredoka One\',sans-serif;font-size:12px;color:#6B3FA0;box-shadow:0 2px 8px rgba(0,0,0,0.25);display:flex;align-items:center;gap:4px;';
+
+      // Get world-specific game labels — use selected background scene, fallback to character's world
+      var currentWorld = bgKey || (chosenChar ? chosenChar.world : 'beach');
+      var worldGame = WORLD_GAMES[currentWorld] || WORLD_GAMES.beach;
+      var kindyLabel = worldGame.kindy.label;
+      var year2Label = worldGame.year2.label;
+
+      // Show prizes won in this world by this player
+      var worldPrizeKeys = (p.worldPrizes && p.worldPrizes[currentWorld]) || [];
+      var prizeImgLookup = {};
+      AVATAR_TOYS.forEach(function(t) { prizeImgLookup['toy:' + t.key] = t.img; });
+      AVATAR_VEHICLES.forEach(function(v) { prizeImgLookup['veh:' + v.key] = v.img; });
+      var prizeHtml = '';
+      var rightPctP = 1;
+      for (var pi = 0; pi < worldPrizeKeys.length && pi < 6; pi++) {
+        var pImg = prizeImgLookup[worldPrizeKeys[pi]];
+        if (pImg) {
+          prizeHtml += '<img src="' + ASSET_BASE + pImg + '" alt="" style="position:absolute;bottom:14%;right:' + rightPctP + '%;width:12%;height:auto;z-index:4;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.2));" />';
+          rightPctP += 14;
+        }
+      }
+
       var displayHtml =
         '<div class="av-display">' +
-          (svgBgContent
-            ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%;z-index:0;">' + svgBgContent + '</svg>'
+          (bgImgHtml
+            ? bgImgHtml
             : '<div class="av-display-bg" style="' + bgStyle + '"></div>' +
-              '<div class="av-display-ground" style="' + groundStyle + ';border-radius:50% 50% 0 0 / 20% 20% 0 0;"></div>' +
-              decorHtml) +
-          (houseKey ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-30 -30 60 60" style="position:absolute;bottom:32%;right:3%;width:35%;height:auto;opacity:0.85;z-index:2;filter:drop-shadow(0 6px 16px rgba(0,0,0,0.25));font-size:0;">' + drawSceneItem(houseKey, 0, 0, 1) + '</svg>' : '') +
-          '<div class="av-display-char">' + charSvg + '</div>' +
+              '<div class="av-display-ground" style="' + groundStyle + ';border-radius:50% 50% 0 0 / 20% 20% 0 0;"></div>') +
+          '<button data-enterhouse="1" style="position:absolute;top:6%;left:4%;z-index:6;cursor:pointer;background:rgba(255,255,255,0.85);border:2px solid rgba(0,0,0,0.15);border-radius:12px;padding:4px 10px;font-family:\'Fredoka One\',sans-serif;font-size:11px;color:#6B3FA0;box-shadow:0 2px 8px rgba(0,0,0,0.2);display:flex;align-items:center;gap:4px;">🚪 Enter House</button>' +
+          '<div class="av-display-char" style="max-width:40%;">' + charHtml + '</div>' +
           petHtml +
-          vehHtml +
-          toyHtml +
-          '<div class="av-display-name">' + escapeHtml(p.name) + '</div>' +
+          prizeHtml +
+          '<button data-gameplay="kindy" style="' + gameBtnStyle + 'left:4%;">🧒 Kindy</button>' +
+          '<button data-gameplay="year2" style="' + gameBtnStyle + 'right:4%;">📚 Year 2</button>' +
+          '<div class="av-display-name">' + escapeHtml(displayName) + '</div>' +
         '</div>';
 
       var tabDefs = [
-        { key: 'bg',    label: '🌅 Scenes' },
-        { key: 'toy',   label: '🧸 Toys' },
-        { key: 'veh',   label: '🏎️ Vehicles' },
-        { key: 'house', label: '🏰 Houses' }
+        { key: 'bg',     label: '🌅 Scenes' }
       ];
       var tabHtml = tabDefs.map(function(td) {
         return '<button class="ar-tab' + (avDisplayTab === td.key ? ' active' : '') +
@@ -6847,6 +7254,7 @@
       }).join('');
 
       var panelHtml = '';
+      var isOutfitTab = (avDisplayTab === 'outfit');
       var catArr, prefixStr, isMulti = false, multiField, multiMax, singleField;
       if (avDisplayTab === 'bg') {
         catArr = AVATAR_BACKGROUNDS; prefixStr = 'bg:'; singleField = 'background';
@@ -6854,11 +7262,37 @@
         catArr = AVATAR_TOYS; prefixStr = 'toy:'; isMulti = true; multiField = 'toys'; multiMax = 99;
       } else if (avDisplayTab === 'veh') {
         catArr = AVATAR_VEHICLES; prefixStr = 'veh:'; isMulti = true; multiField = 'vehicles'; multiMax = 99;
-      } else {
+      } else if (!isOutfitTab) {
         catArr = AVATAR_HOUSES; prefixStr = 'house:'; singleField = 'house';
       }
 
-      if (isMulti) {
+      if (isOutfitTab) {
+        var gender = p.avatar.gender || 'girl';
+        panelHtml += '<div style="font-size:13px;font-weight:700;color:#666;margin-bottom:6px;">World Outfit</div>';
+        panelHtml += '<button class="item-emoji-btn' + (!p.avatar.worldOutfit ? ' selected' : '') +
+          '" data-outfit="" style="font-size:14px;padding:8px;">Default</button>';
+        WORLD_OUTFITS.forEach(function(wo) {
+          var isSel = p.avatar.worldOutfit === wo.key;
+          var thumbSrc = ASSET_BASE + 'outfits/' + wo.key + '-' + gender + '.png';
+          panelHtml += '<button class="item-emoji-btn' + (isSel ? ' selected' : '') +
+            '" data-outfit="' + wo.key + '">' +
+            '<img src="' + thumbSrc + '" alt="" style="width:48px;height:48px;object-fit:contain;" />' +
+            '<span class="item-label">' + wo.label + '</span></button>';
+        });
+        panelHtml += '<div style="font-size:13px;font-weight:700;color:#666;margin:12px 0 6px;">Character</div>';
+        panelHtml += '<button class="item-emoji-btn' + (gender === 'girl' ? ' selected' : '') +
+          '" data-dgender="girl" style="font-size:14px;padding:8px;">👧 Girl</button>';
+        panelHtml += '<button class="item-emoji-btn' + (gender === 'boy' ? ' selected' : '') +
+          '" data-dgender="boy" style="font-size:14px;padding:8px;">👦 Boy</button>';
+        panelHtml += '<div style="font-size:13px;font-weight:700;color:#666;margin:12px 0 6px;">Skin Tone</div>';
+        SKIN_TONES.forEach(function(st) {
+          var isSel = (p.avatar.skinKey || 'light') === st.key;
+          panelHtml += '<button class="item-emoji-btn' + (isSel ? ' selected' : '') +
+            '" data-dskin="' + st.key + '" style="padding:8px;">' +
+            '<span style="display:inline-block;width:32px;height:32px;border-radius:50%;background:' + st.hex + ';border:2px solid ' + st.sh + ';"></span>' +
+            '<span class="item-label">' + st.label + '</span></button>';
+        });
+      } else if (isMulti) {
         var arr = p.avatar[multiField] || [];
         panelHtml += '<button class="item-emoji-btn' + (arr.length === 0 ? ' selected' : '') +
           '" data-dclear="' + multiField + '" style="font-size:14px;padding:8px;">None</button>';
@@ -6866,10 +7300,13 @@
           var fullKey = prefixStr + item.key;
           var isUnlocked = p.avatar.unlocked.indexOf(fullKey) !== -1;
           var isSel = arr.indexOf(fullKey) !== -1;
+          var thumb = item.img
+            ? '<img src="' + ASSET_BASE + item.img + '" alt="" style="width:48px;height:48px;object-fit:contain;" />'
+            : item.icon;
           panelHtml += '<button class="item-emoji-btn' + (isSel ? ' selected' : '') + (isUnlocked ? '' : ' locked') +
             '" data-dtoggle="' + fullKey + '" data-dfield="' + multiField +
             '" data-dmax="' + multiMax + '" data-unlocked="' + (isUnlocked ? '1' : '0') + '">' +
-            item.icon + '<span class="item-label">' + item.label + '</span>' +
+            thumb + '<span class="item-label">' + item.label + '</span>' +
             (isUnlocked ? '' : '<span style="position:absolute;top:2px;right:2px;font-size:10px;">🔒</span>') +
             '</button>';
         });
@@ -6881,10 +7318,13 @@
           var fullKey = prefixStr + item.key;
           var isUnlocked = p.avatar.unlocked.indexOf(fullKey) !== -1;
           var isSel = currentVal === fullKey;
+          var thumb = item.img
+            ? '<img src="' + ASSET_BASE + item.img + '" alt="" style="width:48px;height:48px;object-fit:contain;" />'
+            : item.icon;
           panelHtml += '<button class="item-emoji-btn' + (isSel ? ' selected' : '') + (isUnlocked ? '' : ' locked') +
             '" data-ditem="' + fullKey + '" data-dslot="' + singleField +
             '" data-unlocked="' + (isUnlocked ? '1' : '0') + '">' +
-            item.icon + '<span class="item-label">' + item.label + '</span>' +
+            thumb + '<span class="item-label">' + item.label + '</span>' +
             (isUnlocked ? '' : '<span style="position:absolute;top:2px;right:2px;font-size:10px;">🔒</span>') +
             '</button>';
         });
@@ -6894,8 +7334,8 @@
 
       var container = $('s-avdisplay');
       container.innerHTML =
-        '<button class="btn-back" data-back="s-avatarroom">← Back</button>' +
-        '<h2 style="margin-bottom:8px;">My World</h2>' +
+        '<button class="btn-back" data-back="s-charselect">← Back</button>' +
+        '<h2 style="margin-bottom:8px;">Pick an Adventure</h2>' +
         displayHtml +
         '<div class="ar-tabs" style="margin-top:12px;">' + tabHtml + '</div>' +
         limitHint +
@@ -6945,6 +7385,290 @@
           renderAvatarDisplay();
         });
       });
+
+      container.querySelectorAll('[data-outfit]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var val = btn.getAttribute('data-outfit');
+          p.avatar.worldOutfit = val || null;
+          saveActiveProfile();
+          renderAvatarDisplay();
+        });
+      });
+
+      container.querySelectorAll('[data-dgender]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          p.avatar.gender = btn.getAttribute('data-dgender');
+          saveActiveProfile();
+          renderAvatarDisplay();
+        });
+      });
+
+      container.querySelectorAll('[data-dskin]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          p.avatar.skinKey = btn.getAttribute('data-dskin');
+          saveActiveProfile();
+          renderAvatarDisplay();
+        });
+      });
+
+      container.querySelectorAll('[data-enterhouse]').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          renderHouseInterior();
+          showScreen('s-houseinterior');
+        });
+      });
+
+      container.querySelectorAll('[data-gameplay]').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          launchWorldGame(btn.getAttribute('data-gameplay'));
+        });
+      });
+    }
+
+    // Launch the correct game for the current world
+    function launchWorldGame(type) {
+      var p = activeProfile();
+      if (!p) return;
+      migrateAvatar(p);
+      var ch = p.avatar.characterKey ? findCharacter(p.avatar.characterKey) : null;
+      var bgKey = p.avatar.background ? p.avatar.background.replace('bg:', '') : null;
+      var world = bgKey || (ch ? ch.world : 'beach');
+      var wg = WORLD_GAMES[world] || WORLD_GAMES.beach;
+      var game = (type === 'kindy') ? wg.kindy : wg.year2;
+
+      // Kindy games go through the prep system
+      if (type === 'kindy') {
+        startPrepGame(game.mode);
+        return;
+      }
+
+      // Year 2 games go through the play system
+      var mode = game.mode;
+      if (mode === 'thisweek') {
+        var we = currentWeekEntry();
+        if (we && we.soundId && !we.comingSoon) startGame(we.soundId, 'thisweek');
+        else { var ids = Object.keys(SOUNDS); startGame(ids[Math.floor(Math.random() * ids.length)], 'surprise'); }
+      } else if (mode === 'surprise') {
+        var ids2 = Object.keys(SOUNDS);
+        startGame(ids2[Math.floor(Math.random() * ids2.length)], 'surprise');
+      } else if (mode === 'problems') {
+        var seen = {};
+        var problemWords = [];
+        (p.mistakes || []).forEach(function(m) {
+          if (seen[m.w]) return;
+          seen[m.w] = true;
+          var s = SOUNDS[m.soundId];
+          if (!s) return;
+          var entry = s.words.find(function(w) { return w.w === m.w; });
+          if (entry) problemWords.push(entry);
+        });
+        if (problemWords.length > 0) startGame(p.mistakes[0].soundId, 'problems', problemWords);
+        else { var ids3 = Object.keys(SOUNDS); startGame(ids3[Math.floor(Math.random() * ids3.length)], 'surprise'); }
+      } else if (mode === 'choose') {
+        showScreen('s-play');
+        setTimeout(function() { renderSoundPicker(); }, 100);
+      } else if (mode === 'sentences') {
+        pendingSoundId = null;
+        var weS = currentWeekEntry();
+        if (weS && weS.soundId) pendingSoundId = weS.soundId;
+        showScreen('s-sentences');
+      } else if (mode === 'dadwrong') {
+        var weD = currentWeekEntry();
+        var dadSoundId = (weD && weD.soundId && !weD.comingSoon)
+          ? weD.soundId
+          : (function() { var ids = Object.keys(SOUNDS); return ids[Math.floor(Math.random() * ids.length)]; })();
+        startDadWrongGame(dadSoundId);
+      } else if (mode === 'boss') {
+        startBossGame();
+      }
+    }
+
+    // Global delegation for game buttons inside world view (survive re-renders)
+    document.addEventListener('click', function(ev) {
+      var gpBtn = ev.target.closest('[data-gameplay]');
+      if (!gpBtn) return;
+      ev.stopPropagation();
+      ev.preventDefault();
+      launchWorldGame(gpBtn.getAttribute('data-gameplay'));
+    });
+
+    // -----------------------------------
+    // House Interior — display collected items
+    // -----------------------------------
+
+    function renderHouseInterior() {
+      var p = activeProfile();
+      if (!p) { showScreen('s-profiles'); return; }
+      migrateAvatar(p);
+
+      // Determine current world from selected background scene, fallback to character's world
+      var ch = p.avatar.characterKey ? findCharacter(p.avatar.characterKey) : null;
+      var bgKey = p.avatar.background ? p.avatar.background.replace('bg:', '') : null;
+      var currentWorld = bgKey || (ch ? ch.world : 'beach');
+
+      // World-themed house names
+      var worldHouseNames = {
+        beach: 'Beach Hut', jungle: 'Tree House', candy: 'Candy Cottage',
+        farm: 'Barn', city: 'City Apartment', waterpark: 'Pool House',
+        space: 'Space Station', snow: 'Igloo'
+      };
+      var houseName = worldHouseNames[currentWorld] || 'My House';
+
+      var wallThemes = {
+        beach:       { wall: '#FFF5E6', wall2: '#FFE8D0', floor: '#D4B896', trim: '#C4956A', accent: '#40A0D0', window: '#88D0F0' },
+        jungle:      { wall: '#F0E8D0', wall2: '#E8DCC0', floor: '#A0845C', trim: '#6B8E4E', accent: '#8BB060', window: '#C8E8A0' },
+        candy:       { wall: '#FFF0F8', wall2: '#FFE0F0', floor: '#E8C0D0', trim: '#D080A0', accent: '#E060A0', window: '#F0D0E8' },
+        farm:        { wall: '#FFF5E6', wall2: '#FFE8D0', floor: '#C49A6C', trim: '#8B7355', accent: '#6B8E4E', window: '#B8D8F0' },
+        city:        { wall: '#E8E8F0', wall2: '#D8D8E8', floor: '#A0A0B0', trim: '#606080', accent: '#6080C0', window: '#B8D0F0' },
+        waterpark:   { wall: '#E0F4FF', wall2: '#D0ECFF', floor: '#90C0D8', trim: '#4090B0', accent: '#40B8E0', window: '#C0E8FF' },
+        space:       { wall: '#2A2A4A', wall2: '#202040', floor: '#404060', trim: '#6080C0', accent: '#40C0E0', window: '#1A1A3A' },
+        snow:        { wall: '#E8F4FF', wall2: '#D8ECFF', floor: '#C8DFF0', trim: '#A8C8E8', accent: '#80B0D8', window: '#E0F0FF' }
+      };
+      var c = wallThemes[currentWorld] || { wall: '#F5E6FF', wall2: '#EAD8F8', floor: '#C4A882', trim: '#D4A0D0', accent: '#B080C0', window: '#B8D8F0' };
+
+      var itemImgLookup = {};
+      AVATAR_TOYS.forEach(function(t) { itemImgLookup['toy:' + t.key] = t.img; });
+      AVATAR_VEHICLES.forEach(function(v) { itemImgLookup['veh:' + v.key] = v.img; });
+
+      // Use per-player per-world prizes instead of global toys/vehicles
+      var worldPrizes = (p.worldPrizes && p.worldPrizes[currentWorld]) || [];
+      var toyKeys = worldPrizes.filter(function(k) { return k.indexOf('toy:') === 0 && !!itemImgLookup[k]; });
+      var vehKeys = worldPrizes.filter(function(k) { return k.indexOf('veh:') === 0 && !!itemImgLookup[k]; });
+
+      var buildShelf = function(items, yPct, widthPct) {
+        var itemsHtml = '';
+        items.forEach(function(ik) {
+          var img = itemImgLookup[ik];
+          if (img) {
+            itemsHtml += '<img class="house-shelf-item" src="' + ASSET_BASE + img + '" alt="" />';
+          }
+        });
+        if (!itemsHtml) itemsHtml = '<span style="font-size:11px;color:rgba(0,0,0,0.25);font-style:italic;">empty</span>';
+        return '<div style="position:absolute;top:' + yPct + '%;left:' + ((100 - widthPct) / 2) + '%;width:' + widthPct + '%;">' +
+          '<div class="house-shelf">' + itemsHtml + '</div>' +
+          '<div style="height:5px;background:' + c.trim + ';border-radius:2px;box-shadow:0 2px 6px rgba(0,0,0,0.2);"></div>' +
+        '</div>';
+      };
+
+      var shelvesHtml = '';
+      if (toyKeys.length > 0) shelvesHtml += buildShelf(toyKeys, 10, 70);
+      if (vehKeys.length > 0) shelvesHtml += buildShelf(vehKeys, 38, 70);
+      if (toyKeys.length === 0 && vehKeys.length === 0) shelvesHtml += buildShelf([], 10, 70);
+
+      var windowHtml =
+        '<div style="position:absolute;top:8%;right:8%;width:20%;aspect-ratio:3/4;border-radius:6px 6px 0 0;border:3px solid ' + c.trim + ';background:linear-gradient(180deg,' + c.window + ',' + c.window + ' 60%,#80D080 60%);overflow:hidden;">' +
+          '<div style="position:absolute;top:50%;left:0;right:0;height:1px;background:' + c.trim + ';"></div>' +
+          '<div style="position:absolute;top:0;bottom:0;left:50%;width:1px;background:' + c.trim + ';"></div>' +
+        '</div>';
+
+      var floorLine = 75;
+      var rugHtml = '<div style="position:absolute;bottom:4%;left:10%;width:45%;height:8%;background:' + c.accent + ';opacity:0.3;border-radius:50%;"></div>';
+
+      var charHtml = buildPaperDollHtml(p.avatar);
+      var totalItems = toyKeys.length + vehKeys.length;
+
+      var container = $('s-houseinterior');
+      container.innerHTML =
+        '<button class="btn-back" data-back="s-avdisplay">← Back</button>' +
+        '<h2 style="margin-bottom:8px;">' + escapeHtml(houseName) + '</h2>' +
+        '<div class="house-room">' +
+          '<div class="house-wall" style="background:linear-gradient(180deg,' + c.wall + ' 0%,' + c.wall2 + ' ' + floorLine + '%,' + c.floor + ' ' + floorLine + '%,' + c.floor + ' 100%);border:3px solid ' + c.trim + ';"></div>' +
+          '<div style="position:absolute;bottom:' + (100 - floorLine) + '%;left:0;right:0;height:3px;background:' + c.trim + ';z-index:1;"></div>' +
+          windowHtml +
+          shelvesHtml +
+          rugHtml +
+          '<div class="house-char">' + charHtml + '</div>' +
+        '</div>' +
+        '<p style="text-align:center;font-size:13px;color:#888;margin-top:12px;">' +
+          (totalItems === 0 ? 'Play games in this world to earn prizes!' : totalItems + ' prize' + (totalItems !== 1 ? 's' : '') + ' on display') +
+        '</p>';
+    }
+
+    // -----------------------------------
+    // Character Select — pick one of 16 characters
+    // -----------------------------------
+
+    function renderCharSelect() {
+      var p = activeProfile();
+      if (!p) { showScreen('s-profiles'); return; }
+      migrateAvatar(p);
+
+      var currentKey = p.avatar.characterKey;
+      var girlChars = [];
+      var boyChars = [];
+      for (var i = 0; i < CHARACTERS.length; i++) {
+        if (CHARACTERS[i].gender === 'girl') girlChars.push(CHARACTERS[i]);
+        else boyChars.push(CHARACTERS[i]);
+      }
+
+      var buildGrid = function(chars, title) {
+        var html = '<h3 style="margin:12px 0 8px;color:#6B3FA0;font-size:16px;">' + title + '</h3>';
+        html += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">';
+        for (var j = 0; j < chars.length; j++) {
+          var ch = chars[j];
+          var isSel = currentKey === ch.key;
+          html += '<button class="char-pick-btn' + (isSel ? ' selected' : '') +
+            '" data-charkey="' + ch.key + '" style="' +
+            'display:flex;flex-direction:column;align-items:center;padding:6px 4px;' +
+            'border-radius:12px;border:3px solid ' + (isSel ? '#6B3FA0' : 'rgba(0,0,0,0.08)') + ';' +
+            'background:' + (isSel ? 'rgba(107,63,160,0.1)' : '#fff') + ';' +
+            'cursor:pointer;transition:all 0.15s;">' +
+            '<img src="' + ASSET_BASE + ch.img + '" alt="" style="width:100%;max-width:70px;height:auto;" />' +
+            '<span style="font-size:11px;font-weight:700;color:#6B3FA0;margin-top:2px;">' + ch.label + '</span>' +
+            '<span style="font-size:9px;color:#999;">' + ch.world + '</span>' +
+            '</button>';
+        }
+        html += '</div>';
+        return html;
+      };
+
+      var container = $('s-charselect');
+      container.innerHTML =
+        '<button class="btn-back" data-back="s-home">← Back</button>' +
+        '<h2 style="margin-bottom:4px;">Choose Your Character</h2>' +
+        '<p style="font-size:13px;color:#888;margin:0 0 8px;">Each character has their own world!</p>' +
+        buildGrid(girlChars, '👧 Girls') +
+        buildGrid(boyChars, '👦 Boys') +
+        (currentKey ? '<button class="btn" id="char-continue" style="width:100%;margin-top:16px;">Go to My World →</button>' : '');
+
+      container.querySelectorAll('[data-charkey]').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var key = btn.getAttribute('data-charkey');
+          var ch = findCharacter(key);
+          p.avatar.characterKey = key;
+          if (ch) {
+            p.avatar.gender = ch.gender;
+            p.avatar.worldOutfit = ch.world;
+            p.avatar.background = 'bg:' + ch.world;
+          }
+          saveActiveProfile();
+          container.querySelectorAll('[data-charkey]').forEach(function(b) {
+            var isSel = b.getAttribute('data-charkey') === key;
+            b.style.borderColor = isSel ? '#6B3FA0' : 'rgba(0,0,0,0.08)';
+            b.style.background = isSel ? 'rgba(107,63,160,0.1)' : '#fff';
+          });
+          if (!$('char-continue')) {
+            var goBtn = document.createElement('button');
+            goBtn.className = 'btn';
+            goBtn.id = 'char-continue';
+            goBtn.style.cssText = 'width:100%;margin-top:16px;';
+            goBtn.textContent = 'Go to My World →';
+            goBtn.addEventListener('click', function(e) { e.stopPropagation(); showScreen('s-avdisplay'); });
+            container.appendChild(goBtn);
+          }
+        });
+      });
+
+      var contBtn = $('char-continue');
+      if (contBtn) {
+        contBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          showScreen('s-avdisplay');
+        });
+      }
     }
 
     // -----------------------------------
@@ -7405,7 +8129,7 @@
       if (!p) { showScreen('s-profiles'); return; }
       var container = $('s-prep');
       container.innerHTML =
-        '<button class="btn-back" data-back="s-home">← Back</button>' +
+        '<button class="btn-back" data-back="s-avdisplay">← Back</button>' +
         '<h2 style="text-align:center;color:var(--pu3);">🧸 Prep Games</h2>' +
         '<p style="text-align:center;color:#888;font-size:14px;">Fun games to get ready for school!</p>' +
         '<div class="prep-grid">' +
@@ -7433,6 +8157,21 @@
             '<span class="pt-icon">👂</span>' +
             '<span class="pt-label">First Sound</span>' +
             '<span class="pt-sub">What letter starts it?</span>' +
+          '</button>' +
+          '<button class="prep-tile pt-numtap" data-prep="numtap">' +
+            '<span class="pt-icon">🔢</span>' +
+            '<span class="pt-label">Number Tap</span>' +
+            '<span class="pt-sub">Tap 1 to 20 in order</span>' +
+          '</button>' +
+          '<button class="prep-tile pt-abcorder" data-prep="abcorder">' +
+            '<span class="pt-icon">🔤</span>' +
+            '<span class="pt-label">ABC Order</span>' +
+            '<span class="pt-sub">Tap A to Z in order</span>' +
+          '</button>' +
+          '<button class="prep-tile pt-pairs" data-prep="pairs">' +
+            '<span class="pt-icon">🃏</span>' +
+            '<span class="pt-label">Matching Pairs</span>' +
+            '<span class="pt-sub">Flip and match</span>' +
           '</button>' +
         '</div>';
 
@@ -7522,6 +8261,21 @@
         }
       }
 
+      if (mode === 'numtap') {
+        totalRounds = 1;
+        rounds.push({ type: 'numtap' });
+      }
+
+      if (mode === 'abcorder') {
+        totalRounds = 1;
+        rounds.push({ type: 'abcorder' });
+      }
+
+      if (mode === 'pairs') {
+        totalRounds = 1;
+        rounds.push({ type: 'pairs' });
+      }
+
       prepSession = {
         mode: mode,
         rounds: rounds,
@@ -7547,6 +8301,21 @@
 
       if (mode === 'spelling') {
         renderSpellingRound();
+        return;
+      }
+
+      if (mode === 'numtap') {
+        renderNumTapGame();
+        return;
+      }
+
+      if (mode === 'abcorder') {
+        renderAbcOrderGame();
+        return;
+      }
+
+      if (mode === 'pairs') {
+        renderPairsGame();
         return;
       }
 
@@ -7830,6 +8599,193 @@
       return null;
     }
 
+    // ---- Number Tap: tap 1-20 in order ----
+    function renderNumTapGame() {
+      var container = $('s-prep-game');
+      var screens = document.querySelectorAll('.screen');
+      for (var i = 0; i < screens.length; i++) screens[i].classList.toggle('active', screens[i].id === 's-prep-game');
+
+      var maxNum = 20;
+      var nextNum = 1;
+      var nums = [];
+      for (var n = 1; n <= maxNum; n++) nums.push(n);
+      nums = shuffle(nums);
+
+      var html = '<button class="btn-back" data-back="s-prep">← Back</button>' +
+        '<div class="prep-card">' +
+        '<div class="prep-prompt">Tap the numbers in order: 1 to 20</div>' +
+        '<div id="numtap-status" style="font-size:18px;font-weight:700;color:var(--pu3);margin:8px 0;">Next: 1</div>' +
+        '<div class="prep-btn-grid" id="numtap-grid" style="grid-template-columns:repeat(5,1fr);">';
+      for (var i = 0; i < nums.length; i++) {
+        html += '<button class="prep-btn numtap-btn" data-num="' + nums[i] + '" style="font-size:20px;padding:14px 0;">' + nums[i] + '</button>';
+      }
+      html += '</div></div>';
+      container.innerHTML = html;
+
+      speak('Tap the numbers in order, starting from one', 0.75);
+
+      container.querySelectorAll('.numtap-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var val = parseInt(btn.getAttribute('data-num'), 10);
+          if (val === nextNum) {
+            btn.style.background = 'var(--gn2)';
+            btn.style.color = '#fff';
+            btn.style.pointerEvents = 'none';
+            btn.style.transform = 'scale(0.9)';
+            nextNum++;
+            prepSession.correct++;
+            if (nextNum > maxNum) {
+              prepSession.totalRounds = maxNum;
+              $('numtap-status').textContent = 'Well done!';
+              prepSession.coins = 10;
+              setTimeout(function() { renderPrepDone(); }, 800);
+            } else {
+              $('numtap-status').textContent = 'Next: ' + nextNum;
+            }
+          } else {
+            btn.style.background = '#FFB3B3';
+            setTimeout(function() { btn.style.background = ''; }, 400);
+          }
+        });
+      });
+    }
+
+    // ---- ABC Order: tap A-Z in order ----
+    function renderAbcOrderGame() {
+      var container = $('s-prep-game');
+      var screens = document.querySelectorAll('.screen');
+      for (var i = 0; i < screens.length; i++) screens[i].classList.toggle('active', screens[i].id === 's-prep-game');
+
+      var letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+      var shuffled = shuffle(letters.slice());
+      var nextIdx = 0;
+
+      var html = '<button class="btn-back" data-back="s-prep">← Back</button>' +
+        '<div class="prep-card">' +
+        '<div class="prep-prompt">Tap the letters in order: A to Z</div>' +
+        '<div id="abc-status" style="font-size:18px;font-weight:700;color:var(--pu3);margin:8px 0;">Next: A</div>' +
+        '<div class="prep-btn-grid" id="abc-grid" style="grid-template-columns:repeat(6,1fr);">';
+      for (var i = 0; i < shuffled.length; i++) {
+        html += '<button class="prep-btn abc-btn" data-letter="' + shuffled[i] + '" style="font-size:18px;padding:12px 0;">' + shuffled[i] + '</button>';
+      }
+      html += '</div></div>';
+      container.innerHTML = html;
+
+      speak('Tap the letters in order, starting from A', 0.75);
+
+      container.querySelectorAll('.abc-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var val = btn.getAttribute('data-letter');
+          if (val === letters[nextIdx]) {
+            btn.style.background = 'var(--gn2)';
+            btn.style.color = '#fff';
+            btn.style.pointerEvents = 'none';
+            btn.style.transform = 'scale(0.9)';
+            nextIdx++;
+            prepSession.correct++;
+            if (nextIdx >= letters.length) {
+              prepSession.totalRounds = letters.length;
+              $('abc-status').textContent = 'Amazing!';
+              prepSession.coins = 10;
+              setTimeout(function() { renderPrepDone(); }, 800);
+            } else {
+              $('abc-status').textContent = 'Next: ' + letters[nextIdx];
+            }
+          } else {
+            btn.style.background = '#FFB3B3';
+            setTimeout(function() { btn.style.background = ''; }, 400);
+          }
+        });
+      });
+    }
+
+    // ---- Matching Pairs: memory card flip ----
+    function renderPairsGame() {
+      var container = $('s-prep-game');
+      var screens = document.querySelectorAll('.screen');
+      for (var i = 0; i < screens.length; i++) screens[i].classList.toggle('active', screens[i].id === 's-prep-game');
+
+      var pairItems = shuffle([
+        { id: 'A', display: 'A' }, { id: 'B', display: 'B' },
+        { id: 'C', display: 'C' }, { id: '1', display: '1' },
+        { id: '2', display: '2' }, { id: '3', display: '3' }
+      ]);
+      var cards = [];
+      for (var i = 0; i < pairItems.length; i++) {
+        cards.push({ id: pairItems[i].id, display: pairItems[i].display, idx: cards.length });
+        cards.push({ id: pairItems[i].id, display: pairItems[i].display, idx: cards.length });
+      }
+      cards = shuffle(cards);
+      var totalPairs = pairItems.length;
+      var matchedPairs = 0;
+      var flipped = [];
+      var locked = false;
+
+      var html = '<button class="btn-back" data-back="s-prep">← Back</button>' +
+        '<div class="prep-card">' +
+        '<div class="prep-prompt">Flip cards to find matching pairs!</div>' +
+        '<div id="pairs-status" style="font-size:16px;color:var(--pu3);margin:8px 0;">Pairs found: 0 / ' + totalPairs + '</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:320px;margin:0 auto;" id="pairs-grid">';
+      for (var i = 0; i < cards.length; i++) {
+        html += '<button class="prep-btn pair-card" data-pidx="' + i + '" data-pid="' + cards[i].id + '" style="font-size:24px;padding:18px 0;min-height:60px;background:var(--pu2);color:var(--pu2);">?</button>';
+      }
+      html += '</div></div>';
+      container.innerHTML = html;
+
+      speak('Flip the cards to find matching pairs', 0.75);
+
+      container.querySelectorAll('.pair-card').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          if (locked) return;
+          var idx = parseInt(btn.getAttribute('data-pidx'), 10);
+          var id = btn.getAttribute('data-pid');
+          if (btn.style.pointerEvents === 'none') return;
+          if (flipped.length >= 2) return;
+          if (flipped.length === 1 && flipped[0].idx === idx) return;
+
+          btn.textContent = cards[idx].display;
+          btn.style.color = 'var(--pu3)';
+          btn.style.background = '#fff';
+          flipped.push({ idx: idx, id: id, btn: btn });
+
+          if (flipped.length === 2) {
+            locked = true;
+            if (flipped[0].id === flipped[1].id) {
+              matchedPairs++;
+              prepSession.correct++;
+              flipped[0].btn.style.background = 'var(--gn2)';
+              flipped[0].btn.style.color = '#fff';
+              flipped[0].btn.style.pointerEvents = 'none';
+              flipped[1].btn.style.background = 'var(--gn2)';
+              flipped[1].btn.style.color = '#fff';
+              flipped[1].btn.style.pointerEvents = 'none';
+              $('pairs-status').textContent = 'Pairs found: ' + matchedPairs + ' / ' + totalPairs;
+              flipped = [];
+              locked = false;
+              if (matchedPairs >= totalPairs) {
+                prepSession.totalRounds = totalPairs;
+                prepSession.coins = 10;
+                setTimeout(function() { renderPrepDone(); }, 800);
+              }
+            } else {
+              var f0 = flipped[0].btn;
+              var f1 = flipped[1].btn;
+              setTimeout(function() {
+                f0.textContent = '?';
+                f0.style.color = 'var(--pu2)';
+                f0.style.background = 'var(--pu2)';
+                f1.textContent = '?';
+                f1.style.color = 'var(--pu2)';
+                f1.style.background = 'var(--pu2)';
+                flipped = [];
+                locked = false;
+              }, 800);
+            }
+          }
+        });
+      });
+    }
+
     function renderPrepDone() {
       var p = activeProfile();
       if (!p) return;
@@ -7840,7 +8796,7 @@
       var starsStr = '';
       for (var i = 0; i < starCount; i++) starsStr += '⭐';
 
-      var modeNames = { letters: 'Letter Match', numbers: 'Number Match', spelling: 'Spell It', counting: 'Counting', sounds: 'First Sound' };
+      var modeNames = { letters: 'Letter Match', numbers: 'Number Match', spelling: 'Spell It', counting: 'Counting', sounds: 'First Sound', numtap: 'Number Tap', abcorder: 'ABC Order', pairs: 'Matching Pairs' };
       var modeName = modeNames[prepSession.mode] || 'Prep Game';
 
       var coins = prepSession.coins;
@@ -7870,9 +8826,40 @@
         p.coinHistory.push({ date: today, amount: awarded, source: prepSource });
       }
       updateStreak(p);
+
+      // Random gift chance for prep games too
+      var prepDropChoices = null;
+      if (pct >= 60) {
+        var today2 = todayKey();
+        var dropsToday2 = (p.drops || []).filter(function(d) { return d.date === today2; }).length;
+        if (dropsToday2 < 2 && Math.random() < 0.5) {
+          var ch3 = p.avatar.characterKey ? findCharacter(p.avatar.characterKey) : null;
+          var w3 = ch3 ? ch3.world : 'beach';
+          var pool3 = WORLD_PRIZE_POOLS[w3] || GIFT_POOL;
+          var locked2 = pool3.filter(function(item) { return p.avatar.unlocked.indexOf(item) === -1; });
+          if (locked2.length === 0) locked2 = GIFT_POOL.filter(function(item) { return p.avatar.unlocked.indexOf(item) === -1; });
+          if (locked2.length > 0) {
+            if (!p.drops) p.drops = [];
+            p.drops.push({ date: today2, seen: false });
+            prepDropChoices = shuffle(locked2.slice()).slice(0, 3);
+          }
+        }
+      }
       saveActiveProfile();
 
       var msg = pct >= 90 ? 'Amazing work!' : (pct >= 60 ? 'Great effort!' : 'Good try!');
+
+      var dropHtml2 = prepDropChoices
+        ? '<div class="drop-modal" id="prep-drop-modal"><span class="drop-box">🎁</span>' +
+          '<p style="font-weight:700;margin:4px 0;">Pick a prize!</p>' +
+          '<div class="drop-emoji-row">' +
+          prepDropChoices.map(function(e) {
+            var display = itemIcon(e);
+            var lbl = '<div style="font-size:10px;margin-top:2px;">' + itemLabel(e) + '</div>';
+            return '<button class="drop-emoji-btn prep-drop-btn" data-emoji="' + e + '">' + display + lbl + '</button>';
+          }).join('') +
+          '</div></div>'
+        : '';
 
       container.innerHTML =
         '<div class="prep-done-card">' +
@@ -7883,6 +8870,7 @@
           (awarded > 0 ? '<div class="prep-coins-msg">🪙 +' + awarded + ' coins!</div>' : '') +
           (blockedReason ? '<div class="prep-done-detail" style="color:#E67E22;font-weight:600;">' + blockedReason + '</div>' : '') +
           (awarded < coins && !blockedReason ? '<div class="prep-done-detail" style="color:#aaa;">Daily coin cap reached</div>' : '') +
+          dropHtml2 +
           '<div style="margin-top:20px;display:flex;gap:10px;justify-content:center;">' +
             '<button class="btn" id="prep-again">Play Again</button>' +
             '<button class="btn" id="prep-back" style="background:var(--pu);">Back</button>' +
@@ -7895,8 +8883,34 @@
         startPrepGame(prepSession.mode);
       });
       $('prep-back').addEventListener('click', function() {
-        showScreen('s-prep');
+        showScreen('s-avdisplay');
       });
+
+      // Handle prep gift picks
+      if (prepDropChoices) {
+        container.querySelectorAll('.prep-drop-btn').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            var chosen = btn.getAttribute('data-emoji');
+            var pp = activeProfile();
+            if (pp) {
+              migrateAvatar(pp);
+              if (pp.avatar.unlocked.indexOf(chosen) === -1) pp.avatar.unlocked.push(chosen);
+              var ch2 = pp.avatar.characterKey ? findCharacter(pp.avatar.characterKey) : null;
+              var bgK2 = pp.avatar.background ? pp.avatar.background.replace('bg:', '') : null;
+              var w2 = bgK2 || (ch2 ? ch2.world : 'beach');
+              if (!pp.worldPrizes) pp.worldPrizes = {};
+              if (!pp.worldPrizes[w2]) pp.worldPrizes[w2] = [];
+              if (pp.worldPrizes[w2].indexOf(chosen) === -1) pp.worldPrizes[w2].push(chosen);
+              saveActiveProfile();
+            }
+            var modal = $('prep-drop-modal');
+            if (modal) {
+              modal.innerHTML = '<span style="font-size:46px;">' + itemIcon(chosen) + '</span>' +
+                '<p style="margin:6px 0 0;font-weight:800;">Prize unlocked! 🎉</p>';
+            }
+          });
+        });
+      }
     }
 
     // -----------------------------------
