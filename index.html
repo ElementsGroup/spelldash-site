@@ -1119,6 +1119,132 @@
     // Storage helpers — single localStorage key.
     // -----------------------------------
     var STORAGE_KEY = 'spelldash-profiles';
+    var SYNC_CONFIG_KEY = 'spelldash-sync-config';
+
+    // -----------------------------------
+    // Cloud sync — Supabase REST (no SDK)
+    // -----------------------------------
+    var cloudSync = {
+      url: null,
+      key: null,
+      familyCode: null,
+      debounceTimer: null,
+      lastPush: 0,
+      syncing: false
+    };
+
+    function loadSyncConfig() {
+      try {
+        var raw = localStorage.getItem(SYNC_CONFIG_KEY);
+        if (!raw) return;
+        var cfg = JSON.parse(raw);
+        if (cfg.url) cloudSync.url = cfg.url;
+        if (cfg.key) cloudSync.key = cfg.key;
+        if (cfg.familyCode) cloudSync.familyCode = cfg.familyCode;
+      } catch (e) {}
+    }
+    loadSyncConfig();
+
+    function saveSyncConfig() {
+      try {
+        localStorage.setItem(SYNC_CONFIG_KEY, JSON.stringify({
+          url: cloudSync.url,
+          key: cloudSync.key,
+          familyCode: cloudSync.familyCode
+        }));
+      } catch (e) {}
+    }
+
+    function isSyncReady() {
+      return !!(cloudSync.url && cloudSync.key && cloudSync.familyCode);
+    }
+
+    function supabaseRequest(method, path, body, callback) {
+      if (!isSyncReady()) return;
+      var xhr = new XMLHttpRequest();
+      var fullUrl = cloudSync.url + '/rest/v1/' + path;
+      xhr.open(method, fullUrl, true);
+      xhr.setRequestHeader('apikey', cloudSync.key);
+      xhr.setRequestHeader('Authorization', 'Bearer ' + cloudSync.key);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.setRequestHeader('Prefer', method === 'POST' ? 'resolution=merge-duplicates' : 'return=representation');
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+          var ok = xhr.status >= 200 && xhr.status < 300;
+          var data = null;
+          try { data = JSON.parse(xhr.responseText); } catch (e) {}
+          if (callback) callback(ok, data, xhr.status);
+        }
+      };
+      xhr.onerror = function() { if (callback) callback(false, null, 0); };
+      xhr.send(body ? JSON.stringify(body) : null);
+    }
+
+    function pushToCloud() {
+      if (!isSyncReady() || cloudSync.syncing) return;
+      cloudSync.syncing = true;
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) { cloudSync.syncing = false; return; }
+      var now = new Date().toISOString();
+      supabaseRequest('POST', 'spelldash_sync', {
+        family_code: cloudSync.familyCode,
+        profiles_json: raw,
+        updated_at: now
+      }, function(ok) {
+        cloudSync.syncing = false;
+        cloudSync.lastPush = Date.now();
+        if (ok) console.log('[Sync] Pushed to cloud');
+        else console.warn('[Sync] Push failed');
+      });
+    }
+
+    function debouncedPush() {
+      if (!isSyncReady()) return;
+      if (cloudSync.debounceTimer) clearTimeout(cloudSync.debounceTimer);
+      cloudSync.debounceTimer = setTimeout(pushToCloud, 2000);
+    }
+
+    function pullFromCloud(callback) {
+      if (!isSyncReady()) { if (callback) callback(false); return; }
+      var encoded = encodeURIComponent(cloudSync.familyCode);
+      supabaseRequest('GET', 'spelldash_sync?family_code=eq.' + encoded + '&select=*', null, function(ok, data) {
+        if (ok && data && data.length > 0) {
+          var row = data[0];
+          var cloudProfiles = row.profiles_json;
+          if (typeof cloudProfiles === 'string' && cloudProfiles.length > 2) {
+            var localRaw = localStorage.getItem(STORAGE_KEY);
+            if (cloudProfiles !== localRaw) {
+              localStorage.setItem(STORAGE_KEY, cloudProfiles);
+              state.profiles = loadProfiles();
+              console.log('[Sync] Pulled from cloud — updated local data');
+              if (callback) callback(true);
+              return;
+            }
+          }
+        }
+        if (callback) callback(false);
+      });
+    }
+
+    // Auto-pull on load if sync is configured
+    if (isSyncReady()) {
+      pullFromCloud(function(updated) {
+        if (updated && document.querySelector('.screen.active')) {
+          var activeScreen = document.querySelector('.screen.active').id;
+          if (activeScreen === 's-profiles') renderProfiles();
+        }
+      });
+    }
+
+    // Generate a random 6-char family code
+    function generateFamilyCode() {
+      var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      var code = '';
+      for (var i = 0; i < 6; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return code;
+    }
 
     // Default profile shape — used for fresh slots.
     function freshProfile(name) {
@@ -1167,6 +1293,7 @@
     function saveProfiles(profiles) {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(profiles));
+        debouncedPush();
       } catch (err) {
         console.warn('[Spell Dash] Could not save profiles:', err);
       }
@@ -6118,21 +6245,68 @@
     }
 
     function settingsBackupHtml() {
-      return '<div class="settings-section">' +
-        '<h3>💾 Backup &amp; Restore</h3>' +
-        '<p style="font-size:13px;color:#888;margin:0 0 12px;">Save your family\'s progress so you can restore it on another device or if data is lost.</p>' +
-        '<button class="btn btn-secondary" id="sett-backup" style="width:100%;">📤 Create Backup Code</button>' +
-        '<div id="backup-output" style="display:none;margin-top:12px;">' +
-          '<textarea id="backup-code" readonly style="width:100%;height:80px;font-size:11px;font-family:monospace;border:2px solid rgba(107,63,160,0.2);border-radius:10px;padding:8px;resize:none;word-break:break-all;"></textarea>' +
-          '<button class="btn" id="sett-copy-backup" style="width:100%;margin-top:8px;">📋 Copy Code</button>' +
-          '<p style="font-size:12px;color:#6B3FA0;margin:6px 0 0;text-align:center;">Paste this code somewhere safe (Notes, email to yourself)</p>' +
-        '</div>' +
-        '<div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(107,63,160,0.1);">' +
-          '<p style="font-size:13px;color:#888;margin:0 0 10px;">Restore from a backup code:</p>' +
-          '<textarea id="restore-code" placeholder="Paste your backup code here..." style="width:100%;height:60px;font-size:11px;font-family:monospace;border:2px solid rgba(107,63,160,0.2);border-radius:10px;padding:8px;resize:none;"></textarea>' +
-          '<button class="btn btn-secondary" id="sett-restore" style="width:100%;margin-top:8px;border-color:var(--pu);color:var(--pu);">📥 Restore from Code</button>' +
-        '</div>' +
+      var syncActive = isSyncReady();
+      var statusColor = syncActive ? '#2ecc71' : '#e74c3c';
+      var statusText = syncActive ? '● Syncing' : '● Not connected';
+
+      var html = '<div class="settings-section">' +
+        '<h3>☁️ Cloud Sync</h3>' +
+        '<p style="font-size:13px;color:#888;margin:0 0 8px;">Automatically saves progress across all devices.</p>' +
+        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">' +
+          '<span style="color:' + statusColor + ';font-size:13px;font-weight:700;">' + statusText + '</span>' +
         '</div>';
+
+      if (syncActive) {
+        html += '<div style="background:rgba(46,204,113,0.1);border:1px solid rgba(46,204,113,0.3);border-radius:10px;padding:10px 14px;margin-bottom:12px;">' +
+          '<p style="font-size:13px;color:#333;margin:0;">Family Code: <strong style="font-size:16px;letter-spacing:2px;">' + escapeHtml(cloudSync.familyCode) + '</strong></p>' +
+          '<p style="font-size:11px;color:#888;margin:4px 0 0;">Use this code on other devices to sync data.</p>' +
+        '</div>' +
+        '<button class="btn btn-secondary" id="sett-sync-now" style="width:100%;">🔄 Sync Now</button>' +
+        '<button class="btn btn-secondary" id="sett-disconnect-sync" style="width:100%;margin-top:8px;border-color:var(--pk2);color:var(--pk3);">Disconnect Cloud Sync</button>';
+      } else {
+        html += '<div style="margin-bottom:12px;">' +
+          '<p style="font-size:13px;color:#555;margin:0 0 8px;font-weight:700;">Set up new sync:</p>' +
+          '<button class="btn" id="sett-new-sync" style="width:100%;">🆕 Create Family Code</button>' +
+        '</div>' +
+        '<div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(107,63,160,0.1);">' +
+          '<p style="font-size:13px;color:#555;margin:0 0 8px;font-weight:700;">Join existing family:</p>' +
+          '<input id="sync-join-code" type="text" placeholder="Enter family code..." maxlength="6" style="width:100%;padding:10px 12px;border:2px solid rgba(107,63,160,0.2);border-radius:10px;font-size:16px;font-family:monospace;letter-spacing:3px;text-transform:uppercase;text-align:center;" />' +
+          '<button class="btn btn-secondary" id="sett-join-sync" style="width:100%;margin-top:8px;">📥 Join &amp; Sync</button>' +
+        '</div>';
+
+        // Supabase config (hidden by default, shown via setup button)
+        html += '<div id="sync-setup-area" style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(107,63,160,0.1);">' +
+          '<details>' +
+            '<summary style="font-size:12px;color:#999;cursor:pointer;">⚙️ Cloud Connection Settings</summary>' +
+            '<div style="margin-top:8px;">' +
+              '<label style="font-size:12px;color:#666;">Supabase URL</label>' +
+              '<input id="sync-url" type="url" value="' + escapeHtml(cloudSync.url || '') + '" placeholder="https://xxxxx.supabase.co" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:8px;font-size:12px;margin:4px 0 8px;" />' +
+              '<label style="font-size:12px;color:#666;">Supabase Anon Key</label>' +
+              '<input id="sync-key" type="text" value="' + escapeHtml(cloudSync.key || '') + '" placeholder="eyJhbGci..." style="width:100%;padding:8px;border:1px solid #ddd;border-radius:8px;font-size:12px;margin:4px 0 8px;" />' +
+              '<button class="btn btn-secondary" id="sett-save-sync-config" style="width:100%;">Save Connection</button>' +
+            '</div>' +
+          '</details>' +
+        '</div>';
+      }
+
+      // Manual backup/restore fallback
+      html += '<div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(107,63,160,0.1);">' +
+        '<details>' +
+          '<summary style="font-size:12px;color:#999;cursor:pointer;">💾 Manual Backup / Restore</summary>' +
+          '<div style="margin-top:8px;">' +
+            '<button class="btn btn-secondary" id="sett-backup" style="width:100%;font-size:12px;">📤 Create Backup Code</button>' +
+            '<div id="backup-output" style="display:none;margin-top:8px;">' +
+              '<textarea id="backup-code" readonly style="width:100%;height:60px;font-size:10px;font-family:monospace;border:1px solid #ddd;border-radius:8px;padding:6px;resize:none;word-break:break-all;"></textarea>' +
+              '<button class="btn" id="sett-copy-backup" style="width:100%;margin-top:6px;font-size:12px;">📋 Copy</button>' +
+            '</div>' +
+            '<textarea id="restore-code" placeholder="Paste backup code..." style="width:100%;height:50px;font-size:10px;font-family:monospace;border:1px solid #ddd;border-radius:8px;padding:6px;resize:none;margin-top:8px;"></textarea>' +
+            '<button class="btn btn-secondary" id="sett-restore" style="width:100%;margin-top:6px;font-size:12px;">📥 Restore</button>' +
+          '</div>' +
+        '</details>' +
+      '</div>';
+
+      html += '</div>';
+      return html;
     }
 
     function settingsDangerHtml() {
@@ -6341,7 +6515,80 @@
         renderSettingsScreen();
       });
 
-      // Clear mistakes
+      // Cloud Sync buttons
+      var newSyncBtn = $('sett-new-sync');
+      if (newSyncBtn) newSyncBtn.addEventListener('click', function() {
+        if (!cloudSync.url || !cloudSync.key) {
+          alert('Please set up the cloud connection first.\n\nOpen "Cloud Connection Settings" below and enter your Supabase URL and Anon Key.');
+          return;
+        }
+        var code = generateFamilyCode();
+        cloudSync.familyCode = code;
+        saveSyncConfig();
+        pushToCloud();
+        alert('Family Code created: ' + code + '\n\nUse this code on other devices to sync.');
+        renderSettingsScreen();
+      });
+
+      var joinSyncBtn = $('sett-join-sync');
+      if (joinSyncBtn) joinSyncBtn.addEventListener('click', function() {
+        if (!cloudSync.url || !cloudSync.key) {
+          alert('Please set up the cloud connection first.\n\nOpen "Cloud Connection Settings" below and enter your Supabase URL and Anon Key.');
+          return;
+        }
+        var input = $('sync-join-code');
+        var code = (input ? input.value : '').trim().toUpperCase();
+        if (!code || code.length < 4) { alert('Please enter a valid family code.'); return; }
+        cloudSync.familyCode = code;
+        saveSyncConfig();
+        pullFromCloud(function(updated) {
+          if (updated) {
+            alert('Synced! Data loaded from cloud.');
+            state.profiles = loadProfiles();
+            showScreen('s-profiles');
+          } else {
+            alert('Connected with code: ' + code + '\nNo existing cloud data found — your current data will be uploaded.');
+            pushToCloud();
+            renderSettingsScreen();
+          }
+        });
+      });
+
+      var syncNowBtn = $('sett-sync-now');
+      if (syncNowBtn) syncNowBtn.addEventListener('click', function() {
+        pullFromCloud(function(updated) {
+          if (updated) {
+            alert('Synced from cloud — data updated!');
+            state.profiles = loadProfiles();
+            showScreen('s-home');
+          } else {
+            pushToCloud();
+            alert('All up to date!');
+          }
+        });
+      });
+
+      var disconnectBtn = $('sett-disconnect-sync');
+      if (disconnectBtn) disconnectBtn.addEventListener('click', function() {
+        if (!confirm('Disconnect cloud sync? Your local data will be kept.')) return;
+        cloudSync.familyCode = null;
+        saveSyncConfig();
+        renderSettingsScreen();
+      });
+
+      var saveSyncConfigBtn = $('sett-save-sync-config');
+      if (saveSyncConfigBtn) saveSyncConfigBtn.addEventListener('click', function() {
+        var urlInput = $('sync-url');
+        var keyInput = $('sync-key');
+        var url = (urlInput ? urlInput.value : '').trim().replace(/\/+$/, '');
+        var key = (keyInput ? keyInput.value : '').trim();
+        if (!url || !key) { alert('Please enter both URL and key.'); return; }
+        cloudSync.url = url;
+        cloudSync.key = key;
+        saveSyncConfig();
+        alert('Cloud connection saved!');
+      });
+
       // Backup
       var backupBtn = $('sett-backup');
       if (backupBtn) backupBtn.addEventListener('click', function() {
@@ -7686,19 +7933,19 @@
 
       var buildGrid = function(chars, title) {
         var html = '<h3 style="margin:12px 0 8px;color:#6B3FA0;font-size:16px;">' + title + '</h3>';
-        html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">';
+        html += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">';
         for (var j = 0; j < chars.length; j++) {
           var ch = chars[j];
           var isSel = currentKey === ch.key;
           html += '<button class="char-pick-btn' + (isSel ? ' selected' : '') +
             '" data-charkey="' + ch.key + '" style="' +
-            'display:flex;flex-direction:column;align-items:center;padding:8px 6px;' +
-            'border-radius:14px;border:3px solid ' + (isSel ? '#6B3FA0' : 'rgba(0,0,0,0.08)') + ';' +
+            'display:flex;flex-direction:column;align-items:center;padding:6px 4px;' +
+            'border-radius:12px;border:3px solid ' + (isSel ? '#6B3FA0' : 'rgba(0,0,0,0.08)') + ';' +
             'background:' + (isSel ? 'rgba(107,63,160,0.1)' : '#fff') + ';' +
             'cursor:pointer;transition:all 0.15s;">' +
-            '<img src="' + ASSET_BASE + ch.img + '" alt="" style="width:100%;height:120px;object-fit:contain;" />' +
-            '<span style="font-size:12px;font-weight:700;color:#6B3FA0;margin-top:4px;">' + ch.label + '</span>' +
-            '<span style="font-size:10px;color:#999;">' + ch.world + '</span>' +
+            '<img src="' + ASSET_BASE + ch.img + '" alt="" style="width:100%;height:90px;object-fit:contain;" />' +
+            '<span style="font-size:11px;font-weight:700;color:#6B3FA0;margin-top:2px;">' + ch.label + '</span>' +
+            '<span style="font-size:9px;color:#999;">' + ch.world + '</span>' +
             '</button>';
         }
         html += '</div>';
