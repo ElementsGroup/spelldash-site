@@ -7686,19 +7686,19 @@
 
       var buildGrid = function(chars, title) {
         var html = '<h3 style="margin:12px 0 8px;color:#6B3FA0;font-size:16px;">' + title + '</h3>';
-        html += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">';
+        html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">';
         for (var j = 0; j < chars.length; j++) {
           var ch = chars[j];
           var isSel = currentKey === ch.key;
           html += '<button class="char-pick-btn' + (isSel ? ' selected' : '') +
             '" data-charkey="' + ch.key + '" style="' +
-            'display:flex;flex-direction:column;align-items:center;padding:6px 4px;' +
-            'border-radius:12px;border:3px solid ' + (isSel ? '#6B3FA0' : 'rgba(0,0,0,0.08)') + ';' +
+            'display:flex;flex-direction:column;align-items:center;padding:8px 6px;' +
+            'border-radius:14px;border:3px solid ' + (isSel ? '#6B3FA0' : 'rgba(0,0,0,0.08)') + ';' +
             'background:' + (isSel ? 'rgba(107,63,160,0.1)' : '#fff') + ';' +
             'cursor:pointer;transition:all 0.15s;">' +
-            '<img src="' + ASSET_BASE + ch.img + '" alt="" style="width:100%;max-width:70px;height:auto;" />' +
-            '<span style="font-size:11px;font-weight:700;color:#6B3FA0;margin-top:2px;">' + ch.label + '</span>' +
-            '<span style="font-size:9px;color:#999;">' + ch.world + '</span>' +
+            '<img src="' + ASSET_BASE + ch.img + '" alt="" style="width:100%;height:120px;object-fit:contain;" />' +
+            '<span style="font-size:12px;font-weight:700;color:#6B3FA0;margin-top:4px;">' + ch.label + '</span>' +
+            '<span style="font-size:10px;color:#999;">' + ch.world + '</span>' +
             '</button>';
         }
         html += '</div>';
