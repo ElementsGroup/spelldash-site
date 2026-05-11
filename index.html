@@ -1405,6 +1405,14 @@
       return 'spelldash-site/assets/';
     })();
 
+    var PRIZE_BASE = (function() {
+      var loc = window.location.pathname;
+      if (loc.indexOf('/spelldash-site/') !== -1 || loc === '/index.html' || loc === '/') {
+        return 'prizes/';
+      }
+      return 'spelldash-site/prizes/';
+    })();
+
     // ---- Avatar character customisation constants ----
     var SKIN_TONES = [
       { key: 'porcelain', hex: '#FDE8D5', hi: '#FFF3EC', sh: '#E8C4AA', label: 'Porcelain' },
@@ -1743,6 +1751,11 @@
       if (w) return w.icon;
       if (AVATAR_PETS.indexOf(itemKey) !== -1) return itemKey;
       var prefix = itemKey.split(':')[0], key = itemKey.split(':')[1];
+      if (prefix === 'prize') {
+        var pi = findPrizeItem(key);
+        if (pi) return '<img src="' + PRIZE_BASE + pi.img + '" alt="" style="width:48px;height:48px;object-fit:contain;" />';
+        return '🎁';
+      }
       var arr = prefix === 'toy' ? AVATAR_TOYS : prefix === 'veh' ? AVATAR_VEHICLES : prefix === 'house' ? AVATAR_HOUSES : prefix === 'bg' ? AVATAR_BACKGROUNDS : [];
       for (var i = 0; i < arr.length; i++) { if (arr[i].key === key) return arr[i].icon; }
       return '❓';
@@ -1753,6 +1766,11 @@
       var w = wearableByKey(itemKey);
       if (w) return w.label;
       var prefix = itemKey.split(':')[0], key = itemKey.split(':')[1];
+      if (prefix === 'prize') {
+        var pi = findPrizeItem(key);
+        if (pi) return pi.label;
+        return itemKey;
+      }
       var arr = prefix === 'toy' ? AVATAR_TOYS : prefix === 'veh' ? AVATAR_VEHICLES : prefix === 'house' ? AVATAR_HOUSES : prefix === 'bg' ? AVATAR_BACKGROUNDS : [];
       for (var i = 0; i < arr.length; i++) { if (arr[i].key === key) return arr[i].label; }
       return itemKey;
@@ -1760,6 +1778,7 @@
 
     function equipItem(p, itemKey) {
       if (!itemKey) return;
+      if (itemKey.indexOf('prize:') === 0) return; // Prize items are collectibles only
       var wb = wearableByKey(itemKey);
       if (wb) {
         if (wb.cat === 'hat') p.avatar.hat = itemKey;
@@ -5017,48 +5036,183 @@
 
     // ---- Surprise drop ------------------------------------------
 
-    // World-specific prize pools — items relevant to each world
-    var WORLD_PRIZE_POOLS = {
+    // World-specific prize item definitions — 10 unique items per world
+    var WORLD_PRIZE_ITEMS = {
       beach: [
-        'toy:surfboard', 'toy:ball', 'toy:kite', 'toy:trophy',
-        'veh:boat', 'veh:jetski', 'house:cottage'
+        { key: 'beach-jetski',       label: 'Jet Ski',        img: 'beach-jetski.png' },
+        { key: 'beach-beach-buggy',  label: 'Beach Buggy',    img: 'beach-beach-buggy.png' },
+        { key: 'beach-dolphin',      label: 'Dolphin',        img: 'beach-dolphin.png' },
+        { key: 'beach-crab',         label: 'Crab',           img: 'beach-crab.png' },
+        { key: 'beach-coconut-drink',label: 'Coconut Drink',  img: 'beach-coconut-drink.png' },
+        { key: 'beach-smoothie',     label: 'Smoothie',       img: 'beach-smoothie.png' },
+        { key: 'beach-ice-cream',    label: 'Ice Cream',      img: 'beach-ice-cream.png' },
+        { key: 'beach-fish-chips',   label: 'Fish & Chips',   img: 'beach-fish-chips.png' },
+        { key: 'beach-surfboard',    label: 'Surfboard',      img: 'beach-surfboard.png' },
+        { key: 'beach-sandcastle',   label: 'Sandcastle',     img: 'beach-sandcastle.png' }
       ],
       jungle: [
-        'toy:teddy', 'toy:sword', 'toy:rocket', 'toy:trophy',
-        'veh:bike', 'veh:helicopter', 'house:treehouse'
+        { key: 'jungle-safari-jeep',   label: 'Safari Jeep',    img: 'jungle-safari-jeep.png' },
+        { key: 'jungle-canoe',         label: 'Canoe',          img: 'jungle-canoe.png' },
+        { key: 'jungle-monkey',        label: 'Monkey',         img: 'jungle-monkey.png' },
+        { key: 'jungle-parrot',        label: 'Parrot',         img: 'jungle-parrot.png' },
+        { key: 'jungle-juice-box',     label: 'Juice Box',      img: 'jungle-juice-box.png' },
+        { key: 'jungle-coconut-water', label: 'Coconut Water',  img: 'jungle-coconut-water.png' },
+        { key: 'jungle-bananas',       label: 'Bananas',        img: 'jungle-bananas.png' },
+        { key: 'jungle-mango',         label: 'Mango',          img: 'jungle-mango.png' },
+        { key: 'jungle-binoculars',    label: 'Binoculars',     img: 'jungle-binoculars.png' },
+        { key: 'jungle-treasure-map',  label: 'Treasure Map',   img: 'jungle-treasure-map.png' }
       ],
       candy: [
-        'toy:balloon', 'toy:wand', 'toy:guitar', 'toy:trophy',
-        'veh:scooter', 'veh:car', 'house:cottage'
+        { key: 'candy-candy-car',        label: 'Candy Car',        img: 'candy-candy-car.png' },
+        { key: 'candy-lollipop-scooter', label: 'Lollipop Scooter', img: 'candy-lollipop-scooter.png' },
+        { key: 'candy-gummy-bear',       label: 'Gummy Bear',       img: 'candy-gummy-bear.png' },
+        { key: 'candy-candy-cat',        label: 'Candy Cat',        img: 'candy-candy-cat.png' },
+        { key: 'candy-milkshake',        label: 'Milkshake',        img: 'candy-milkshake.png' },
+        { key: 'candy-soda-can',         label: 'Soda Can',         img: 'candy-soda-can.png' },
+        { key: 'candy-cupcake',          label: 'Cupcake',          img: 'candy-cupcake.png' },
+        { key: 'candy-donut',            label: 'Donut',            img: 'candy-donut.png' },
+        { key: 'candy-candy-cane',       label: 'Candy Cane',       img: 'candy-candy-cane.png' },
+        { key: 'candy-lollipop',         label: 'Lollipop',         img: 'candy-lollipop.png' }
       ],
       farm: [
-        'toy:teddy', 'toy:basketball', 'toy:guitar', 'toy:trophy',
-        'veh:truck', 'veh:digger', 'veh:bike', 'house:construction'
+        { key: 'farm-tractor',      label: 'Tractor',      img: 'farm-tractor.png' },
+        { key: 'farm-hay-cart',     label: 'Hay Cart',     img: 'farm-hay-cart.png' },
+        { key: 'farm-puppy',        label: 'Puppy',        img: 'farm-puppy.png' },
+        { key: 'farm-lamb',         label: 'Lamb',         img: 'farm-lamb.png' },
+        { key: 'farm-milk-glass',   label: 'Milk Glass',   img: 'farm-milk-glass.png' },
+        { key: 'farm-apple-juice',  label: 'Apple Juice',  img: 'farm-apple-juice.png' },
+        { key: 'farm-apple-pie',    label: 'Apple Pie',    img: 'farm-apple-pie.png' },
+        { key: 'farm-corn',         label: 'Corn',         img: 'farm-corn.png' },
+        { key: 'farm-sunflower',    label: 'Sunflower',    img: 'farm-sunflower.png' },
+        { key: 'farm-straw-hat',    label: 'Straw Hat',    img: 'farm-straw-hat.png' }
       ],
       city: [
-        'toy:skateboard', 'toy:basketball', 'toy:guitar', 'toy:trophy',
-        'veh:car', 'veh:scooter', 'veh:motorbike', 'house:firestation'
+        { key: 'city-taxi',           label: 'Taxi',           img: 'city-taxi.png' },
+        { key: 'city-scooter',        label: 'Scooter',        img: 'city-scooter.png' },
+        { key: 'city-kitten',         label: 'Kitten',         img: 'city-kitten.png' },
+        { key: 'city-hamster',        label: 'Hamster',        img: 'city-hamster.png' },
+        { key: 'city-bubble-tea',     label: 'Bubble Tea',     img: 'city-bubble-tea.png' },
+        { key: 'city-hot-chocolate',  label: 'Hot Chocolate',  img: 'city-hot-chocolate.png' },
+        { key: 'city-pizza',          label: 'Pizza',          img: 'city-pizza.png' },
+        { key: 'city-burger',         label: 'Burger',         img: 'city-burger.png' },
+        { key: 'city-boombox',        label: 'Boombox',        img: 'city-boombox.png' },
+        { key: 'city-skateboard',     label: 'Skateboard',     img: 'city-skateboard.png' }
       ],
       waterpark: [
-        'toy:surfboard', 'toy:ball', 'toy:balloon', 'toy:trophy',
-        'veh:jetski', 'veh:boat', 'house:pirate'
+        { key: 'waterpark-pedal-boat',     label: 'Pedal Boat',     img: 'waterpark-pedal-boat.png' },
+        { key: 'waterpark-bumper-boat',    label: 'Bumper Boat',    img: 'waterpark-bumper-boat.png' },
+        { key: 'waterpark-turtle',         label: 'Turtle',         img: 'waterpark-turtle.png' },
+        { key: 'waterpark-seal',           label: 'Seal',           img: 'waterpark-seal.png' },
+        { key: 'waterpark-slushie',        label: 'Slushie',        img: 'waterpark-slushie.png' },
+        { key: 'waterpark-lemonade',       label: 'Lemonade',       img: 'waterpark-lemonade.png' },
+        { key: 'waterpark-popsicle',       label: 'Popsicle',       img: 'waterpark-popsicle.png' },
+        { key: 'waterpark-cotton-candy',   label: 'Cotton Candy',   img: 'waterpark-cotton-candy.png' },
+        { key: 'waterpark-flamingo-float', label: 'Flamingo Float', img: 'waterpark-flamingo-float.png' },
+        { key: 'waterpark-water-gun',      label: 'Water Gun',      img: 'waterpark-water-gun.png' }
       ],
       space: [
-        'toy:rocket', 'toy:wand', 'toy:sword', 'toy:trophy',
-        'veh:ufo', 'veh:helicopter', 'veh:plane', 'house:spaceship'
+        { key: 'space-rocket',          label: 'Rocket',          img: 'space-rocket.png' },
+        { key: 'space-moon-buggy',      label: 'Moon Buggy',      img: 'space-moon-buggy.png' },
+        { key: 'space-alien-pet',       label: 'Alien Pet',       img: 'space-alien-pet.png' },
+        { key: 'space-robot-dog',       label: 'Robot Dog',       img: 'space-robot-dog.png' },
+        { key: 'space-space-juice',     label: 'Space Juice',     img: 'space-space-juice.png' },
+        { key: 'space-galaxy-smoothie', label: 'Galaxy Smoothie', img: 'space-galaxy-smoothie.png' },
+        { key: 'space-astro-icecream',  label: 'Astro Ice Cream', img: 'space-astro-icecream.png' },
+        { key: 'space-star-cookies',    label: 'Star Cookies',    img: 'space-star-cookies.png' },
+        { key: 'space-ray-gun',         label: 'Ray Gun',         img: 'space-ray-gun.png' },
+        { key: 'space-crystal-ball',    label: 'Crystal Ball',    img: 'space-crystal-ball.png' }
       ],
       snow: [
-        'toy:teddy', 'toy:kite', 'toy:balloon', 'toy:trophy',
-        'veh:rollerblades', 'veh:train', 'house:igloo'
+        { key: 'snow-snowmobile',   label: 'Snowmobile',   img: 'snow-snowmobile.png' },
+        { key: 'snow-sled',         label: 'Sled',         img: 'snow-sled.png' },
+        { key: 'snow-penguin',      label: 'Penguin',      img: 'snow-penguin.png' },
+        { key: 'snow-polar-bear',   label: 'Polar Bear',   img: 'snow-polar-bear.png' },
+        { key: 'snow-hot-cocoa',    label: 'Hot Cocoa',    img: 'snow-hot-cocoa.png' },
+        { key: 'snow-warm-cider',   label: 'Warm Cider',   img: 'snow-warm-cider.png' },
+        { key: 'snow-gingerbread',  label: 'Gingerbread',  img: 'snow-gingerbread.png' },
+        { key: 'snow-marshmallow',  label: 'Marshmallow',  img: 'snow-marshmallow.png' },
+        { key: 'snow-snow-globe',   label: 'Snow Globe',   img: 'snow-snow-globe.png' },
+        { key: 'snow-ice-skates',   label: 'Ice Skates',   img: 'snow-ice-skates.png' }
       ]
     };
 
-    // Flat gift pool for fallback
+    // Helper: look up a prize item from WORLD_PRIZE_ITEMS by its full key (e.g. 'beach-jetski')
+    function findPrizeItem(prizeKey) {
+      var worlds = ['beach','jungle','candy','farm','city','waterpark','space','snow'];
+      for (var wi = 0; wi < worlds.length; wi++) {
+        var items = WORLD_PRIZE_ITEMS[worlds[wi]];
+        for (var ii = 0; ii < items.length; ii++) {
+          if (items[ii].key === prizeKey) return items[ii];
+        }
+      }
+      return null;
+    }
+
+    // World-specific prize pools — items relevant to each world
+    var WORLD_PRIZE_POOLS = {
+      beach: [
+        'prize:beach-jetski', 'prize:beach-beach-buggy', 'prize:beach-dolphin',
+        'prize:beach-crab', 'prize:beach-coconut-drink', 'prize:beach-smoothie',
+        'prize:beach-ice-cream', 'prize:beach-fish-chips', 'prize:beach-surfboard',
+        'prize:beach-sandcastle'
+      ],
+      jungle: [
+        'prize:jungle-safari-jeep', 'prize:jungle-canoe', 'prize:jungle-monkey',
+        'prize:jungle-parrot', 'prize:jungle-juice-box', 'prize:jungle-coconut-water',
+        'prize:jungle-bananas', 'prize:jungle-mango', 'prize:jungle-binoculars',
+        'prize:jungle-treasure-map'
+      ],
+      candy: [
+        'prize:candy-candy-car', 'prize:candy-lollipop-scooter', 'prize:candy-gummy-bear',
+        'prize:candy-candy-cat', 'prize:candy-milkshake', 'prize:candy-soda-can',
+        'prize:candy-cupcake', 'prize:candy-donut', 'prize:candy-candy-cane',
+        'prize:candy-lollipop'
+      ],
+      farm: [
+        'prize:farm-tractor', 'prize:farm-hay-cart', 'prize:farm-puppy',
+        'prize:farm-lamb', 'prize:farm-milk-glass', 'prize:farm-apple-juice',
+        'prize:farm-apple-pie', 'prize:farm-corn', 'prize:farm-sunflower',
+        'prize:farm-straw-hat'
+      ],
+      city: [
+        'prize:city-taxi', 'prize:city-scooter', 'prize:city-kitten',
+        'prize:city-hamster', 'prize:city-bubble-tea', 'prize:city-hot-chocolate',
+        'prize:city-pizza', 'prize:city-burger', 'prize:city-boombox',
+        'prize:city-skateboard'
+      ],
+      waterpark: [
+        'prize:waterpark-pedal-boat', 'prize:waterpark-bumper-boat', 'prize:waterpark-turtle',
+        'prize:waterpark-seal', 'prize:waterpark-slushie', 'prize:waterpark-lemonade',
+        'prize:waterpark-popsicle', 'prize:waterpark-cotton-candy', 'prize:waterpark-flamingo-float',
+        'prize:waterpark-water-gun'
+      ],
+      space: [
+        'prize:space-rocket', 'prize:space-moon-buggy', 'prize:space-alien-pet',
+        'prize:space-robot-dog', 'prize:space-space-juice', 'prize:space-galaxy-smoothie',
+        'prize:space-astro-icecream', 'prize:space-star-cookies', 'prize:space-ray-gun',
+        'prize:space-crystal-ball'
+      ],
+      snow: [
+        'prize:snow-snowmobile', 'prize:snow-sled', 'prize:snow-penguin',
+        'prize:snow-polar-bear', 'prize:snow-hot-cocoa', 'prize:snow-warm-cider',
+        'prize:snow-gingerbread', 'prize:snow-marshmallow', 'prize:snow-snow-globe',
+        'prize:snow-ice-skates'
+      ]
+    };
+
+    // Flat gift pool for fallback — includes legacy toy/veh/house items plus all prize items
     var GIFT_POOL = (function() {
       var items = [];
       AVATAR_TOYS.forEach(function(t) { items.push('toy:' + t.key); });
       AVATAR_VEHICLES.forEach(function(v) { items.push('veh:' + v.key); });
       AVATAR_HOUSES.forEach(function(h) { items.push('house:' + h.key); });
+      var worlds = ['beach','jungle','candy','farm','city','waterpark','space','snow'];
+      for (var wi = 0; wi < worlds.length; wi++) {
+        var prizeItems = WORLD_PRIZE_ITEMS[worlds[wi]];
+        for (var pi = 0; pi < prizeItems.length; pi++) {
+          items.push('prize:' + prizeItems[pi].key);
+        }
+      }
       return items;
     })();
 
@@ -7551,14 +7705,18 @@
       // Show prizes won in this world by this player
       var worldPrizeKeys = (p.worldPrizes && p.worldPrizes[currentWorld]) || [];
       var prizeImgLookup = {};
-      AVATAR_TOYS.forEach(function(t) { prizeImgLookup['toy:' + t.key] = t.img; });
-      AVATAR_VEHICLES.forEach(function(v) { prizeImgLookup['veh:' + v.key] = v.img; });
+      AVATAR_TOYS.forEach(function(t) { prizeImgLookup['toy:' + t.key] = { src: ASSET_BASE + t.img }; });
+      AVATAR_VEHICLES.forEach(function(v) { prizeImgLookup['veh:' + v.key] = { src: ASSET_BASE + v.img }; });
+      var worldPrizeArr = WORLD_PRIZE_ITEMS[currentWorld] || [];
+      for (var wpi = 0; wpi < worldPrizeArr.length; wpi++) {
+        prizeImgLookup['prize:' + worldPrizeArr[wpi].key] = { src: PRIZE_BASE + worldPrizeArr[wpi].img };
+      }
       var prizeHtml = '';
       var rightPctP = 1;
       for (var pi = 0; pi < worldPrizeKeys.length && pi < 6; pi++) {
-        var pImg = prizeImgLookup[worldPrizeKeys[pi]];
-        if (pImg) {
-          prizeHtml += '<img src="' + ASSET_BASE + pImg + '" alt="" style="position:absolute;bottom:14%;right:' + rightPctP + '%;width:12%;height:auto;z-index:4;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.2));" />';
+        var pEntry = prizeImgLookup[worldPrizeKeys[pi]];
+        if (pEntry) {
+          prizeHtml += '<img src="' + pEntry.src + '" alt="" style="position:absolute;bottom:14%;right:' + rightPctP + '%;width:12%;height:auto;z-index:4;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.2));" />';
           rightPctP += 14;
         }
       }
@@ -7863,20 +8021,25 @@
       var c = wallThemes[currentWorld] || { wall: '#F5E6FF', wall2: '#EAD8F8', floor: '#C4A882', trim: '#D4A0D0', accent: '#B080C0', window: '#B8D8F0' };
 
       var itemImgLookup = {};
-      AVATAR_TOYS.forEach(function(t) { itemImgLookup['toy:' + t.key] = t.img; });
-      AVATAR_VEHICLES.forEach(function(v) { itemImgLookup['veh:' + v.key] = v.img; });
+      AVATAR_TOYS.forEach(function(t) { itemImgLookup['toy:' + t.key] = { src: ASSET_BASE + t.img }; });
+      AVATAR_VEHICLES.forEach(function(v) { itemImgLookup['veh:' + v.key] = { src: ASSET_BASE + v.img }; });
+      var worldPrizeArr2 = WORLD_PRIZE_ITEMS[currentWorld] || [];
+      for (var wpi2 = 0; wpi2 < worldPrizeArr2.length; wpi2++) {
+        itemImgLookup['prize:' + worldPrizeArr2[wpi2].key] = { src: PRIZE_BASE + worldPrizeArr2[wpi2].img };
+      }
 
       // Use per-player per-world prizes instead of global toys/vehicles
       var worldPrizes = (p.worldPrizes && p.worldPrizes[currentWorld]) || [];
       var toyKeys = worldPrizes.filter(function(k) { return k.indexOf('toy:') === 0 && !!itemImgLookup[k]; });
       var vehKeys = worldPrizes.filter(function(k) { return k.indexOf('veh:') === 0 && !!itemImgLookup[k]; });
+      var prizeKeys = worldPrizes.filter(function(k) { return k.indexOf('prize:') === 0 && !!itemImgLookup[k]; });
 
       var buildShelf = function(items, yPct, widthPct) {
         var itemsHtml = '';
         items.forEach(function(ik) {
-          var img = itemImgLookup[ik];
-          if (img) {
-            itemsHtml += '<img class="house-shelf-item" src="' + ASSET_BASE + img + '" alt="" />';
+          var entry = itemImgLookup[ik];
+          if (entry) {
+            itemsHtml += '<img class="house-shelf-item" src="' + entry.src + '" alt="" />';
           }
         });
         if (!itemsHtml) itemsHtml = '<span style="font-size:11px;color:rgba(0,0,0,0.25);font-style:italic;">empty</span>';
@@ -7886,10 +8049,15 @@
         '</div>';
       };
 
+      var allShelfItems = toyKeys.concat(vehKeys).concat(prizeKeys);
       var shelvesHtml = '';
-      if (toyKeys.length > 0) shelvesHtml += buildShelf(toyKeys, 10, 70);
-      if (vehKeys.length > 0) shelvesHtml += buildShelf(vehKeys, 38, 70);
-      if (toyKeys.length === 0 && vehKeys.length === 0) shelvesHtml += buildShelf([], 10, 70);
+      if (allShelfItems.length > 0) {
+        if (toyKeys.length > 0) shelvesHtml += buildShelf(toyKeys, 6, 70);
+        if (vehKeys.length > 0) shelvesHtml += buildShelf(vehKeys, 26, 70);
+        if (prizeKeys.length > 0) shelvesHtml += buildShelf(prizeKeys, 46, 70);
+      } else {
+        shelvesHtml += buildShelf([], 10, 70);
+      }
 
       var windowHtml =
         '<div style="position:absolute;top:8%;right:8%;width:20%;aspect-ratio:3/4;border-radius:6px 6px 0 0;border:3px solid ' + c.trim + ';background:linear-gradient(180deg,' + c.window + ',' + c.window + ' 60%,#80D080 60%);overflow:hidden;">' +
@@ -7901,7 +8069,7 @@
       var rugHtml = '<div style="position:absolute;bottom:4%;left:10%;width:45%;height:8%;background:' + c.accent + ';opacity:0.3;border-radius:50%;"></div>';
 
       var charHtml = buildPaperDollHtml(p.avatar);
-      var totalItems = toyKeys.length + vehKeys.length;
+      var totalItems = toyKeys.length + vehKeys.length + prizeKeys.length;
 
       var container = $('s-houseinterior');
       container.innerHTML =
