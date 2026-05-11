@@ -1356,7 +1356,11 @@
     }
 
     if (voiceAvailable) {
-      speechSynthesis.addEventListener('voiceschanged', initVoice);
+      if (typeof speechSynthesis.addEventListener === 'function') {
+        speechSynthesis.addEventListener('voiceschanged', initVoice);
+      } else if (typeof speechSynthesis.onvoiceschanged !== 'undefined') {
+        speechSynthesis.onvoiceschanged = initVoice;
+      }
       initVoice();
     }
 
