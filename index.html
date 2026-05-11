@@ -1109,10 +1109,6 @@
   </div>
 
   <script>
-    window.onerror = function(msg, url, line) {
-      document.body.innerHTML = '<div style="padding:20px;font-size:18px;color:red;background:#fff;position:fixed;top:0;left:0;right:0;z-index:99999;">' +
-        '<b>Error:</b> ' + msg + '<br><b>Line:</b> ' + line + '</div>' + document.body.innerHTML;
-    };
     // ============================================================
     // Spell Dash — Stage 1 foundation.
     // No game logic, no word data yet. Just profiles, navigation,
@@ -3954,11 +3950,15 @@
         : 'Choose your character';
 
       var isAmos = (p.name || '').toLowerCase().indexOf('amos') !== -1;
-      var homeEl = $('s-home');
+      var root = document.documentElement;
       if (isAmos) {
-        homeEl.style.background = 'linear-gradient(180deg, #B8D4F0 0%, #D0E8FF 30%, #E8F0FF 100%)';
+        root.style.setProperty('--pk', '#A8D8F0');
+        root.style.setProperty('--pk2', '#5CB8E8');
+        root.style.setProperty('--pk3', '#2878B8');
       } else {
-        homeEl.style.background = '';
+        root.style.setProperty('--pk', '#FFB3C6');
+        root.style.setProperty('--pk2', '#FF85A1');
+        root.style.setProperty('--pk3', '#CC3060');
       }
 
       var dropsArea = $('drops-area');
@@ -7661,7 +7661,8 @@
           '" data-ditem="" data-dslot="' + singleField + '" style="font-size:14px;padding:8px;">None</button>';
         catArr.forEach(function(item) {
           var fullKey = prefixStr + item.key;
-          var isUnlocked = p.avatar.unlocked.indexOf(fullKey) !== -1;
+          var isBg = prefixStr === 'bg:';
+          var isUnlocked = isBg || p.avatar.unlocked.indexOf(fullKey) !== -1;
           var isSel = currentVal === fullKey;
           var thumb = item.img
             ? '<img src="' + ASSET_BASE + item.img + '" alt="" style="width:48px;height:48px;object-fit:contain;" />'
@@ -8174,7 +8175,7 @@
           panelHtml += '<div class="ar-section-title">' + pc.title + '</div><div class="ar-shop-grid">';
           pc.arr.forEach(function(it) {
             var fullKey = pc.prefix + it.key;
-            var owned = p.avatar.unlocked.indexOf(fullKey) !== -1;
+            var owned = pc.prefix === 'bg:' || p.avatar.unlocked.indexOf(fullKey) !== -1;
             var canBuy = !owned && gems >= GEM_PRICE;
             var cls = 'ar-shop-btn' + (owned ? ' owned' : (canBuy ? '' : ' cant-afford'));
             var priceLabel = owned ? '<span class="ar-shop-price owned-lbl">✓ owned</span>'
