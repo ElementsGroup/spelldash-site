@@ -946,7 +946,7 @@
     .house-wall { position: absolute; inset: 0; }
     .house-floor { position: absolute; bottom: 0; left: 0; right: 0; height: 25%; }
     .house-shelf { display: flex; align-items: flex-end; justify-content: center; gap: 6px; padding: 6px 8px; }
-    .house-shelf-item { width: 48px; height: 48px; object-fit: contain; mix-blend-mode: multiply; }
+    .house-shelf-item { width: 48px; height: 48px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15)); }
     .house-char { position: absolute; bottom: 8%; right: 6%; width: 30%; z-index: 3; }
     .av-display-house { position: absolute; top: 2%; right: 2%; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25)); }
     .av-display-vehicle { position: absolute; bottom: 8%; left: 2%; font-size: 72px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25)); }
@@ -1759,7 +1759,7 @@
       var prefix = itemKey.split(':')[0], key = itemKey.split(':')[1];
       if (prefix === 'prize') {
         var pi = findPrizeItem(key);
-        if (pi) return '<img src="' + PRIZE_BASE + pi.img + '" alt="" style="width:48px;height:48px;object-fit:contain;mix-blend-mode:multiply;" />';
+        if (pi) return '<img src="' + PRIZE_BASE + pi.img + '" alt="" style="width:48px;height:48px;object-fit:contain;" />';
         return '🎁';
       }
       var arr = prefix === 'toy' ? AVATAR_TOYS : prefix === 'veh' ? AVATAR_VEHICLES : prefix === 'house' ? AVATAR_HOUSES : prefix === 'bg' ? AVATAR_BACKGROUNDS : [];
@@ -6354,7 +6354,7 @@
           html += '<div style="width:56px;text-align:center;' +
             (isOwned ? '' : 'opacity:0.3;filter:grayscale(1);') +
             '" title="' + prizeArr[pi].label + (isOwned ? ' (owned)' : ' (locked)') + '">' +
-            '<img src="' + PRIZE_BASE + prizeArr[pi].img + '" alt="" style="width:48px;height:48px;object-fit:contain;mix-blend-mode:multiply;" />' +
+            '<img src="' + PRIZE_BASE + prizeArr[pi].img + '" alt="" style="width:48px;height:48px;object-fit:contain;" />' +
             '<div style="font-size:9px;color:#666;margin-top:2px;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + prizeArr[pi].label + '</div>' +
             '</div>';
         }
@@ -7806,7 +7806,7 @@
       for (var pi = 0; pi < worldPrizeKeys.length && pi < 6; pi++) {
         var pEntry = prizeImgLookup[worldPrizeKeys[pi]];
         if (pEntry) {
-          prizeHtml += '<img src="' + pEntry.src + '" alt="" style="position:absolute;bottom:14%;right:' + rightPctP + '%;width:12%;height:auto;z-index:4;mix-blend-mode:multiply;" />';
+          prizeHtml += '<img src="' + pEntry.src + '" alt="" style="position:absolute;bottom:14%;right:' + rightPctP + '%;width:12%;height:auto;z-index:4;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.2));" />';
           rightPctP += 14;
         }
       }
