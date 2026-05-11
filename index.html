@@ -946,7 +946,7 @@
     .house-wall { position: absolute; inset: 0; }
     .house-floor { position: absolute; bottom: 0; left: 0; right: 0; height: 25%; }
     .house-shelf { display: flex; align-items: flex-end; justify-content: center; gap: 6px; padding: 6px 8px; }
-    .house-shelf-item { width: 48px; height: 48px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15)); }
+    .house-shelf-item { width: 48px; height: 48px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15)); background: #FFF8F0; border-radius: 8px; padding: 2px; }
     .house-char { position: absolute; bottom: 8%; right: 6%; width: 30%; z-index: 3; }
     .av-display-house { position: absolute; top: 2%; right: 2%; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25)); }
     .av-display-vehicle { position: absolute; bottom: 8%; left: 2%; font-size: 72px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25)); }
@@ -1000,8 +1000,8 @@
           <span class="desc">Log a book</span>
         </button>
         <button class="tile t-coins" data-go="s-coins">
-          <span class="icon">🪙</span>
-          <span class="label">Coins</span>
+          <span class="icon">🏺</span>
+          <span class="label">My Saving Jar</span>
           <span class="desc">🪙 Coins  💎 Gems</span>
         </button>
       </div>
@@ -1012,9 +1012,11 @@
       </div>
 
       <div id="gifts-area" class="gifts-area" style="margin:0 14px 12px;">
-        <h3 style="margin:0 0 8px;color:#6B3FA0;font-size:15px;">Surprise Gifts</h3>
+        <h3 style="margin:0 0 8px;color:#6B3FA0;font-size:15px;">🎁 Gifts Received</h3>
         <div id="gifts-display" style="min-height:48px;display:flex;align-items:center;justify-content:center;color:#999;font-size:13px;">Keep playing to earn surprise gifts!</div>
       </div>
+
+      <div class="drops-area" id="drops-area"></div>
 
       <div id="gratitude-area" style="margin:0 14px 12px;padding:14px 18px;background:linear-gradient(135deg,rgba(184,238,216,0.4),rgba(168,216,240,0.4));border-radius:18px;border:1px solid rgba(107,63,160,0.12);">
         <h3 style="margin:0 0 10px;color:#6B3FA0;font-size:15px;">🙏 What am I grateful for?</h3>
@@ -1025,8 +1027,6 @@
         </div>
         <div id="gratitude-reward-msg" style="text-align:center;font-size:12px;color:#6B3FA0;margin-top:6px;min-height:16px;"></div>
       </div>
-
-      <div class="drops-area" id="drops-area"></div>
 
       <div class="home-nav-row">
         <button class="home-nav-btn" data-go="s-wall">
@@ -1759,7 +1759,7 @@
       var prefix = itemKey.split(':')[0], key = itemKey.split(':')[1];
       if (prefix === 'prize') {
         var pi = findPrizeItem(key);
-        if (pi) return '<img src="' + PRIZE_BASE + pi.img + '" alt="" style="width:48px;height:48px;object-fit:contain;" />';
+        if (pi) return '<span style="display:inline-block;width:48px;height:48px;background:#FFF8F0;border-radius:10px;overflow:hidden;"><img src="' + PRIZE_BASE + pi.img + '" alt="" style="width:48px;height:48px;object-fit:contain;" /></span>';
         return '🎁';
       }
       var arr = prefix === 'toy' ? AVATAR_TOYS : prefix === 'veh' ? AVATAR_VEHICLES : prefix === 'house' ? AVATAR_HOUSES : prefix === 'bg' ? AVATAR_BACKGROUNDS : [];
@@ -6058,8 +6058,8 @@
       container.innerHTML =
         '<button class="btn-back" data-back="s-home">← Back</button>' +
         '<div class="coin-hero">' +
-        '<div class="coin-hero-amt">🪙 ' + coins + '</div>' +
-        '<div class="coin-hero-label">coins available</div>' +
+        '<div class="coin-hero-amt">🏺 ' + coins + '</div>' +
+        '<div class="coin-hero-label">coins in your saving jar</div>' +
         '<div class="progress-track" style="margin-top:14px;background:rgba(255,255,255,0.3);">' +
         '<div class="progress-fill" style="width:' + Math.min(100, (dailyCoins / 20) * 100) + '%;"></div></div>' +
         '<div style="font-size:13px;color:var(--ye3);margin-top:6px;">Today: ' + dailyCoins + ' / 20 coins</div>' +
@@ -6354,7 +6354,7 @@
           html += '<div style="width:56px;text-align:center;' +
             (isOwned ? '' : 'opacity:0.3;filter:grayscale(1);') +
             '" title="' + prizeArr[pi].label + (isOwned ? ' (owned)' : ' (locked)') + '">' +
-            '<img src="' + PRIZE_BASE + prizeArr[pi].img + '" alt="" style="width:48px;height:48px;object-fit:contain;" />' +
+            '<span style="display:inline-block;width:48px;height:48px;background:#FFF8F0;border-radius:10px;overflow:hidden;"><img src="' + PRIZE_BASE + prizeArr[pi].img + '" alt="" style="width:48px;height:48px;object-fit:contain;" /></span>' +
             '<div style="font-size:9px;color:#666;margin-top:2px;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + prizeArr[pi].label + '</div>' +
             '</div>';
         }
@@ -7806,7 +7806,7 @@
       for (var pi = 0; pi < worldPrizeKeys.length && pi < 6; pi++) {
         var pEntry = prizeImgLookup[worldPrizeKeys[pi]];
         if (pEntry) {
-          prizeHtml += '<img src="' + pEntry.src + '" alt="" style="position:absolute;bottom:14%;right:' + rightPctP + '%;width:12%;height:auto;z-index:4;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.2));" />';
+          prizeHtml += '<div style="position:absolute;bottom:14%;right:' + rightPctP + '%;width:12%;z-index:4;background:#FFF8F0;border-radius:8px;padding:2px;box-shadow:0 3px 6px rgba(0,0,0,0.2);"><img src="' + pEntry.src + '" alt="" style="width:100%;height:auto;display:block;" /></div>';
           rightPctP += 14;
         }
       }
