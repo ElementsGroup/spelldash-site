@@ -1109,6 +1109,10 @@
   </div>
 
   <script>
+    window.onerror = function(msg, url, line) {
+      document.body.innerHTML = '<div style="padding:20px;font-size:18px;color:red;background:#fff;position:fixed;top:0;left:0;right:0;z-index:99999;">' +
+        '<b>Error:</b> ' + msg + '<br><b>Line:</b> ' + line + '</div>' + document.body.innerHTML;
+    };
     // ============================================================
     // Spell Dash — Stage 1 foundation.
     // No game logic, no word data yet. Just profiles, navigation,
