@@ -1621,7 +1621,7 @@
       city:      { year2: { mode: 'problems',  label: 'Problem Words' },       kindy: { mode: 'sounds',   label: 'First Sound' } },
       waterpark: { year2: { mode: 'choose',    label: 'Choose Your Sound' },   kindy: { mode: 'numtap',   label: 'Number Tap' } },
       space:     { year2: { mode: 'boss',      label: "I'm the Boss" },        kindy: { mode: 'abcorder', label: 'ABC Order' } },
-      snow:      { year2: { mode: 'surprise',  label: 'Surprise Me' },         kindy: { mode: 'pairs',    label: 'Matching Pairs' } }
+      snow:      { year2: { mode: 'tricky',    label: 'Tricky Words' },         kindy: { mode: 'pairs',    label: 'Matching Pairs' } }
     };
 
     // Affirmations — age-appropriate positive messages
@@ -4534,6 +4534,99 @@
           { w: 'dinosaur', team: 'aw', lv: 'extension', hint: 'A huge reptile that lived millions of years ago.',  ph: 'dinosor' },
           { w: 'therefore', team: 'ore', lv: 'extension', hint: 'For that reason — a linking word.',                 ph: 'thairfor' }
         ]
+      },
+      'sh-ch-th': {
+        name: 'Sh, Ch, Th', emoji: '🤫',
+        teams: ['sh', 'ch', 'th'],
+        teamInfo: {
+          'sh': { label: 'sh', bg: '#FFB3C6', fg: '#CC3060', family: 'ship, shop, fish, wish' },
+          'ch': { label: 'ch', bg: '#A8D8F0', fg: '#2878B8', family: 'chin, chop, much, rich' },
+          'th': { label: 'th', bg: '#D4AAEE', fg: '#7830B8', family: 'this, that, with, bath' }
+        },
+        compare: {
+          title: 'Three consonant digraphs',
+          words: ['ship', 'chin', 'this'],
+          lesson: 'sh makes a quiet sound (shhh). ch makes a punchy sound. th can be soft (this) or hard (thin).'
+        },
+        cueLine: 'Listen for the sh, ch, or th sound!',
+        sentenceStarters: ['The ship went across the…', 'I had chips and chocolate for…', 'The thick fog made it hard to…', 'She shut the door because…'],
+        words: [
+          { w: 'ship',    team: 'sh', lv: 'core',      hint: 'A big boat that sails on the sea.',               ph: 'shi p' },
+          { w: 'shop',    team: 'sh', lv: 'core',      hint: 'A place where you buy things.',                    ph: 'sho p' },
+          { w: 'fish',    team: 'sh', lv: 'core',      hint: 'An animal that lives in water.',                   ph: 'fi sh' },
+          { w: 'chin',    team: 'ch', lv: 'core',      hint: 'The bottom part of your face.',                    ph: 'chi n' },
+          { w: 'chop',    team: 'ch', lv: 'core',      hint: 'To cut something into pieces.',                    ph: 'cho p' },
+          { w: 'much',    team: 'ch', lv: 'core',      hint: 'A large amount — "how much?"',                     ph: 'mu ch' },
+          { w: 'this',    team: 'th', lv: 'core',      hint: 'Pointing to something close — "look at this!"',    ph: 'thi s' },
+          { w: 'bath',    team: 'th', lv: 'core',      hint: 'Where you wash in warm water.',                    ph: 'ba th' },
+          { w: 'wish',    team: 'sh', lv: 'challenge', hint: 'To want something very much.',                     ph: 'wi sh' },
+          { w: 'church',  team: 'ch', lv: 'challenge', hint: 'A building where people worship.',                 ph: 'chur ch' },
+          { w: 'think',   team: 'th', lv: 'challenge', hint: 'To use your brain to figure things out.',          ph: 'thi nk' },
+          { w: 'shadow',  team: 'sh', lv: 'extension', hint: 'A dark shape made when you block the light.',      ph: 'sha dow' },
+          { w: 'thirsty', team: 'th', lv: 'extension', hint: 'Needing a drink of water.',                        ph: 'thir stee' }
+        ]
+      },
+      'wh-ph-ck': {
+        name: 'Wh, Ph, Ck', emoji: '📸',
+        teams: ['wh', 'ph', 'ck'],
+        teamInfo: {
+          'wh': { label: 'wh', bg: '#B8EED8', fg: '#1E7A5A', family: 'when, what, wheel, white' },
+          'ph': { label: 'ph', bg: '#FFEC80', fg: '#9A7A00', family: 'phone, photo, graph, elephant' },
+          'ck': { label: 'ck', bg: '#FFB3C6', fg: '#CC3060', family: 'back, kick, duck, clock' }
+        },
+        compare: {
+          title: 'Three more consonant digraphs',
+          words: ['when', 'phone', 'back'],
+          lesson: 'wh sounds like w at the start of question words. ph makes an f sound. ck makes a sharp k sound at the end.'
+        },
+        cueLine: 'Can you hear the wh, ph, or ck sound?',
+        sentenceStarters: ['When I woke up I saw a…', 'I used the phone to call my…', 'The duck went back to the…', 'The elephant took a photo of…'],
+        words: [
+          { w: 'when',     team: 'wh', lv: 'core',      hint: 'Asking about time — "at what time?"',              ph: 'we n' },
+          { w: 'wheel',    team: 'wh', lv: 'core',      hint: 'A round thing that rolls — cars have four.',       ph: 'wee l' },
+          { w: 'white',    team: 'wh', lv: 'core',      hint: 'The colour of snow.',                              ph: 'wy t' },
+          { w: 'phone',    team: 'ph', lv: 'core',      hint: 'You use it to call people.',                       ph: 'foh n' },
+          { w: 'photo',    team: 'ph', lv: 'core',      hint: 'A picture taken with a camera.',                   ph: 'foh toh' },
+          { w: 'back',     team: 'ck', lv: 'core',      hint: 'The opposite of front.',                           ph: 'ba ck' },
+          { w: 'kick',     team: 'ck', lv: 'core',      hint: 'To hit something with your foot.',                 ph: 'ki ck' },
+          { w: 'duck',     team: 'ck', lv: 'core',      hint: 'A bird that swims and goes "quack".',              ph: 'du ck' },
+          { w: 'whisper',  team: 'wh', lv: 'challenge', hint: 'To talk very quietly.',                            ph: 'whi sper' },
+          { w: 'elephant', team: 'ph', lv: 'challenge', hint: 'The biggest land animal with a long trunk.',       ph: 'el e fant' },
+          { w: 'clock',    team: 'ck', lv: 'challenge', hint: 'Shows you the time on the wall.',                  ph: 'clo ck' },
+          { w: 'whichever', team: 'wh', lv: 'extension', hint: 'No matter which one — "take whichever you want."', ph: 'whi chev er' },
+          { w: 'alphabet', team: 'ph', lv: 'extension', hint: 'All 26 letters from A to Z.',                      ph: 'al fa bet' }
+        ]
+      },
+      'ng-tch-qu': {
+        name: 'Ng, Tch, Qu', emoji: '👑',
+        teams: ['ng', 'tch', 'qu'],
+        teamInfo: {
+          'ng': { label: 'ng', bg: '#A8D8F0', fg: '#2878B8', family: 'ring, sing, long, hang' },
+          'tch': { label: 'tch', bg: '#D4AAEE', fg: '#7830B8', family: 'catch, match, watch, kitchen' },
+          'qu': { label: 'qu', bg: '#B8EED8', fg: '#1E7A5A', family: 'queen, quick, quiet, quiz' }
+        },
+        compare: {
+          title: 'Three trickier consonant digraphs',
+          words: ['ring', 'catch', 'queen'],
+          lesson: 'ng hums at the end of words. tch makes a ch sound after a short vowel. qu always go together — q never works alone!'
+        },
+        cueLine: 'Listen for the ng, tch, or qu sound!',
+        sentenceStarters: ['The king wore a ring and sang a…', 'I tried to catch the ball in the…', 'The queen was quite quiet when…', 'We watched a match at the…'],
+        words: [
+          { w: 'ring',    team: 'ng',  lv: 'core',      hint: 'Jewellery you wear on your finger.',               ph: 'ri ng' },
+          { w: 'sing',    team: 'ng',  lv: 'core',      hint: 'To make music with your voice.',                   ph: 'si ng' },
+          { w: 'long',    team: 'ng',  lv: 'core',      hint: 'The opposite of short.',                           ph: 'lo ng' },
+          { w: 'catch',   team: 'tch', lv: 'core',      hint: 'To grab something thrown to you.',                 ph: 'ca tch' },
+          { w: 'match',   team: 'tch', lv: 'core',      hint: 'Two things that go together, or a sports game.',   ph: 'ma tch' },
+          { w: 'watch',   team: 'tch', lv: 'core',      hint: 'To look at something, or a clock on your wrist.',  ph: 'wo tch' },
+          { w: 'queen',   team: 'qu',  lv: 'core',      hint: 'A woman who rules a country.',                     ph: 'kwee n' },
+          { w: 'quick',   team: 'qu',  lv: 'core',      hint: 'Fast — done in a hurry.',                          ph: 'kwi ck' },
+          { w: 'strong',  team: 'ng',  lv: 'challenge', hint: 'Having lots of power or muscle.',                  ph: 'stro ng' },
+          { w: 'kitchen', team: 'tch', lv: 'challenge', hint: 'The room where you cook food.',                    ph: 'ki tchen' },
+          { w: 'quiet',   team: 'qu',  lv: 'challenge', hint: 'Not making much noise — shhh!',                    ph: 'kwy et' },
+          { w: 'string',  team: 'ng',  lv: 'extension', hint: 'Thin rope or cord.',                               ph: 'stri ng' },
+          { w: 'question', team: 'qu', lv: 'extension', hint: 'Something you ask — ends with a question mark.',   ph: 'kwes chun' }
+        ]
       }
     };
 
@@ -4547,7 +4640,10 @@
       { weekKey: '2025-W07', label: 'Week 7',  title: 'Ow sound',      soundId: 'ou-ow',      emoji: '🦉', comingSoon: false },
       { weekKey: '2025-W08', label: 'Week 8',  title: 'Oy sound',      soundId: 'oi-oy',      emoji: '🧸', comingSoon: false },
       { weekKey: '2025-W09', label: 'Week 9',  title: 'Ar sound',      soundId: 'ar',         emoji: '⭐', comingSoon: false },
-      { weekKey: '2025-W10', label: 'Week 10', title: 'Or sound',      soundId: 'or-aw-ore',  emoji: '🦖', comingSoon: false }
+      { weekKey: '2025-W10', label: 'Week 10', title: 'Or sound',      soundId: 'or-aw-ore',  emoji: '🦖', comingSoon: false },
+      { weekKey: '2025-W11', label: 'Week 11', title: 'Sh, Ch, Th',    soundId: 'sh-ch-th',   emoji: '🤫', comingSoon: false },
+      { weekKey: '2025-W12', label: 'Week 12', title: 'Wh, Ph, Ck',    soundId: 'wh-ph-ck',   emoji: '📸', comingSoon: false },
+      { weekKey: '2025-W13', label: 'Week 13', title: 'Ng, Tch, Qu',   soundId: 'ng-tch-qu',  emoji: '👑', comingSoon: false }
     ];
 
     // ============================================================
@@ -5423,7 +5519,8 @@
       }
       $('done-home').addEventListener('click', function() { showScreen('s-home'); });
       $('done-again').addEventListener('click', function() {
-        if (gameSession.mode === 'boss') startBossGame();
+        if (gameSession.mode === 'tricky') startTrickyWordsGame();
+        else if (gameSession.mode === 'boss') startBossGame();
         else startGame(gameSession.soundId, 'surprise');
       });
       if (gameSession.repeatBlocked && $('done-next-week')) {
@@ -5492,6 +5589,448 @@
       startGame(firstSoundId, 'boss', picked);
     }
 
+    // ---- Tricky Words game (InitiaLit curriculum) -----------------
+
+    var TRICKY_WORDS = {
+      foundation: [
+        { id: 1, words: ['I', 'the', 'my', 'a', 'is'] },
+        { id: 2, words: ['was', 'you', 'to', 'they', 'that'] },
+        { id: 3, words: ['said', 'are', 'he', 'she', 'me', 'be', 'we'] },
+        { id: 4, words: ['were', 'has', 'look', 'one'] },
+        { id: 5, words: ['his', 'here', 'them', 'there'] },
+        { id: 6, words: ['have', 'of', 'with'] },
+        { id: 7, words: ['all', 'call', 'ball', 'tall', 'little'] },
+        { id: 8, words: ['go', 'so', 'no', 'this', 'then'] },
+        { id: 9, words: ['put', 'as', 'do', 'like', 'very'] },
+        { id: 10, words: ['what', 'where', 'want', 'some', 'come'] },
+        { id: 11, words: ['down', 'out', 'for', 'or'] },
+        { id: 12, words: ['should', 'would', 'could'] }
+      ],
+      year1: [
+        { id: 1, words: ['said', 'are', 'her', 'was', 'you', 'very'] },
+        { id: 2, words: ['put', 'have', 'were', 'then', 'there', 'they'] },
+        { id: 3, words: ['here', 'what', 'want', 'some', 'where', 'should', 'would', 'could'] },
+        { id: 4, words: ['saw', 'friend', 'school', 'your', 'again', 'home'] },
+        { id: 5, words: ['who', 'many', 'any', 'love', 'over', 'says'] },
+        { id: 6, words: ['mother', 'brother', 'father', 'sister', 'cousin', 'family'] },
+        { id: 7, words: ['two', 'three', 'four', 'why', 'house', 'because'] },
+        { id: 8, words: ['before', 'after', 'these', 'work', 'baby', 'children'] },
+        { id: 9, words: ['fast', "I'm", 'last', 'about', 'ask', 'our'] },
+        { id: 10, words: ['kind', 'find', 'thought', 'only', 'great', 'their'] },
+        { id: 11, words: ["didn't", "can't", "don't", "shouldn't", "wouldn't", "couldn't"] },
+        { id: 12, words: ['always', 'animal', 'open', 'other', 'another', 'water'] },
+        { id: 13, words: ['walk', 'talk', 'know', 'laugh', 'people', 'every'] }
+      ],
+      year2: [
+        { id: 1, words: ['until', 'February', 'woman', 'different'] },
+        { id: 2, words: ['caught', 'something', 'really', 'bought'] },
+        { id: 3, words: ['alright', 'already', 'across', 'lose'] },
+        { id: 4, words: ['build', 'tomorrow', 'through', 'surprise'] },
+        { id: 5, words: ['minutes', 'remember', 'decided', 'together'] },
+        { id: 6, words: ['though', 'around', 'favourite', 'interesting'] },
+        { id: 7, words: ['women', 'believe'] }
+      ]
+    };
+
+    function startTrickyWordsGame() {
+      var p = activeProfile();
+      if (!p) return;
+
+      var pool = [];
+      var level = p.level || 'core';
+
+      // Year 1 sets 4+ always included (sets 1-3 review Foundation)
+      TRICKY_WORDS.year1.forEach(function(s) {
+        if (s.id >= 4 || level === 'extension') {
+          s.words.forEach(function(w) { pool.push(w); });
+        }
+      });
+
+      // Year 2 words based on level
+      if (level === 'core') {
+        TRICKY_WORDS.year2.forEach(function(s) {
+          if (s.id <= 3) s.words.forEach(function(w) { pool.push(w); });
+        });
+      } else {
+        TRICKY_WORDS.year2.forEach(function(s) {
+          s.words.forEach(function(w) { pool.push(w); });
+        });
+      }
+
+      // Deduplicate
+      var seen = {};
+      pool = pool.filter(function(w) {
+        var key = w.toLowerCase();
+        if (seen[key]) return false;
+        seen[key] = true;
+        return true;
+      });
+
+      if (pool.length < 4) {
+        alert('Not enough tricky words available. Ask Dad to adjust settings.');
+        return;
+      }
+
+      var picked = shuffle(pool).slice(0, 8);
+
+      gameSession = {
+        soundId: null,
+        mode: 'tricky',
+        words: picked,
+        index: 0,
+        phase: 'tricky',
+        correctFirst: 0,
+        wrongCount: 0,
+        wrongThisWord: false,
+        wrongWords: [],
+        sessionCoins: 0,
+        coinSeconds: 0,
+        coinTimerInterval: null,
+        lastActiveMs: Date.now(),
+        sessionDate: todayKey(),
+        isTricky: true,
+        _trickyPos: 0,
+        _trickyWord: '',
+        _trickyChars: []
+      };
+
+      showScreen('s-game');
+      buildTrickyGameScreen();
+    }
+
+    function buildTrickyGameScreen() {
+      var el = $('s-game');
+      var progressDots = '';
+      for (var i = 0; i < gameSession.words.length; i++) {
+        progressDots += '<span id="tricky-dot-' + i + '" style="width:10px;height:10px;border-radius:50%;' +
+          'background:rgba(255,255,255,0.3);display:inline-block;transition:all 0.3s;"></span>';
+      }
+
+      el.innerHTML =
+        '<div style="padding:12px 16px;display:flex;align-items:center;gap:12px;">' +
+          '<button id="tricky-back" style="font-size:28px;background:none;border:none;cursor:pointer;' +
+            'color:white;text-shadow:0 1px 3px rgba(0,0,0,0.3);">←</button>' +
+          '<div style="flex:1;text-align:center;">' +
+            '<div style="display:flex;gap:5px;justify-content:center;" id="tricky-dots">' + progressDots + '</div>' +
+          '</div>' +
+          '<div id="tricky-stars" style="font-size:16px;text-shadow:0 1px 3px rgba(0,0,0,0.2);">⭐⭐⭐</div>' +
+        '</div>' +
+        '<div id="tricky-content" style="flex:1;display:flex;flex-direction:column;align-items:center;' +
+          'justify-content:center;padding:20px;min-height:0;"></div>';
+
+      $('tricky-back').addEventListener('click', function() {
+        stopCoinTimer();
+        showScreen('s-world');
+      });
+
+      startCoinTimer();
+      showTrickyFlash();
+    }
+
+    function updateTrickyDots() {
+      for (var i = 0; i < gameSession.words.length; i++) {
+        var dot = $('tricky-dot-' + i);
+        if (!dot) continue;
+        if (i < gameSession.index) {
+          dot.style.background = '#4CAF50';
+        } else if (i === gameSession.index) {
+          dot.style.background = 'white';
+          dot.style.boxShadow = '0 0 6px rgba(255,255,255,0.8)';
+        }
+      }
+      var starsEl = $('tricky-stars');
+      if (starsEl && gameSession.index > 0) {
+        starsEl.textContent = starsHtml(starsFromScore(gameSession.correctFirst, gameSession.index));
+      }
+    }
+
+    function showTrickyFlash() {
+      if (gameSession.index >= gameSession.words.length) {
+        showTrickyDone();
+        return;
+      }
+
+      var word = gameSession.words[gameSession.index];
+      gameSession.wrongThisWord = false;
+      updateTrickyDots();
+
+      var content = $('tricky-content');
+      content.innerHTML =
+        '<div style="text-align:center;">' +
+          '<p style="font-size:15px;color:rgba(255,255,255,0.7);margin:0 0 20px;font-weight:600;">' +
+            '✨ Remember this word ✨</p>' +
+          '<div id="tricky-flash-word" style="font-size:clamp(48px,12vw,72px);font-weight:900;color:white;' +
+            'letter-spacing:3px;text-shadow:0 2px 12px rgba(0,0,0,0.3);opacity:0;transition:opacity 0.4s ease;">' +
+            escapeHtml(word) +
+          '</div>' +
+          '<div style="margin-top:24px;font-size:14px;color:rgba(255,255,255,0.5);">Listen and look carefully…</div>' +
+        '</div>';
+
+      speak(word.toLowerCase(), 0.8);
+
+      setTimeout(function() {
+        var fw = $('tricky-flash-word');
+        if (fw) fw.style.opacity = '1';
+      }, 100);
+
+      // Fade out after ~2.8 seconds then transition to spell phase
+      setTimeout(function() {
+        var fw = $('tricky-flash-word');
+        if (fw) {
+          fw.style.transition = 'opacity 0.5s ease, filter 0.5s ease';
+          fw.style.opacity = '0';
+          fw.style.filter = 'blur(8px)';
+        }
+        setTimeout(function() {
+          showTrickySpell(word);
+        }, 600);
+      }, 2800);
+    }
+
+    function showTrickySpell(word) {
+      var content = $('tricky-content');
+      var chars = word.split('');
+      var lowerChars = [];
+      for (var c = 0; c < chars.length; c++) {
+        lowerChars.push(chars[c].toLowerCase());
+      }
+
+      // Build empty slots
+      var slotsHtml = '<div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:16px 0;" id="tricky-slots">';
+      for (var i = 0; i < chars.length; i++) {
+        slotsHtml += '<div id="tricky-slot-' + i + '" data-idx="' + i + '" style="width:clamp(36px,9vw,48px);' +
+          'height:clamp(42px,10vw,56px);border-radius:12px;background:rgba(255,255,255,0.15);' +
+          'border:2px dashed rgba(255,255,255,0.4);display:flex;align-items:center;justify-content:center;' +
+          'font-size:clamp(22px,6vw,32px);font-weight:800;color:white;transition:all 0.2s ease;"></div>';
+      }
+      slotsHtml += '</div>';
+
+      // Build letter bank with distractors
+      var bankChars = lowerChars.slice();
+      var alpha = 'abcdefghijklmnopqrstuvwxyz';
+      var extraCount = Math.max(3, Math.min(6, 10 - chars.length));
+      var attempts = 0;
+      while (bankChars.length < chars.length + extraCount && attempts < 60) {
+        var r = alpha[Math.floor(Math.random() * alpha.length)];
+        if (lowerChars.indexOf(r) === -1) {
+          bankChars.push(r);
+        }
+        attempts++;
+      }
+      bankChars = shuffle(bankChars);
+
+      var bankHtml = '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;max-width:380px;margin-top:8px;" id="tricky-bank">';
+      for (var b = 0; b < bankChars.length; b++) {
+        bankHtml += '<button class="tricky-letter-btn" data-letter="' + escapeHtml(bankChars[b]) + '" data-bi="' + b + '" ' +
+          'style="width:clamp(40px,10vw,52px);height:clamp(40px,10vw,52px);border-radius:14px;border:none;' +
+          'background:rgba(255,255,255,0.9);color:#4A2C82;font-size:clamp(20px,5vw,28px);font-weight:800;' +
+          'cursor:pointer;transition:all 0.15s ease;box-shadow:0 3px 8px rgba(0,0,0,0.2);">' +
+          escapeHtml(bankChars[b]) + '</button>';
+      }
+      bankHtml += '</div>';
+
+      content.innerHTML =
+        '<div style="text-align:center;">' +
+          '<p style="font-size:14px;color:rgba(255,255,255,0.7);margin:0 0 12px;font-weight:600;">Now spell it!</p>' +
+          '<button id="tricky-speak" style="font-size:36px;background:none;border:none;cursor:pointer;' +
+            'margin-bottom:8px;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3));">🔊</button>' +
+          slotsHtml +
+          bankHtml +
+        '</div>';
+
+      // Store state for this round
+      gameSession._trickyPos = 0;
+      gameSession._trickyWord = word;
+      gameSession._trickyChars = lowerChars;
+
+      // Speaker button
+      $('tricky-speak').addEventListener('click', function() {
+        speak(word.toLowerCase(), 0.8);
+      });
+
+      // Letter tap handler (delegated on bank)
+      $('tricky-bank').addEventListener('click', function(ev) {
+        var btn = ev.target.closest('.tricky-letter-btn');
+        if (!btn || btn.disabled) return;
+        gameSession.lastActiveMs = Date.now();
+
+        var tapped = btn.getAttribute('data-letter');
+        var pos = gameSession._trickyPos;
+        var expected = gameSession._trickyChars[pos];
+
+        if (tapped === expected) {
+          // Correct letter
+          btn.disabled = true;
+          btn.style.opacity = '0.3';
+          btn.style.transform = 'scale(0.8)';
+          btn.style.pointerEvents = 'none';
+
+          var slot = $('tricky-slot-' + pos);
+          if (slot) {
+            slot.textContent = tapped;
+            slot.style.background = 'rgba(76,175,80,0.4)';
+            slot.style.borderColor = '#4CAF50';
+            slot.style.borderStyle = 'solid';
+            slot.style.transform = 'scale(1.1)';
+            setTimeout(function() { if (slot) slot.style.transform = 'scale(1)'; }, 150);
+          }
+
+          gameSession._trickyPos++;
+
+          // Word complete?
+          if (gameSession._trickyPos >= gameSession._trickyChars.length) {
+            if (!gameSession.wrongThisWord) {
+              gameSession.correctFirst++;
+            } else {
+              gameSession.wrongWords.push(gameSession._trickyWord);
+            }
+            gameSession.index++;
+            updateTrickyDots();
+
+            setTimeout(function() {
+              showTrickyFlash();
+            }, 900);
+          }
+        } else {
+          // Wrong letter — shake
+          gameSession.wrongThisWord = true;
+          gameSession.wrongCount++;
+          btn.style.background = '#ff5252';
+          btn.style.color = 'white';
+          btn.style.transform = 'translateX(-4px)';
+          setTimeout(function() {
+            btn.style.transform = 'translateX(4px)';
+            setTimeout(function() {
+              btn.style.transform = 'translateX(0)';
+              btn.style.background = 'rgba(255,255,255,0.9)';
+              btn.style.color = '#4A2C82';
+            }, 80);
+          }, 80);
+        }
+      });
+    }
+
+    function showTrickyDone() {
+      stopCoinTimer();
+      awardSessionCoins();
+
+      var p = activeProfile();
+      var total = gameSession.words.length;
+      var correct = gameSession.correctFirst;
+      var stars = starsFromScore(correct, total);
+
+      // Record stars and streak
+      if (p) {
+        if (!p.gameStars) p.gameStars = {};
+        var existing = p.gameStars.tricky || 0;
+        if (stars > existing) p.gameStars.tricky = stars;
+        updateStreak(p);
+        saveActiveProfile();
+      }
+
+      // Check for prize drop
+      var dropChoices = p ? checkAndTriggerDrop(p) : null;
+      if (p && dropChoices) saveActiveProfile();
+
+      var coinsMsg = '';
+      if (gameSession.sessionCoins > 0) {
+        coinsMsg = '🪙 You earned <strong>' + gameSession.sessionCoins + ' coin' +
+          (gameSession.sessionCoins !== 1 ? 's' : '') + '</strong> this session!';
+      } else {
+        coinsMsg = 'Play longer next time to earn coins!';
+      }
+
+      var econ = p ? (p.economy || {}) : {};
+      var capMsg = (econ.dailyCoins >= getDailyCap(p))
+        ? '<p style="color:rgba(255,255,255,0.6);font-size:13px;">Daily coin cap reached! Come back tomorrow 🌟</p>'
+        : '';
+
+      var dropHtml = '';
+      if (dropChoices) {
+        dropHtml = '<div id="tricky-drop" style="background:rgba(255,255,255,0.15);border-radius:16px;padding:16px;margin:12px 0;">' +
+          '<span style="font-size:36px;">🎁</span>' +
+          '<p style="font-weight:700;margin:4px 0;color:white;">Choose a prize!</p>' +
+          '<div style="display:flex;gap:12px;justify-content:center;">' +
+          dropChoices.map(function(e) {
+            var display = itemIcon(e);
+            var lbl = '<div style="font-size:10px;margin-top:2px;color:rgba(255,255,255,0.7);">' + itemLabel(e) + '</div>';
+            return '<button class="tricky-drop-btn" data-emoji="' + e + '" style="background:rgba(255,255,255,0.2);' +
+              'border:2px solid rgba(255,255,255,0.3);border-radius:12px;padding:8px 12px;cursor:pointer;">' +
+              display + lbl + '</button>';
+          }).join('') +
+          '</div></div>';
+      }
+
+      // Wrong words review
+      var reviewHtml = '';
+      if (gameSession.wrongWords.length > 0) {
+        reviewHtml = '<div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;margin:8px 0;max-width:280px;">' +
+          '<p style="font-size:13px;color:rgba(255,255,255,0.7);margin:0 0 6px;font-weight:600;">Practice these:</p>' +
+          '<p style="font-size:18px;color:white;margin:0;font-weight:700;letter-spacing:1px;">' +
+          gameSession.wrongWords.map(function(w) { return escapeHtml(w); }).join(' · ') +
+          '</p></div>';
+      }
+
+      var msgs = [
+        'Brilliant spelling!', 'Word wizard!', 'You remembered them!',
+        'Tricky words conquered!', 'Amazing memory!', 'Spelling champion!'
+      ];
+
+      var content = $('tricky-content');
+      content.innerHTML =
+        '<div style="text-align:center;">' +
+          '<div style="font-size:42px;margin-bottom:8px;">' + starsHtml(stars) + '</div>' +
+          '<h2 style="color:white;margin:0 0 8px;font-size:22px;text-shadow:0 2px 6px rgba(0,0,0,0.3);">' +
+            escapeHtml(pick(msgs)) + '</h2>' +
+          '<p style="color:rgba(255,255,255,0.8);font-size:15px;margin:0 0 12px;">' +
+            correct + ' of ' + total + ' correct on the first try</p>' +
+          '<p style="color:rgba(255,255,255,0.8);font-size:14px;margin:0 0 8px;">' + coinsMsg + '</p>' +
+          capMsg + reviewHtml + dropHtml +
+          '<div style="display:flex;flex-direction:column;gap:10px;margin-top:16px;width:100%;max-width:280px;">' +
+            '<button id="tricky-again" style="padding:14px 24px;border-radius:14px;border:none;' +
+              'background:rgba(255,255,255,0.9);color:#4A2C82;font-size:16px;font-weight:700;cursor:pointer;' +
+              'box-shadow:0 3px 8px rgba(0,0,0,0.2);">Play again 🎲</button>' +
+            '<button id="tricky-home" style="padding:12px 24px;border-radius:14px;' +
+              'border:2px solid rgba(255,255,255,0.4);background:transparent;color:white;font-size:15px;' +
+              'font-weight:600;cursor:pointer;">Back to home</button>' +
+          '</div>' +
+        '</div>';
+
+      $('tricky-again').addEventListener('click', function() { startTrickyWordsGame(); });
+      $('tricky-home').addEventListener('click', function() { showScreen('s-home'); });
+
+      // Handle drop selection
+      if (dropChoices) {
+        content.querySelectorAll('.tricky-drop-btn').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            var chosen = btn.getAttribute('data-emoji');
+            var pp = activeProfile();
+            if (pp) {
+              migrateAvatar(pp);
+              if (pp.avatar.unlocked.indexOf(chosen) === -1) {
+                pp.avatar.unlocked.push(chosen);
+              }
+              var ch = pp.avatar.characterKey ? findCharacter(pp.avatar.characterKey) : null;
+              var bgK = pp.avatar.background ? pp.avatar.background.replace('bg:', '') : null;
+              var world = bgK || (ch ? ch.world : 'beach');
+              if (!pp.worldPrizes) pp.worldPrizes = {};
+              if (!pp.worldPrizes[world]) pp.worldPrizes[world] = [];
+              if (pp.worldPrizes[world].indexOf(chosen) === -1) {
+                pp.worldPrizes[world].push(chosen);
+              }
+              equipItem(pp, chosen);
+              saveActiveProfile();
+            }
+            var dropEl = $('tricky-drop');
+            if (dropEl) {
+              dropEl.innerHTML = '<span style="font-size:36px;">' + itemIcon(chosen) + '</span>' +
+                '<p style="margin:4px 0;font-weight:800;color:white;">Prize unlocked! 🎉</p>';
+            }
+          });
+        });
+      }
+    }
+
     // ---- Play tile clicks (delegated) ---------------------------
 
     document.addEventListener('click', function(ev) {
@@ -5547,6 +6086,9 @@
 
       } else if (mode === 'boss') {
         startBossGame();
+
+      } else if (mode === 'tricky') {
+        startTrickyWordsGame();
       }
     });
 
@@ -8064,6 +8606,8 @@
         startDadWrongGame(dadSoundId);
       } else if (mode === 'boss') {
         startBossGame();
+      } else if (mode === 'tricky') {
+        startTrickyWordsGame();
       }
     }
 
