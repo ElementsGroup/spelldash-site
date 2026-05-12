@@ -1130,23 +1130,59 @@
     // -----------------------------------
     // Cloud sync — Supabase REST (no SDK)
     // -----------------------------------
+    var SUPABASE_URL = 'https://brwhnigphshhvapcikrn.supabase.co';
+    var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJyd2huaWdwaHNoaHZhcGNpa3JuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0NjAxODEsImV4cCI6MjA5NDAzNjE4MX0.6lbTm0GJgPctml3GHd96HlyKGhbKvomBU5yLrBbHpQs';
+
     var cloudSync = {
-      url: null,
-      key: null,
+      url: SUPABASE_URL,
+      key: SUPABASE_KEY,
       familyCode: null,
       debounceTimer: null,
       lastPush: 0,
-      syncing: false
+      syncing: false,
+      pullInterval: null
     };
+
+    // Cookie helpers for family code persistence (survives localStorage clears)
+    function setSyncCookie(code) {
+      var expires = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toUTCString();
+      document.cookie = 'sd_fc=' + encodeURIComponent(code) + ';expires=' + expires + ';path=/;SameSite=Lax';
+    }
+    function getSyncCookie() {
+      var match = document.cookie.match(/(?:^|;\s*)sd_fc=([^;]*)/);
+      return match ? decodeURIComponent(match[1]) : null;
+    }
+    function clearSyncCookie() {
+      document.cookie = 'sd_fc=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;SameSite=Lax';
+    }
 
     function loadSyncConfig() {
       try {
+        // Always use hardcoded credentials
+        cloudSync.url = SUPABASE_URL;
+        cloudSync.key = SUPABASE_KEY;
+        // Try localStorage first for family code
         var raw = localStorage.getItem(SYNC_CONFIG_KEY);
-        if (!raw) return;
-        var cfg = JSON.parse(raw);
-        if (cfg.url) cloudSync.url = cfg.url;
-        if (cfg.key) cloudSync.key = cfg.key;
-        if (cfg.familyCode) cloudSync.familyCode = cfg.familyCode;
+        if (raw) {
+          var cfg = JSON.parse(raw);
+          if (cfg.familyCode) cloudSync.familyCode = cfg.familyCode;
+        }
+        // Fall back to cookie if localStorage was cleared
+        if (!cloudSync.familyCode) {
+          var cookieCode = getSyncCookie();
+          if (cookieCode) {
+            cloudSync.familyCode = cookieCode;
+            saveSyncConfig(); // Restore localStorage from cookie
+            console.log('[Sync] Recovered family code from cookie');
+          }
+        }
+        // Migrate legacy configs that stored URL/key — update to hardcoded
+        if (raw) {
+          var cfg2 = JSON.parse(raw);
+          if (cfg2.url && cfg2.url !== SUPABASE_URL) {
+            saveSyncConfig(); // Overwrite with hardcoded values
+          }
+        }
       } catch (e) {}
     }
     loadSyncConfig();
@@ -1154,10 +1190,14 @@
     function saveSyncConfig() {
       try {
         localStorage.setItem(SYNC_CONFIG_KEY, JSON.stringify({
-          url: cloudSync.url,
-          key: cloudSync.key,
+          url: SUPABASE_URL,
+          key: SUPABASE_KEY,
           familyCode: cloudSync.familyCode
         }));
+        // Also persist family code in cookie as backup
+        if (cloudSync.familyCode) {
+          setSyncCookie(cloudSync.familyCode);
+        }
       } catch (e) {}
     }
 
@@ -1241,6 +1281,41 @@
         }
       });
     }
+
+    // Background sync — pull every 90 seconds to keep devices in sync
+    function startBackgroundSync() {
+      if (cloudSync.pullInterval) clearInterval(cloudSync.pullInterval);
+      if (!isSyncReady()) return;
+      cloudSync.pullInterval = setInterval(function() {
+        if (document.hidden) return; // Skip when tab is not visible
+        pullFromCloud(function(updated) {
+          if (updated) {
+            console.log('[Sync] Background pull updated local data');
+            // Refresh the current screen if showing profile-dependent data
+            var active = document.querySelector('.screen.active');
+            if (active) {
+              var id = active.id;
+              if (id === 's-home') renderHome();
+              else if (id === 's-profiles') renderProfiles();
+            }
+          }
+        });
+      }, 90000);
+    }
+    startBackgroundSync();
+
+    // Restart background sync when tab becomes visible
+    document.addEventListener('visibilitychange', function() {
+      if (!document.hidden && isSyncReady()) {
+        pullFromCloud(function(updated) {
+          if (updated) {
+            console.log('[Sync] Visibility pull updated local data');
+            var active = document.querySelector('.screen.active');
+            if (active && active.id === 's-home') renderHome();
+          }
+        });
+      }
+    });
 
     // Generate a random 6-char family code
     function generateFamilyCode() {
@@ -7067,20 +7142,6 @@
           '<input id="sync-join-code" type="text" placeholder="Enter family code..." maxlength="6" style="width:100%;padding:10px 12px;border:2px solid rgba(107,63,160,0.2);border-radius:10px;font-size:16px;font-family:monospace;letter-spacing:3px;text-transform:uppercase;text-align:center;" />' +
           '<button class="btn btn-secondary" id="sett-join-sync" style="width:100%;margin-top:8px;">📥 Join &amp; Sync</button>' +
         '</div>';
-
-        // Supabase config (hidden by default, shown via setup button)
-        html += '<div id="sync-setup-area" style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(107,63,160,0.1);">' +
-          '<details>' +
-            '<summary style="font-size:12px;color:#999;cursor:pointer;">⚙️ Cloud Connection Settings</summary>' +
-            '<div style="margin-top:8px;">' +
-              '<label style="font-size:12px;color:#666;">Supabase URL</label>' +
-              '<input id="sync-url" type="url" value="' + escapeHtml(cloudSync.url || '') + '" placeholder="https://xxxxx.supabase.co" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:8px;font-size:12px;margin:4px 0 8px;" />' +
-              '<label style="font-size:12px;color:#666;">Supabase Anon Key</label>' +
-              '<input id="sync-key" type="text" value="' + escapeHtml(cloudSync.key || '') + '" placeholder="eyJhbGci..." style="width:100%;padding:8px;border:1px solid #ddd;border-radius:8px;font-size:12px;margin:4px 0 8px;" />' +
-              '<button class="btn btn-secondary" id="sett-save-sync-config" style="width:100%;">Save Connection</button>' +
-            '</div>' +
-          '</details>' +
-        '</div>';
       }
 
       // Manual backup/restore fallback
@@ -7312,24 +7373,17 @@
       // Cloud Sync buttons
       var newSyncBtn = $('sett-new-sync');
       if (newSyncBtn) newSyncBtn.addEventListener('click', function() {
-        if (!cloudSync.url || !cloudSync.key) {
-          alert('Please set up the cloud connection first.\n\nOpen "Cloud Connection Settings" below and enter your Supabase URL and Anon Key.');
-          return;
-        }
         var code = generateFamilyCode();
         cloudSync.familyCode = code;
         saveSyncConfig();
         pushToCloud();
+        startBackgroundSync();
         alert('Family Code created: ' + code + '\n\nUse this code on other devices to sync.');
         renderSettingsScreen();
       });
 
       var joinSyncBtn = $('sett-join-sync');
       if (joinSyncBtn) joinSyncBtn.addEventListener('click', function() {
-        if (!cloudSync.url || !cloudSync.key) {
-          alert('Please set up the cloud connection first.\n\nOpen "Cloud Connection Settings" below and enter your Supabase URL and Anon Key.');
-          return;
-        }
         var input = $('sync-join-code');
         var code = (input ? input.value : '').trim().toUpperCase();
         if (!code || code.length < 4) { alert('Please enter a valid family code.'); return; }
@@ -7338,11 +7392,13 @@
         pullFromCloud(function(updated) {
           if (updated) {
             alert('Synced! Data loaded from cloud.');
+            startBackgroundSync();
             state.profiles = loadProfiles();
             showScreen('s-profiles');
           } else {
             alert('Connected with code: ' + code + '\nNo existing cloud data found — your current data will be uploaded.');
             pushToCloud();
+            startBackgroundSync();
             renderSettingsScreen();
           }
         });
@@ -7366,21 +7422,10 @@
       if (disconnectBtn) disconnectBtn.addEventListener('click', function() {
         if (!confirm('Disconnect cloud sync? Your local data will be kept.')) return;
         cloudSync.familyCode = null;
+        clearSyncCookie();
         saveSyncConfig();
+        if (cloudSync.pullInterval) { clearInterval(cloudSync.pullInterval); cloudSync.pullInterval = null; }
         renderSettingsScreen();
-      });
-
-      var saveSyncConfigBtn = $('sett-save-sync-config');
-      if (saveSyncConfigBtn) saveSyncConfigBtn.addEventListener('click', function() {
-        var urlInput = $('sync-url');
-        var keyInput = $('sync-key');
-        var url = (urlInput ? urlInput.value : '').trim().replace(/\/+$/, '');
-        var key = (keyInput ? keyInput.value : '').trim();
-        if (!url || !key) { alert('Please enter both URL and key.'); return; }
-        cloudSync.url = url;
-        cloudSync.key = key;
-        saveSyncConfig();
-        alert('Cloud connection saved!');
       });
 
       // Backup
