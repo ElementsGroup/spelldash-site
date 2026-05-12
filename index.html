@@ -4943,10 +4943,13 @@
       var gridClass = teams.length >= 4 ? 'team-grid-2x2' : 'team-grid-row';
       var teamsHtml = teams.map(function(team) {
         var ti = sound.teamInfo[team] || {};
+        var familyText = (ti.family || '').split(', ').filter(function(fw) {
+          return fw.toLowerCase() !== entry.w.toLowerCase();
+        }).join(', ');
         return '<button class="team-btn" data-team="' + escapeHtml(team) + '"' +
                ' style="background:' + (ti.bg || '#eee') + ';color:' + (ti.fg || '#333') + '">' +
                '<strong>' + escapeHtml(ti.label || team) + '</strong>' +
-               '<small>' + escapeHtml(ti.family || '') + '</small></button>';
+               '<small>' + escapeHtml(familyText) + '</small></button>';
       }).join('');
 
       var liveStars = gameSession.index > 0
